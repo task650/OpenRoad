@@ -23,7 +23,7 @@
 #include <QWidget>
 #include <QVector>
 #include <QTimer>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 namespace Ui {
 class PageAppBalance;
@@ -37,8 +37,8 @@ public:
     explicit PageAppBalance(QWidget *parent = nullptr);
     ~PageAppBalance();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
     void reloadParams();
 
 private slots:

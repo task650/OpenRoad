@@ -21,7 +21,7 @@
 #define PAGEGPD_H
 
 #include <QWidget>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 namespace Ui {
 class PageGPD;
@@ -35,8 +35,8 @@ public:
     explicit PageGPD(QWidget *parent = nullptr);
     ~PageGPD();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
     void reloadParams();
 
 private:

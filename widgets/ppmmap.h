@@ -21,7 +21,7 @@
 #define PPMMAP_H
 
 #include <QWidget>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 namespace Ui {
 class PpmMap;
@@ -35,8 +35,8 @@ public:
     explicit PpmMap(QWidget *parent = 0);
     ~PpmMap();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
 
 private slots:
     void decodedPpmReceived(double value, double last_len);

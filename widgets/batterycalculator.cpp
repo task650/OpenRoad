@@ -44,14 +44,14 @@ void BatteryCalculator::on_batteryCalcButton_clicked()
     }
 }
 
-VescInterface *BatteryCalculator::vesc() const
+VescInterface *BatteryCalculator::openroad() const
 {
     return mVesc;
 }
 
-void BatteryCalculator::setVesc(VescInterface *vesc)
+void BatteryCalculator::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 }
 
 void BatteryCalculator::on_batteryCellBox_valueChanged(int arg1)

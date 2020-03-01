@@ -21,7 +21,7 @@
 #define ADCMAP_H
 
 #include <QWidget>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 namespace Ui {
 class AdcMap;
@@ -35,8 +35,8 @@ public:
     explicit AdcMap(QWidget *parent = 0);
     ~AdcMap();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
 
 private slots:
     void decodedAdcReceived(double value, double voltage, double value2, double voltage2);

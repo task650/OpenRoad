@@ -34,14 +34,14 @@ PageDataAnalysis::~PageDataAnalysis()
     delete ui;
 }
 
-VescInterface *PageDataAnalysis::vesc() const
+VescInterface *PageDataAnalysis::openroad() const
 {
     return mVesc;
 }
 
-void PageDataAnalysis::setVesc(VescInterface *vesc)
+void PageDataAnalysis::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     if (mVesc) {
         ConfigParam *p = mVesc->infoConfig()->getParam("data_analysis_description");

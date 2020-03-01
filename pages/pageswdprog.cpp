@@ -165,14 +165,14 @@ void PageSwdProg::on_uploadButton_clicked()
     }
 }
 
-VescInterface *PageSwdProg::vesc() const
+VescInterface *PageSwdProg::openroad() const
 {
     return mVesc;
 }
 
-void PageSwdProg::setVesc(VescInterface *vesc)
+void PageSwdProg::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     connect(mVesc, SIGNAL(fwUploadStatus(QString,double,bool)),
             this, SLOT(fwUploadStatus(QString,double,bool)));
@@ -272,18 +272,18 @@ void PageSwdProg::bmConnRes(int res)
     case 2:
     case 3:
         addSwdFw("BLE - Xtal: 16M RX: 1 TX: 2 LED: 3",
-                 "://res/other_fw/nrf51_vesc_ble_16k_16m_rx1_tx2_led3.bin");
+                 "://res/other_fw/nrf51_openroad_ble_16k_16m_rx1_tx2_led3.bin");
         addSwdFw("BLE - Xtal: 16M RX: 11 TX: 9 LED: 3",
-                 "://res/other_fw/nrf51_vesc_ble_16k_16m_rx11_tx9_led3.bin");
+                 "://res/other_fw/nrf51_openroad_ble_16k_16m_rx11_tx9_led3.bin");
         break;
 
     case 4:
         addSwdFw("BLE - Xtal: 16M RX: 11 TX: 9 LED: 3",
-                 "://res/other_fw/nrf51_vesc_ble_32k_16m_rx11_tx9_led3.bin");
+                 "://res/other_fw/nrf51_openroad_ble_32k_16m_rx11_tx9_led3.bin");
         addSwdFw("BLE TRAMPA - Xtal: 32M RX: 2 TX: 1 LED: 3",
-                 "://res/other_fw/nrf51_vesc_ble_32k_32m_rx2_tx1_led3.bin");
+                 "://res/other_fw/nrf51_openroad_ble_32k_32m_rx2_tx1_led3.bin");
         addSwdFw("BLE VESC Builtin - Xtal: 32M RX: 1 TX: 2 LED: 3",
-                 "://res/other_fw/nrf51_vesc_ble_32k_32m_rx1_tx2_led3.bin");
+                 "://res/other_fw/nrf51_openroad_ble_32k_32m_rx1_tx2_led3.bin");
         addSwdFw("Remote Trampa MT - Xtal: 32M",
                  "://res/other_fw/nrf51_remote_mt_32k_32m.bin");
         break;
@@ -292,16 +292,16 @@ void PageSwdProg::bmConnRes(int res)
     case 6:
     case 7:
         addSwdFw("BLE TRAMPA - RX: 7 TX: 6 LED: 8",
-                 "://res/other_fw/nrf52832_vesc_ble_rx7_tx6_led8.bin");
+                 "://res/other_fw/nrf52832_openroad_ble_rx7_tx6_led8.bin");
         addSwdFw("BLE VESC Builtin - RX: 6 TX: 7 LED: 8",
-                 "://res/other_fw/nrf52832_vesc_ble_rx6_tx7_led8.bin");
+                 "://res/other_fw/nrf52832_openroad_ble_rx6_tx7_led8.bin");
         break;
 
     case 8:
         addSwdFw("BLE Sparkfun Mini - RX: 11 TX: 8 LED: 7",
-                 "://res/other_fw/nrf52840_vesc_ble_rx11_tx8_led7.bin");
+                 "://res/other_fw/nrf52840_openroad_ble_rx11_tx8_led7.bin");
         addSwdFw("VESC HD Builtin - RX: 26 TX: 25 LED: 27",
-                 "://res/other_fw/nrf52840_vesc_ble_rx26_tx25_led27.bin");
+                 "://res/other_fw/nrf52840_openroad_ble_rx26_tx25_led27.bin");
         addSwdFw("Wand Remote",
                  "://res/other_fw/nrf52840_stick_remote.bin");
         break;

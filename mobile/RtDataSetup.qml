@@ -23,9 +23,9 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls.Styles 1.4
 import QtGraphicalEffects 1.0
 
-import Vedder.vesc.vescinterface 1.0
-import Vedder.vesc.commands 1.0
-import Vedder.vesc.configparams 1.0
+import Vedder.openroad.openroadinterface 1.0
+import Vedder.openroad.commands 1.0
+import Vedder.openroad.configparams 1.0
 
 Item {
     id: rtData
@@ -188,7 +188,7 @@ Item {
         target: mCommands
 
         onValuesSetupReceived: {
-            currentGauge.maximumValue = Math.ceil(mMcConf.getParamDouble("l_current_max") / 5) * 5 * values.num_vescs
+            currentGauge.maximumValue = Math.ceil(mMcConf.getParamDouble("l_current_max") / 5) * 5 * values.num_openroads
             currentGauge.minimumValue = -currentGauge.maximumValue
 
             currentGauge.value = values.current_motor
@@ -215,7 +215,7 @@ Item {
 
             var powerMax = Math.min(values.v_in * Math.min(mMcConf.getParamDouble("l_in_current_max"),
                                                            mMcConf.getParamDouble("l_current_max")),
-                                    mMcConf.getParamDouble("l_watt_max")) * values.num_vescs
+                                    mMcConf.getParamDouble("l_watt_max")) * values.num_openroads
             var powerMaxRound = (Math.ceil(powerMax / 1000.0) * 1000.0)
 
             if (Math.abs(powerGauge.maximumValue - powerMaxRound) > 1.2) {
@@ -241,7 +241,7 @@ Item {
                     l1Txt + parseFloat((values.tachometer_abs * impFact) / 1000.0).toFixed(3) + "\n" +
                     l2Txt + parseFloat(wh_km / impFact).toFixed(1) + "\n" +
                     l3Txt + parseFloat(values.battery_wh / (wh_km / impFact)).toFixed(2) + "\n" +
-                    "VESCs   : " + values.num_vescs
+                    "VESCs   : " + values.num_openroads
         }
     }
 }

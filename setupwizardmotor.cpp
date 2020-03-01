@@ -22,21 +22,21 @@
 #include <QMessageBox>
 #include "utility.h"
 
-SetupWizardMotor::SetupWizardMotor(VescInterface *vesc, QWidget *parent)
+SetupWizardMotor::SetupWizardMotor(VescInterface *openroad, QWidget *parent)
     : QWizard(parent)
 {
-    setPage(Page_Intro, new IntroPage(vesc));
-    setPage(Page_Connection, new ConnectionPage(vesc));
-    setPage(Page_Firmware, new FirmwarePage(vesc));
-    setPage(Page_MotorType, new MotorTypePage(vesc));
-    setPage(Page_Currents, new CurrentsPage(vesc));
-    setPage(Page_Voltages, new VoltagesPage(vesc));
-    setPage(Page_Sensors, new SensorsPage(vesc));
-    setPage(Page_Bldc, new BldcPage(vesc));
-    setPage(Page_Foc, new FocPage(vesc));
-    setPage(Page_FocEncoder, new FocEncoderPage(vesc));
-    setPage(Page_FocHall, new FocHallPage(vesc));
-    setPage(Page_Conclusion, new ConclusionPage(vesc));
+    setPage(Page_Intro, new IntroPage(openroad));
+    setPage(Page_Connection, new ConnectionPage(openroad));
+    setPage(Page_Firmware, new FirmwarePage(openroad));
+    setPage(Page_MotorType, new MotorTypePage(openroad));
+    setPage(Page_Currents, new CurrentsPage(openroad));
+    setPage(Page_Voltages, new VoltagesPage(openroad));
+    setPage(Page_Sensors, new SensorsPage(openroad));
+    setPage(Page_Bldc, new BldcPage(openroad));
+    setPage(Page_Foc, new FocPage(openroad));
+    setPage(Page_FocEncoder, new FocEncoderPage(openroad));
+    setPage(Page_FocHall, new FocHallPage(openroad));
+    setPage(Page_Conclusion, new ConclusionPage(openroad));
 
     setStartId(Page_Intro);
     setWizardStyle(ModernStyle);
@@ -67,10 +67,10 @@ void SetupWizardMotor::idChanged(int id)
     }
 }
 
-IntroPage::IntroPage(VescInterface *vesc, QWidget *parent)
+IntroPage::IntroPage(VescInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = vesc;
+    mVesc = openroad;
     setTitle(tr("VESC® Motor Setup Wizard"));
 
     mLabel = new QLabel(tr("This wizard will guide you through the motor setup of the VESC® "
@@ -127,10 +127,10 @@ bool IntroPage::validatePage()
     return !res;
 }
 
-ConnectionPage::ConnectionPage(VescInterface *vesc, QWidget *parent)
+ConnectionPage::ConnectionPage(VescInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     setTitle(tr("Connect VESC"));
     setSubTitle(tr("The VESC has to be connected in order to use this "
@@ -162,10 +162,10 @@ bool ConnectionPage::isComplete() const
     return mVesc->fwRx();
 }
 
-FirmwarePage::FirmwarePage(VescInterface *vesc, QWidget *parent)
+FirmwarePage::FirmwarePage(VescInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     setTitle(tr("Update Firmware"));
     setSubTitle(tr("You need to update the firmware on the VESC in order "
@@ -205,10 +205,10 @@ void FirmwarePage::initializePage()
     mVesc->commands()->getFwVersion();
 }
 
-MotorTypePage::MotorTypePage(VescInterface *vesc, QWidget *parent)
+MotorTypePage::MotorTypePage(VescInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = vesc;
+    mVesc = openroad;
     mLoadDefaultAsked = false;
 
     setTitle(tr("Choose Motor Type"));
@@ -254,10 +254,10 @@ void MotorTypePage::showEvent(QShowEvent *event)
     QWidget::showEvent(event);
 }
 
-CurrentsPage::CurrentsPage(VescInterface *vesc, QWidget *parent)
+CurrentsPage::CurrentsPage(VescInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = vesc;
+    mVesc = openroad;
     mWarningShown = false;
 
     setTitle(tr("Set Current Limits"));
@@ -328,10 +328,10 @@ void CurrentsPage::showEvent(QShowEvent *event)
     QWidget::showEvent(event);
 }
 
-VoltagesPage::VoltagesPage(VescInterface *vesc, QWidget *parent)
+VoltagesPage::VoltagesPage(VescInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     setTitle(tr("Set Voltage Limits"));
     setSubTitle(tr("Set soft voltage limits to prevent overdischarging your battery."));
@@ -341,7 +341,7 @@ VoltagesPage::VoltagesPage(VescInterface *vesc, QWidget *parent)
     mParamTab->addParamRow(mVesc->mcConfig(), "l_battery_cut_end");
 
     mCalc = new BatteryCalculator(this);
-    mCalc->setVesc(vesc);
+    mCalc->setVesc(openroad);
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(mParamTab);
@@ -360,10 +360,10 @@ bool VoltagesPage::validatePage()
     return true;
 }
 
-SensorsPage::SensorsPage(VescInterface *vesc, QWidget *parent)
+SensorsPage::SensorsPage(VescInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     setTitle(tr("Choose sensor mode"));
     setSubTitle(tr("Select what type of sensor (if any) your motor has."));
@@ -509,17 +509,17 @@ void SensorsPage::indexChanged(int ind)
     }
 }
 
-BldcPage::BldcPage(VescInterface *vesc, QWidget *parent)
+BldcPage::BldcPage(VescInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     setTitle(tr("BLDC Settings"));
     setSubTitle(tr("Run detection and get the required parameters for BLDC commutation."));
 
     mParamTab = new ParamTable;
     mDetect = new DetectBldc(this);
-    mDetect->setVesc(vesc);
+    mDetect->setVesc(openroad);
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(mParamTab);
@@ -556,17 +556,17 @@ void BldcPage::initializePage()
     }
 }
 
-FocPage::FocPage(VescInterface *vesc, QWidget *parent)
+FocPage::FocPage(VescInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     setTitle(tr("FOC Settings"));
     setSubTitle(tr("Run detection and get the required parameters for FOC."));
 
     mParamTab = new ParamTable;
     mDetect = new DetectFoc(this);
-    mDetect->setVesc(vesc);
+    mDetect->setVesc(openroad);
 
     mParamTab->addParamRow(mVesc->mcConfig(), "foc_motor_r");
     mParamTab->addParamRow(mVesc->mcConfig(), "foc_motor_l");
@@ -652,17 +652,17 @@ bool FocPage::validatePage()
     return res;
 }
 
-FocEncoderPage::FocEncoderPage(VescInterface *vesc, QWidget *parent)
+FocEncoderPage::FocEncoderPage(VescInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     setTitle(tr("FOC Encoder Settings"));
     setSubTitle(tr("Detect and set the required settings for running FOC with an encoder."));
 
     mParamTab = new ParamTable;
     mDetect = new DetectFocEncoder(this);
-    mDetect->setVesc(vesc);
+    mDetect->setVesc(openroad);
 
     mParamTab->addParamRow(mVesc->mcConfig(), "foc_sl_erpm");
     mParamTab->addParamRow(mVesc->mcConfig(), "foc_encoder_offset");
@@ -686,17 +686,17 @@ bool FocEncoderPage::validatePage()
     return true;
 }
 
-FocHallPage::FocHallPage(VescInterface *vesc, QWidget *parent)
+FocHallPage::FocHallPage(VescInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     setTitle(tr("FOC Hall Sensor Settings"));
     setSubTitle(tr("Detect and set the required settings for running FOC with hall sensors."));
 
     mParamTab = new ParamTable;
     mDetect = new DetectFocHall(this);
-    mDetect->setVesc(vesc);
+    mDetect->setVesc(openroad);
 
     mParamTab->addParamRow(mVesc->mcConfig(), "foc_sl_erpm");
     mParamTab->addParamRow(mVesc->mcConfig(), "foc_hall_table__0");
@@ -725,10 +725,10 @@ bool FocHallPage::validatePage()
     return true;
 }
 
-ConclusionPage::ConclusionPage(VescInterface *vesc, QWidget *parent)
+ConclusionPage::ConclusionPage(VescInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = vesc;
+    mVesc = openroad;
     setTitle(tr("Conclusion"));
 
     mLabel = new QLabel(tr("You have finished the motor setup for the VESC®. The next step "

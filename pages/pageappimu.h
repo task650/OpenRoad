@@ -20,8 +20,8 @@
 #ifndef PAGEAPPIMU_H
 #define PAGEAPPIMU_H
 
-#include "vescinterface.h"
-#include "widgets/vesc3dview.h"
+#include "openroadinterface.h"
+#include "widgets/openroad3dview.h"
 
 #include <QWidget>
 #include <QCheckBox>
@@ -38,8 +38,8 @@ public:
     explicit PageAppImu(QWidget *parent = nullptr);
     ~PageAppImu();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
     void reloadParams();
 
 private slots:

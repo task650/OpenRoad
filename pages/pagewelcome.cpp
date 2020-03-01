@@ -68,14 +68,14 @@ void PageWelcome::startSetupWizardApp()
     }
 }
 
-VescInterface *PageWelcome::vesc() const
+VescInterface *PageWelcome::openroad() const
 {
     return mVesc;
 }
 
-void PageWelcome::setVesc(VescInterface *vesc)
+void PageWelcome::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 }
 
 void PageWelcome::on_autoConnectButton_clicked()

@@ -42,14 +42,14 @@ PageAppAdc::~PageAppAdc()
     delete ui;
 }
 
-VescInterface *PageAppAdc::vesc() const
+VescInterface *PageAppAdc::openroad() const
 {
     return mVesc;
 }
 
-void PageAppAdc::setVesc(VescInterface *vesc)
+void PageAppAdc::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     if (mVesc) {
         reloadParams();

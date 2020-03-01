@@ -74,14 +74,14 @@ void DetectFocHall::on_applyButton_clicked()
     }
 }
 
-VescInterface *DetectFocHall::vesc() const
+VescInterface *DetectFocHall::openroad() const
 {
     return mVesc;
 }
 
-void DetectFocHall::setVesc(VescInterface *vesc)
+void DetectFocHall::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     if (mVesc) {
         connect(mVesc->commands(), SIGNAL(focHallTableReceived(QVector<int>,int)),

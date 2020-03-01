@@ -21,7 +21,7 @@
 #define PAGEMOTORINFO_H
 
 #include <QWidget>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 namespace Ui {
 class PageMotorInfo;
@@ -35,8 +35,8 @@ public:
     explicit PageMotorInfo(QWidget *parent = nullptr);
     ~PageMotorInfo();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
     void reloadParams();
 
 private slots:

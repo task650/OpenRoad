@@ -23,7 +23,7 @@
 #include <QWidget>
 #include <QTimer>
 #include <QElapsedTimer>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 #ifdef HAS_SERIALPORT
 #include <QSerialPortInfo>
@@ -41,8 +41,8 @@ public:
     explicit PageExperiments(QWidget *parent = 0);
     ~PageExperiments();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
     void stop();
 
 private slots:

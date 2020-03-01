@@ -21,7 +21,7 @@
 #define DETECTFOCHALL_H
 
 #include <QWidget>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 namespace Ui {
 class DetectFocHall;
@@ -35,8 +35,8 @@ public:
     explicit DetectFocHall(QWidget *parent = 0);
     ~DetectFocHall();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
 
 private slots:
     void focHallTableReceived(QVector<int> hall_table, int res);

@@ -77,14 +77,14 @@ PageAppBalance::~PageAppBalance()
     delete ui;
 }
 
-VescInterface *PageAppBalance::vesc() const
+VescInterface *PageAppBalance::openroad() const
 {
     return mVesc;
 }
 
-void PageAppBalance::setVesc(VescInterface *vesc)
+void PageAppBalance::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     if (mVesc) {
         reloadParams();

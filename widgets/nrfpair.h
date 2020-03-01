@@ -22,7 +22,7 @@
 
 #include <QWidget>
 #include <QTimer>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 namespace Ui {
 class NrfPair;
@@ -36,8 +36,8 @@ public:
     explicit NrfPair(QWidget *parent = 0);
     ~NrfPair();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
     void startPairing();
 
 private slots:

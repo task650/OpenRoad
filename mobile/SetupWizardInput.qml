@@ -22,10 +22,10 @@ import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
 
-import Vedder.vesc.vescinterface 1.0
-import Vedder.vesc.commands 1.0
-import Vedder.vesc.configparams 1.0
-import Vedder.vesc.utility 1.0
+import Vedder.openroad.openroadinterface 1.0
+import Vedder.openroad.commands 1.0
+import Vedder.openroad.configparams 1.0
+import Vedder.openroad.utility 1.0
 
 Item {
     property ConfigParams mAppConf: VescIf.appConfig()

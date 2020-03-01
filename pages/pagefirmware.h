@@ -22,7 +22,7 @@
 
 #include <QWidget>
 #include <QTimer>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 namespace Ui {
 class PageFirmware;
@@ -36,8 +36,8 @@ public:
     explicit PageFirmware(QWidget *parent = 0);
     ~PageFirmware();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
     void reloadParams();
 
 private slots:

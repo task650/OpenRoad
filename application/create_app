@@ -51,8 +51,8 @@ cp ../parametereditor.cpp $APP_NAME
 cp ../parametereditor.h $APP_NAME
 cp ../vbytearray.cpp $APP_NAME
 cp ../vbytearray.h $APP_NAME
-cp ../vescinterface.cpp $APP_NAME
-cp ../vescinterface.h $APP_NAME
+cp ../openroadinterface.cpp $APP_NAME
+cp ../openroadinterface.h $APP_NAME
 cp ../utility.cpp $APP_NAME
 cp ../utility.h $APP_NAME
 cp ../tcpserversimple.cpp $APP_NAME

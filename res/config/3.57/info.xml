@@ -782,7 +782,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; ; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu';&quot;&gt;You are now ready to start using VESC Tool. If you have any questions, visit &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://vesc-project.com/forum&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; text-decoration: underline; color:#5555ff;&quot;&gt;http://vesc-project.com/forum&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</description>
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://openroad-project.com/forum&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; text-decoration: underline; color:#5555ff;&quot;&gt;http://openroad-project.com/forum&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</description>
             <cDefine></cDefine>
         </wizard_startup_conclusion>
         <gpl_text>

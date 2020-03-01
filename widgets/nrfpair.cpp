@@ -44,14 +44,14 @@ NrfPair::~NrfPair()
     delete ui;
 }
 
-VescInterface *NrfPair::vesc() const
+VescInterface *NrfPair::openroad() const
 {
     return mVesc;
 }
 
-void NrfPair::setVesc(VescInterface *vesc)
+void NrfPair::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     if (mVesc) {
         connect(mVesc->commands(), SIGNAL(nrfPairingRes(int)),

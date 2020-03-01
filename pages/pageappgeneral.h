@@ -21,7 +21,7 @@
 #define PAGEAPPGENERAL_H
 
 #include <QWidget>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 #include "widgets/paramtable.h"
 
 namespace Ui {
@@ -36,8 +36,8 @@ public:
     explicit PageAppGeneral(QWidget *parent = nullptr);
     ~PageAppGeneral();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
     void reloadParams();
 
 private:

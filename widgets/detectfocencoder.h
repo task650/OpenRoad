@@ -21,7 +21,7 @@
 #define DETECTFOCENCODER_H
 
 #include <QWidget>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 namespace Ui {
 class DetectFocEncoder;
@@ -35,8 +35,8 @@ public:
     explicit DetectFocEncoder(QWidget *parent = 0);
     ~DetectFocEncoder();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
 
 private slots:
     void encoderParamReceived(double offset, double ratio, bool inverted);

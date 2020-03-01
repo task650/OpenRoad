@@ -43,14 +43,14 @@ PageAppNunchuk::~PageAppNunchuk()
     delete ui;
 }
 
-VescInterface *PageAppNunchuk::vesc() const
+VescInterface *PageAppNunchuk::openroad() const
 {
     return mVesc;
 }
 
-void PageAppNunchuk::setVesc(VescInterface *vesc)
+void PageAppNunchuk::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     if (mVesc) {
         reloadParams();
@@ -73,8 +73,8 @@ void PageAppNunchuk::reloadParams()
         ui->generalTab->clearParams();
         ui->throttleCurveTab->clearParams();
 
-        ui->generalTab->addParamSubgroup(mVesc->appConfig(), "vesc remote", "general");
-        ui->throttleCurveTab->addParamSubgroup(mVesc->appConfig(), "vesc remote", "throttle curve");
+        ui->generalTab->addParamSubgroup(mVesc->appConfig(), "openroad remote", "general");
+        ui->throttleCurveTab->addParamSubgroup(mVesc->appConfig(), "openroad remote", "throttle curve");
     }
 }
 

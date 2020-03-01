@@ -45,12 +45,12 @@ void PageSetupCalculators::on_removeSetupButton_clicked()
 
 }
 
-VescInterface *PageSetupCalculators::vesc() const
+VescInterface *PageSetupCalculators::openroad() const
 {
     return mVesc;
 }
 
-void PageSetupCalculators::setVesc(VescInterface *vesc)
+void PageSetupCalculators::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 }

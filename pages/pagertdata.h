@@ -23,7 +23,7 @@
 #include <QWidget>
 #include <QVector>
 #include <QTimer>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 namespace Ui {
 class PageRtData;
@@ -37,8 +37,8 @@ public:
     explicit PageRtData(QWidget *parent = nullptr);
     ~PageRtData();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
 
 private slots:
     void timerSlot();

@@ -34,14 +34,14 @@ PageMotor::~PageMotor()
     delete ui;
 }
 
-VescInterface *PageMotor::vesc() const
+VescInterface *PageMotor::openroad() const
 {
     return mVesc;
 }
 
-void PageMotor::setVesc(VescInterface *vesc)
+void PageMotor::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     if (mVesc) {
         ui->dirSetup->setVesc(mVesc);

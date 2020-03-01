@@ -21,7 +21,7 @@
 #define PAGEBLDC_H
 
 #include <QWidget>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 #include "widgets/paramtable.h"
 
 namespace Ui {
@@ -36,8 +36,8 @@ public:
     explicit PageBldc(QWidget *parent = nullptr);
     ~PageBldc();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
     void reloadParams();
 
 private:

@@ -38,14 +38,14 @@ PpmMap::~PpmMap()
     delete ui;
 }
 
-VescInterface *PpmMap::vesc() const
+VescInterface *PpmMap::openroad() const
 {
     return mVesc;
 }
 
-void PpmMap::setVesc(VescInterface *vesc)
+void PpmMap::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     if (mVesc) {
         ConfigParam *p = mVesc->appConfig()->getParam("app_ppm_conf.ctrl_type");

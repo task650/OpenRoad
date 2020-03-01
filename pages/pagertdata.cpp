@@ -205,14 +205,14 @@ PageRtData::~PageRtData()
     delete ui;
 }
 
-VescInterface *PageRtData::vesc() const
+VescInterface *PageRtData::openroad() const
 {
     return mVesc;
 }
 
-void PageRtData::setVesc(VescInterface *vesc)
+void PageRtData::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     if (mVesc) {
         connect(mVesc->commands(), SIGNAL(valuesReceived(MC_VALUES,unsigned int)),

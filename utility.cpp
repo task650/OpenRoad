@@ -104,9 +104,9 @@ float Utility::throttle_curve(float val, float curve_acc, float curve_brake, int
     return ret;
 }
 
-bool Utility::autoconnectBlockingWithProgress(VescInterface *vesc, QWidget *parent)
+bool Utility::autoconnectBlockingWithProgress(VescInterface *openroad, QWidget *parent)
 {
-    if (!vesc) {
+    if (!openroad) {
         return false;
     }
 
@@ -114,10 +114,10 @@ bool Utility::autoconnectBlockingWithProgress(VescInterface *vesc, QWidget *pare
     dialog.setWindowModality(Qt::WindowModal);
     dialog.show();
 
-    bool res = vesc->autoconnect();
+    bool res = openroad->autoconnect();
 
     if (!res) {
-        vesc->emitMessageDialog(QObject::tr("Autoconnect"),
+        openroad->emitMessageDialog(QObject::tr("Autoconnect"),
                                 QObject::tr("Could not autoconnect. Make sure that the USB cable is plugged in "
                                             "and that the VESC is powered."),
                                 false);
@@ -126,10 +126,10 @@ bool Utility::autoconnectBlockingWithProgress(VescInterface *vesc, QWidget *pare
     return res;
 }
 
-void Utility::checkVersion(VescInterface *vesc)
+void Utility::checkVersion(VescInterface *openroad)
 {
     QString version = QString::number(VT_VERSION);
-    QUrl url("https://vesc-project.com/vesctool-version.html");
+    QUrl url("https://openroad-project.com/openroadtool-version.html");
     QNetworkAccessManager manager;
     QNetworkRequest request(url);
     QNetworkReply *reply = manager.get(request);
@@ -139,20 +139,20 @@ void Utility::checkVersion(VescInterface *vesc)
 
     QString res = QString::fromUtf8(reply->readAll());
 
-    if (res.startsWith("vesctoolversion")) {
+    if (res.startsWith("openroadtoolversion")) {
         res.remove(0, 15);
-        res.remove(res.indexOf("vesctoolversion"), res.size());
+        res.remove(res.indexOf("openroadtoolversion"), res.size());
 
         if (res.toDouble() > version.toDouble()) {
-            if (vesc) {
-                vesc->emitStatusMessage("A new version of VESC Tool is available", true);
-                vesc->emitMessageDialog(QObject::tr("New Software Available"),
+            if (openroad) {
+                openroad->emitStatusMessage("A new version of VESC Tool is available", true);
+                openroad->emitMessageDialog(QObject::tr("New Software Available"),
                                         QObject::tr("A new version of VESC Tool is available. Go to "
-                                                    "<a href=\"http://vesc-project.com/\">http://vesc-project.com/</a>"
+                                                    "<a href=\"http://openroad-project.com/\">http://openroad-project.com/</a>"
                                                     " to download it and get all the latest features."),
                                         true);
             } else {
-                qDebug() << "A new version of VESC Tool is available. Go to vesc-project.com to download it "
+                qDebug() << "A new version of VESC Tool is available. Go to openroad-project.com to download it "
                             "and get all the latest features.";
             }
         }
@@ -171,7 +171,7 @@ QString Utility::fwChangeLog()
     }
 }
 
-QString Utility::vescToolChangeLog()
+QString Utility::openroadToolChangeLog()
 {
     QFile cl("://res/CHANGELOG");
     if (cl.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -199,7 +199,7 @@ QString Utility::aboutText()
           #endif
               "&copy; Benjamin Vedder 2016 - 2019<br>"
               "<a href=\"mailto:benjamin@vedder.se\">benjamin@vedder.se</a><br>"
-              "<a href=\"https://vesc-project.com/\">https://vesc-project.com/</a>").
+              "<a href=\"https://openroad-project.com/\">https://openroad-project.com/</a>").
             arg(QString::number(VT_VERSION, 'f', 2));
 }
 
@@ -293,14 +293,14 @@ void Utility::sleepWithEventLoop(int timeMs)
     QObject::disconnect(conn1);
 }
 
-QString Utility::detectAllFoc(VescInterface *vesc,
+QString Utility::detectAllFoc(VescInterface *openroad,
                               bool detect_can, double max_power_loss, double min_current_in,
                               double max_current_in, double openloop_rpm, double sl_erpm)
 {
     QString res;
     bool detectOk = true;
 
-    vesc->commands()->detectAllFoc(detect_can, max_power_loss, min_current_in,
+    openroad->commands()->detectAllFoc(detect_can, max_power_loss, min_current_in,
                                    max_current_in, openloop_rpm, sl_erpm);
 
     QEventLoop loop;
@@ -310,10 +310,10 @@ QString Utility::detectAllFoc(VescInterface *vesc,
     timeoutTimer.start(180000);
     pollTimer.start(100);
 
-    vesc->commands()->disableAppOutput(180000, true);
+    openroad->commands()->disableAppOutput(180000, true);
 
     int resDetect = 0;
-    auto conn = connect(vesc->commands(), &Commands::detectAllFocReceived,
+    auto conn = connect(openroad->commands(), &Commands::detectAllFocReceived,
                         [&resDetect, &loop](int result) {
         resDetect = result;
         loop.quit();
@@ -321,8 +321,8 @@ QString Utility::detectAllFoc(VescInterface *vesc,
 
     QString pollRes;
     auto conn2 = connect(&pollTimer, &QTimer::timeout,
-                        [&pollRes, &loop, &vesc]() {
-        if (!vesc->isPortConnected()) {
+                        [&pollRes, &loop, &openroad]() {
+        if (!openroad->isPortConnected()) {
             pollRes = "VESC disconnected during detection.";
             loop.quit();
         }
@@ -336,11 +336,11 @@ QString Utility::detectAllFoc(VescInterface *vesc,
 
     if (timeoutTimer.isActive() && pollRes.isEmpty()) {
         if (resDetect >= 0) {
-            ConfigParams *p = vesc->mcConfig();
-            ConfigParams *ap = vesc->appConfig();
+            ConfigParams *p = openroad->mcConfig();
+            ConfigParams *ap = openroad->appConfig();
 
             // MCConf should have been sent after the detection
-            vesc->commands()->getAppConf();
+            openroad->commands()->getAppConf();
             waitSignal(ap, SIGNAL(updated()), 1500);
 
             auto genRes = [&p, &ap]() {
@@ -366,39 +366,39 @@ QString Utility::detectAllFoc(VescInterface *vesc,
                         arg(sensors);
             };
 
-            QVector<int> canDevs = vesc->scanCan();
+            QVector<int> canDevs = openroad->scanCan();
             res = genRes();
 
-            int canLastFwd = vesc->commands()->getSendCan();
-            int canLastId = vesc->commands()->getCanSendId();
-            vesc->ignoreCanChange(true);
+            int canLastFwd = openroad->commands()->getSendCan();
+            int canLastId = openroad->commands()->getCanSendId();
+            openroad->ignoreCanChange(true);
 
             if (!canDevs.empty()) {
                 res += "\n\nVESCs on CAN-bus:";
             }
 
             for (int id: canDevs) {
-                vesc->commands()->setSendCan(true, id);
+                openroad->commands()->setSendCan(true, id);
 
-                if (!checkFwCompatibility(vesc)) {
-                    vesc->emitMessageDialog("FW Versions",
+                if (!checkFwCompatibility(openroad)) {
+                    openroad->emitMessageDialog("FW Versions",
                                             "All VESCs must have the latest firmware to perform this operation.",
                                             false, false);
                     break;
                 }
 
-                vesc->commands()->getMcconf();
+                openroad->commands()->getMcconf();
                 waitSignal(p, SIGNAL(updated()), 1500);
-                vesc->commands()->getAppConf();
+                openroad->commands()->getAppConf();
                 waitSignal(ap, SIGNAL(updated()), 1500);
                 res += "\n\n" + genRes();
             }
 
-            vesc->commands()->setSendCan(canLastFwd, canLastId);
-            vesc->ignoreCanChange(false);
-            vesc->commands()->getMcconf();
+            openroad->commands()->setSendCan(canLastFwd, canLastId);
+            openroad->ignoreCanChange(false);
+            openroad->commands()->getMcconf();
             waitSignal(p, SIGNAL(updated()), 1500);
-            vesc->commands()->getAppConf();
+            openroad->commands()->getAppConf();
             waitSignal(ap, SIGNAL(updated()), 1500);
         } else {
             QString reason;
@@ -426,26 +426,26 @@ QString Utility::detectAllFoc(VescInterface *vesc,
         res.prepend("Success!\n\n");
     }
 
-    vesc->commands()->disableAppOutput(0, true);
+    openroad->commands()->disableAppOutput(0, true);
 
     return res;
 }
 
-bool Utility::resetInputCan(VescInterface *vesc, QVector<int> canIds)
+bool Utility::resetInputCan(VescInterface *openroad, QVector<int> canIds)
 {
     bool res = true;
 
-    bool canLastFwd = vesc->commands()->getSendCan();
-    int canLastId = vesc->commands()->getCanSendId();
+    bool canLastFwd = openroad->commands()->getSendCan();
+    int canLastId = openroad->commands()->getCanSendId();
 
-    vesc->ignoreCanChange(true);
+    openroad->ignoreCanChange(true);
 
     // Local VESC first
-    ConfigParams *ap = vesc->appConfig();
-    vesc->commands()->setSendCan(false);
+    ConfigParams *ap = openroad->appConfig();
+    openroad->commands()->setSendCan(false);
 
-    if (!checkFwCompatibility(vesc)) {
-        vesc->emitMessageDialog("FW Versions",
+    if (!checkFwCompatibility(openroad)) {
+        openroad->emitMessageDialog("FW Versions",
                                 "All VESCs must have the latest firmware to perform this operation.",
                                 false, false);
         res = false;
@@ -453,7 +453,7 @@ bool Utility::resetInputCan(VescInterface *vesc, QVector<int> canIds)
     }
 
     if (res) {
-        vesc->commands()->getAppConf();
+        openroad->commands()->getAppConf();
         res = waitSignal(ap, SIGNAL(updated()), 1500);
 
         if (!res) {
@@ -464,7 +464,7 @@ bool Utility::resetInputCan(VescInterface *vesc, QVector<int> canIds)
     if (res) {
         int canId = ap->getParamInt("controller_id");
         int canStatus = ap->getParamEnum("send_can_status");
-        vesc->commands()->getAppConfDefault();
+        openroad->commands()->getAppConfDefault();
         res = waitSignal(ap, SIGNAL(updated()), 1500);
 
         if (!res) {
@@ -474,8 +474,8 @@ bool Utility::resetInputCan(VescInterface *vesc, QVector<int> canIds)
         if (res) {
             ap->updateParamInt("controller_id", canId);
             ap->updateParamEnum("send_can_status", canStatus);
-            vesc->commands()->setAppConf();
-            res = waitSignal(vesc->commands(), SIGNAL(ackReceived(QString)), 3000);
+            openroad->commands()->setAppConf();
+            res = waitSignal(openroad->commands(), SIGNAL(ackReceived(QString)), 3000);
 
             if (!res) {
                 qWarning() << "Appconf set no ack received";
@@ -486,10 +486,10 @@ bool Utility::resetInputCan(VescInterface *vesc, QVector<int> canIds)
     // All VESCs on CAN-bus
     if (res) {
         for (int id: canIds) {
-            vesc->commands()->setSendCan(true, id);
+            openroad->commands()->setSendCan(true, id);
 
-            if (!checkFwCompatibility(vesc)) {
-                vesc->emitMessageDialog("FW Versions",
+            if (!checkFwCompatibility(openroad)) {
+                openroad->emitMessageDialog("FW Versions",
                                         "All VESCs must have the latest firmware to perform this operation.",
                                         false, false);
                 res = false;
@@ -500,7 +500,7 @@ bool Utility::resetInputCan(VescInterface *vesc, QVector<int> canIds)
                 break;
             }
 
-            vesc->commands()->getAppConf();
+            openroad->commands()->getAppConf();
             res = waitSignal(ap, SIGNAL(updated()), 1500);
 
             if (!res) {
@@ -510,7 +510,7 @@ bool Utility::resetInputCan(VescInterface *vesc, QVector<int> canIds)
 
             int canId = ap->getParamInt("controller_id");
             int canStatus = ap->getParamEnum("send_can_status");
-            vesc->commands()->getAppConfDefault();
+            openroad->commands()->getAppConfDefault();
             res = waitSignal(ap, SIGNAL(updated()), 1500);
 
             if (!res) {
@@ -520,8 +520,8 @@ bool Utility::resetInputCan(VescInterface *vesc, QVector<int> canIds)
 
             ap->updateParamInt("controller_id", canId);
             ap->updateParamEnum("send_can_status", canStatus);
-            vesc->commands()->setAppConf();
-            res = waitSignal(vesc->commands(), SIGNAL(ackReceived(QString)), 3000);
+            openroad->commands()->setAppConf();
+            res = waitSignal(openroad->commands(), SIGNAL(ackReceived(QString)), 3000);
 
             if (!res) {
                 qWarning() << "Appconf set no ack received";
@@ -530,44 +530,44 @@ bool Utility::resetInputCan(VescInterface *vesc, QVector<int> canIds)
         }
     }
 
-    vesc->commands()->setSendCan(canLastFwd, canLastId);
-    vesc->commands()->getAppConf();
+    openroad->commands()->setSendCan(canLastFwd, canLastId);
+    openroad->commands()->getAppConf();
     if (!waitSignal(ap, SIGNAL(updated()), 1500)) {
         qWarning() << "Appconf not received";
         res = false;
     }
 
-    vesc->ignoreCanChange(false);
+    openroad->ignoreCanChange(false);
 
     return res;
 }
 
-bool Utility::setBatteryCutCan(VescInterface *vesc, QVector<int> canIds,
+bool Utility::setBatteryCutCan(VescInterface *openroad, QVector<int> canIds,
                                double cutStart, double cutEnd)
 {
     bool res = true;
 
-    bool canLastFwd = vesc->commands()->getSendCan();
-    int canLastId = vesc->commands()->getCanSendId();
+    bool canLastFwd = openroad->commands()->getSendCan();
+    int canLastId = openroad->commands()->getCanSendId();
 
-    vesc->ignoreCanChange(true);
+    openroad->ignoreCanChange(true);
 
     // Local VESC first
-    ConfigParams *p = vesc->mcConfig();
-    vesc->commands()->setSendCan(false);
+    ConfigParams *p = openroad->mcConfig();
+    openroad->commands()->setSendCan(false);
 
-    if (!checkFwCompatibility(vesc)) {
-        vesc->emitMessageDialog("FW Versions",
+    if (!checkFwCompatibility(openroad)) {
+        openroad->emitMessageDialog("FW Versions",
                                 "All VESCs must have the latest firmware to perform this operation.",
                                 false, false);
         res = false;
     }
 
     if (res) {
-        vesc->commands()->getMcconf();
+        openroad->commands()->getMcconf();
         res = waitSignal(p, SIGNAL(updated()), 1500);
         if (!res) {
-            vesc->emitMessageDialog("Read Motor Configuration",
+            openroad->emitMessageDialog("Read Motor Configuration",
                                     "Could not read motor configuration.",
                                     false, false);
         }
@@ -576,11 +576,11 @@ bool Utility::setBatteryCutCan(VescInterface *vesc, QVector<int> canIds,
     if (res) {
         p->updateParamDouble("l_battery_cut_start", cutStart);
         p->updateParamDouble("l_battery_cut_end", cutEnd);
-        vesc->commands()->setMcconf(false);
-        res = waitSignal(vesc->commands(), SIGNAL(ackReceived(QString)), 2000);
+        openroad->commands()->setMcconf(false);
+        res = waitSignal(openroad->commands(), SIGNAL(ackReceived(QString)), 2000);
 
         if (!res) {
-            vesc->emitMessageDialog("Write Motor Configuration",
+            openroad->emitMessageDialog("Write Motor Configuration",
                                     "Could not write motor configuration.",
                                     false, false);
         }
@@ -589,21 +589,21 @@ bool Utility::setBatteryCutCan(VescInterface *vesc, QVector<int> canIds,
     // All VESCs on CAN-bus
     if (res) {
         for (int id: canIds) {
-            vesc->commands()->setSendCan(true, id);
+            openroad->commands()->setSendCan(true, id);
 
-            if (!checkFwCompatibility(vesc)) {
-                vesc->emitMessageDialog("FW Versions",
+            if (!checkFwCompatibility(openroad)) {
+                openroad->emitMessageDialog("FW Versions",
                                         "All VESCs must have the latest firmware to perform this operation.",
                                         false, false);
                 res = false;
                 break;
             }
 
-            vesc->commands()->getMcconf();
+            openroad->commands()->getMcconf();
             res = waitSignal(p, SIGNAL(updated()), 1500);
 
             if (!res) {
-                vesc->emitMessageDialog("Read Motor Configuration",
+                openroad->emitMessageDialog("Read Motor Configuration",
                                         "Could not read motor configuration.",
                                         false, false);
 
@@ -612,11 +612,11 @@ bool Utility::setBatteryCutCan(VescInterface *vesc, QVector<int> canIds,
 
             p->updateParamDouble("l_battery_cut_start", cutStart);
             p->updateParamDouble("l_battery_cut_end", cutEnd);
-            vesc->commands()->setMcconf(false);
-            res = waitSignal(vesc->commands(), SIGNAL(ackReceived(QString)), 2000);
+            openroad->commands()->setMcconf(false);
+            res = waitSignal(openroad->commands(), SIGNAL(ackReceived(QString)), 2000);
 
             if (!res) {
-                vesc->emitMessageDialog("Write Motor Configuration",
+                openroad->emitMessageDialog("Write Motor Configuration",
                                         "Could not write motor configuration.",
                                         false, false);
 
@@ -625,26 +625,26 @@ bool Utility::setBatteryCutCan(VescInterface *vesc, QVector<int> canIds,
         }
     }
 
-    vesc->commands()->setSendCan(canLastFwd, canLastId);
-    vesc->commands()->getMcconf();
+    openroad->commands()->setSendCan(canLastFwd, canLastId);
+    openroad->commands()->getMcconf();
     if (!waitSignal(p, SIGNAL(updated()), 1500)) {
         res = false;
 
         if (!res) {
-            vesc->emitMessageDialog("Read Motor Configuration",
+            openroad->emitMessageDialog("Read Motor Configuration",
                                     "Could not read motor configuration.",
                                     false, false);
         }
     }
 
-    vesc->ignoreCanChange(false);
+    openroad->ignoreCanChange(false);
 
     return res;
 }
 
-bool Utility::setBatteryCutCanFromCurrentConfig(VescInterface *vesc, QVector<int> canIds)
+bool Utility::setBatteryCutCanFromCurrentConfig(VescInterface *openroad, QVector<int> canIds)
 {
-    ConfigParams *p = vesc->mcConfig();
+    ConfigParams *p = openroad->mcConfig();
 
     int battType = p->getParamEnum("si_battery_type");
     int cells = p->getParamInt("si_battery_cells");
@@ -664,99 +664,99 @@ bool Utility::setBatteryCutCanFromCurrentConfig(VescInterface *vesc, QVector<int
     start *= (double)cells;
     end *= (double)cells;
 
-    return setBatteryCutCan(vesc, canIds, start, end);
+    return setBatteryCutCan(openroad, canIds, start, end);
 }
 
-bool Utility::setInvertDirection(VescInterface *vesc, int canId, bool inverted)
+bool Utility::setInvertDirection(VescInterface *openroad, int canId, bool inverted)
 {
     bool res = true;
 
-    bool canLastFwd = vesc->commands()->getSendCan();
-    int canLastId = vesc->commands()->getCanSendId();
+    bool canLastFwd = openroad->commands()->getSendCan();
+    int canLastId = openroad->commands()->getCanSendId();
 
-    vesc->ignoreCanChange(true);
-    vesc->commands()->setSendCan(canId >= 0, canId);
+    openroad->ignoreCanChange(true);
+    openroad->commands()->setSendCan(canId >= 0, canId);
 
-    if (!checkFwCompatibility(vesc)) {
-        vesc->emitMessageDialog("FW Versions",
+    if (!checkFwCompatibility(openroad)) {
+        openroad->emitMessageDialog("FW Versions",
                                 "All VESCs must have the latest firmware to perform this operation.",
                                 false, false);
         res = false;
     }
 
-    ConfigParams *p = vesc->mcConfig();
+    ConfigParams *p = openroad->mcConfig();
 
     if (res) {
-        vesc->commands()->getMcconf();
+        openroad->commands()->getMcconf();
         res = waitSignal(p, SIGNAL(updated()), 1500);
     }
 
     if (res) {
         p->updateParamBool("m_invert_direction", inverted);
-        vesc->commands()->setMcconf(false);
-        res = waitSignal(vesc->commands(), SIGNAL(ackReceived(QString)), 2000);
+        openroad->commands()->setMcconf(false);
+        res = waitSignal(openroad->commands(), SIGNAL(ackReceived(QString)), 2000);
     }
 
-    vesc->commands()->setSendCan(canLastFwd, canLastId);
-    vesc->commands()->getMcconf();
+    openroad->commands()->setSendCan(canLastFwd, canLastId);
+    openroad->commands()->getMcconf();
     if (!waitSignal(p, SIGNAL(updated()), 1500)) {
         res = false;
     }
 
-    vesc->ignoreCanChange(false);
+    openroad->ignoreCanChange(false);
 
     return res;
 }
 
-bool Utility::getInvertDirection(VescInterface *vesc, int canId)
+bool Utility::getInvertDirection(VescInterface *openroad, int canId)
 {
     bool res = false;
 
-    bool canLastFwd = vesc->commands()->getSendCan();
-    int canLastId = vesc->commands()->getCanSendId();
+    bool canLastFwd = openroad->commands()->getSendCan();
+    int canLastId = openroad->commands()->getCanSendId();
 
-    vesc->ignoreCanChange(true);
-    vesc->commands()->setSendCan(canId >= 0, canId);
+    openroad->ignoreCanChange(true);
+    openroad->commands()->setSendCan(canId >= 0, canId);
 
-    if (!checkFwCompatibility(vesc)) {
-        vesc->emitMessageDialog("FW Versions",
+    if (!checkFwCompatibility(openroad)) {
+        openroad->emitMessageDialog("FW Versions",
                                 "All VESCs must have the latest firmware to perform this operation.",
                                 false, false);
-        vesc->commands()->setSendCan(canLastFwd, canLastId);
-        vesc->ignoreCanChange(false);
+        openroad->commands()->setSendCan(canLastFwd, canLastId);
+        openroad->ignoreCanChange(false);
         return false;
     }
 
-    ConfigParams *p = vesc->mcConfig();
-    vesc->commands()->getMcconf();
+    ConfigParams *p = openroad->mcConfig();
+    openroad->commands()->getMcconf();
     waitSignal(p, SIGNAL(updated()), 1500);
     res = p->getParamBool("m_invert_direction");
 
-    vesc->commands()->setSendCan(canLastFwd, canLastId);
-    vesc->commands()->getMcconf();
+    openroad->commands()->setSendCan(canLastFwd, canLastId);
+    openroad->commands()->getMcconf();
     waitSignal(p, SIGNAL(updated()), 1500);
 
-    vesc->ignoreCanChange(false);
+    openroad->ignoreCanChange(false);
 
     return res;
 }
 
-QString Utility::testDirection(VescInterface *vesc, int canId, double duty, int ms)
+QString Utility::testDirection(VescInterface *openroad, int canId, double duty, int ms)
 {
-    bool canLastFwd = vesc->commands()->getSendCan();
-    int canLastId = vesc->commands()->getCanSendId();
+    bool canLastFwd = openroad->commands()->getSendCan();
+    int canLastId = openroad->commands()->getCanSendId();
 
-    vesc->commands()->disableAppOutput(ms, true);
+    openroad->commands()->disableAppOutput(ms, true);
 
-    vesc->ignoreCanChange(true);
-    vesc->commands()->setSendCan(canId >= 0, canId);
+    openroad->ignoreCanChange(true);
+    openroad->commands()->setSendCan(canId >= 0, canId);
 
-    if (!checkFwCompatibility(vesc)) {
-        vesc->emitMessageDialog("FW Versions",
+    if (!checkFwCompatibility(openroad)) {
+        openroad->emitMessageDialog("FW Versions",
                                 "All VESCs must have the latest firmware to perform this operation.",
                                 false, false);
-        vesc->commands()->setSendCan(canLastFwd, canLastId);
-        vesc->ignoreCanChange(false);
+        openroad->commands()->setSendCan(canLastFwd, canLastId);
+        openroad->ignoreCanChange(false);
         return "FW not up to date";
     }
 
@@ -769,8 +769,8 @@ QString Utility::testDirection(VescInterface *vesc, int canId, double duty, int 
 
     QString pollRes = "Ok";
     auto conn = connect(&pollTimer, &QTimer::timeout,
-                        [&pollRes, &loop, &vesc, &duty, &ms, &timeoutTimer]() {
-        if (!vesc->isPortConnected()) {
+                        [&pollRes, &loop, &openroad, &duty, &ms, &timeoutTimer]() {
+        if (!openroad->isPortConnected()) {
             pollRes = "VESC disconnected.";
             loop.quit();
         } else {
@@ -778,7 +778,7 @@ QString Utility::testDirection(VescInterface *vesc, int canId, double duty, int 
             if (fabs(d) > fabs(duty)) {
                 d = duty;
             }
-            vesc->commands()->setDutyCycle(d);
+            openroad->commands()->setDutyCycle(d);
         }
     });
 
@@ -787,10 +787,10 @@ QString Utility::testDirection(VescInterface *vesc, int canId, double duty, int 
 
     disconnect(conn);
 
-    vesc->commands()->setCurrent(0.0);
+    openroad->commands()->setCurrent(0.0);
 
-    vesc->commands()->setSendCan(canLastFwd, canLastId);
-    vesc->ignoreCanChange(false);
+    openroad->commands()->setSendCan(canLastFwd, canLastId);
+    openroad->ignoreCanChange(false);
 
     return pollRes;
 }
@@ -799,7 +799,7 @@ QString Utility::testDirection(VescInterface *vesc, int canId, double duty, int 
  * @brief Utility::restoreConfAll
  * Restore the VESC configuration to the default values.
  *
- * @param vesc
+ * @param openroad
  * Pointer to a connected VescInterface instance.
  *
  * @param can
@@ -814,74 +814,74 @@ QString Utility::testDirection(VescInterface *vesc, int canId, double duty, int 
  * @return
  * true for success, false otherwise.
  */
-bool Utility::restoreConfAll(VescInterface *vesc, bool can, bool mc, bool app)
+bool Utility::restoreConfAll(VescInterface *openroad, bool can, bool mc, bool app)
 {
     bool res = true;
 
-    bool canLastFwd = vesc->commands()->getSendCan();
-    int canLastId = vesc->commands()->getCanSendId();
+    bool canLastFwd = openroad->commands()->getSendCan();
+    int canLastId = openroad->commands()->getCanSendId();
 
     if (can) {
-        vesc->ignoreCanChange(true);
-        vesc->commands()->setSendCan(false);
-        if (!checkFwCompatibility(vesc)) {
-            vesc->emitMessageDialog("FW Versions",
+        openroad->ignoreCanChange(true);
+        openroad->commands()->setSendCan(false);
+        if (!checkFwCompatibility(openroad)) {
+            openroad->emitMessageDialog("FW Versions",
                                     "All VESCs must have the latest firmware to perform this operation.",
                                     false, false);
-            vesc->commands()->setSendCan(canLastFwd, canLastId);
-            vesc->ignoreCanChange(false);
+            openroad->commands()->setSendCan(canLastFwd, canLastId);
+            openroad->ignoreCanChange(false);
             return false;
         }
     }
 
     if (mc) {
-        ConfigParams *p = vesc->mcConfig();
-        vesc->commands()->getMcconfDefault();
+        ConfigParams *p = openroad->mcConfig();
+        openroad->commands()->getMcconfDefault();
         res = waitSignal(p, SIGNAL(updated()), 1500);
 
         if (res) {
-            vesc->commands()->setMcconf(false);
-            res = waitSignal(vesc->commands(), SIGNAL(ackReceived(QString)), 2000);
+            openroad->commands()->setMcconf(false);
+            res = waitSignal(openroad->commands(), SIGNAL(ackReceived(QString)), 2000);
         }
     }
 
     if (app) {
-        ConfigParams *p = vesc->appConfig();
-        vesc->commands()->getAppConfDefault();
+        ConfigParams *p = openroad->appConfig();
+        openroad->commands()->getAppConfDefault();
         res = waitSignal(p, SIGNAL(updated()), 1500);
 
         if (res) {
-            vesc->commands()->setAppConf();
-            res = waitSignal(vesc->commands(), SIGNAL(ackReceived(QString)), 2000);
+            openroad->commands()->setAppConf();
+            res = waitSignal(openroad->commands(), SIGNAL(ackReceived(QString)), 2000);
         }
     }
 
     if (res && can) {
-        QVector<int> canDevs = vesc->scanCan();
+        QVector<int> canDevs = openroad->scanCan();
 
         for (int d: canDevs) {
-            vesc->commands()->setSendCan(true, d);
+            openroad->commands()->setSendCan(true, d);
 
-            if (!checkFwCompatibility(vesc)) {
-                vesc->emitMessageDialog("FW Versions",
+            if (!checkFwCompatibility(openroad)) {
+                openroad->emitMessageDialog("FW Versions",
                                         "All VESCs must have the latest firmware to perform this operation.",
                                         false, false);
-                vesc->commands()->setSendCan(canLastFwd, canLastId);
-                vesc->ignoreCanChange(false);
+                openroad->commands()->setSendCan(canLastFwd, canLastId);
+                openroad->ignoreCanChange(false);
                 return false;
             }
 
             if (mc) {
-                ConfigParams *p = vesc->mcConfig();
-                vesc->commands()->getMcconfDefault();
+                ConfigParams *p = openroad->mcConfig();
+                openroad->commands()->getMcconfDefault();
                 res = waitSignal(p, SIGNAL(updated()), 1500);
 
                 if (!res) {
                     break;
                 }
 
-                vesc->commands()->setMcconf(false);
-                res = waitSignal(vesc->commands(), SIGNAL(ackReceived(QString)), 2000);
+                openroad->commands()->setMcconf(false);
+                res = waitSignal(openroad->commands(), SIGNAL(ackReceived(QString)), 2000);
 
                 if (!res) {
                     break;
@@ -889,16 +889,16 @@ bool Utility::restoreConfAll(VescInterface *vesc, bool can, bool mc, bool app)
             }
 
             if (app) {
-                ConfigParams *p = vesc->appConfig();
-                vesc->commands()->getAppConfDefault();
+                ConfigParams *p = openroad->appConfig();
+                openroad->commands()->getAppConfDefault();
                 res = waitSignal(p, SIGNAL(updated()), 1500);
 
                 if (!res) {
                     break;
                 }
 
-                vesc->commands()->setAppConf();
-                res = waitSignal(vesc->commands(), SIGNAL(ackReceived(QString)), 2000);
+                openroad->commands()->setAppConf();
+                res = waitSignal(openroad->commands(), SIGNAL(ackReceived(QString)), 2000);
 
                 if (!res) {
                     break;
@@ -908,11 +908,11 @@ bool Utility::restoreConfAll(VescInterface *vesc, bool can, bool mc, bool app)
     }
 
     if (can) {
-        vesc->commands()->setSendCan(canLastFwd, canLastId);
+        openroad->commands()->setSendCan(canLastFwd, canLastId);
 
         if (mc) {
-            ConfigParams *p = vesc->mcConfig();
-            vesc->commands()->getMcconf();
+            ConfigParams *p = openroad->mcConfig();
+            openroad->commands()->getMcconf();
             if (!waitSignal(p, SIGNAL(updated()), 1500)) {
                 res = false;
                 qWarning() << "Could not restore mc conf";
@@ -920,15 +920,15 @@ bool Utility::restoreConfAll(VescInterface *vesc, bool can, bool mc, bool app)
         }
 
         if (app) {
-            ConfigParams *p = vesc->appConfig();
-            vesc->commands()->getAppConf();
+            ConfigParams *p = openroad->appConfig();
+            openroad->commands()->getAppConf();
             if (!waitSignal(p, SIGNAL(updated()), 1500)) {
                 res = false;
                 qWarning() << "Could not restore app conf";
             }
         }
 
-        vesc->ignoreCanChange(false);
+        openroad->ignoreCanChange(false);
     }
 
     return res;
@@ -939,7 +939,7 @@ bool Utility::almostEqual(double A, double B, double eps)
     return fabs(A - B) <= eps * fmax(1.0f, fmax(fabs(A), fabs(B)));
 }
 
-bool Utility::createParamParserC(VescInterface *vesc, QString filename)
+bool Utility::createParamParserC(VescInterface *openroad, QString filename)
 {
     if (filename.toLower().endsWith(".c") || filename.toLower().endsWith(".h")) {
         filename.chop(2);
@@ -977,8 +977,8 @@ bool Utility::createParamParserC(VescInterface *vesc, QString filename)
     outHeader << "#include <stdbool.h>\n\n";
 
     outHeader << "// Constants\n";
-    outHeader << "#define MCCONF_SIGNATURE\t\t" << vesc->mcConfig()->getSignature() << "\n";
-    outHeader << "#define APPCONF_SIGNATURE\t\t" << vesc->appConfig()->getSignature() << "\n\n";
+    outHeader << "#define MCCONF_SIGNATURE\t\t" << openroad->mcConfig()->getSignature() << "\n";
+    outHeader << "#define APPCONF_SIGNATURE\t\t" << openroad->appConfig()->getSignature() << "\n\n";
 
     outHeader << "// Functions\n";
     outHeader << "int32_t " << prefix << "_serialize_mcconf(uint8_t *buffer, const mc_configuration *conf);\n";
@@ -1204,14 +1204,14 @@ bool Utility::createParamParserC(VescInterface *vesc, QString filename)
     outSource << "int32_t " << prefix << "_serialize_mcconf(uint8_t *buffer, const mc_configuration *conf) {\n";
     outSource << "\t" << "int32_t ind = 0;\n\n";
     outSource << "\t" << "buffer_append_uint32(buffer, MCCONF_SIGNATURE, &ind);\n\n";
-    serialFunc(vesc->mcConfig(), outSource);
+    serialFunc(openroad->mcConfig(), outSource);
     outSource << "\n\t" << "return ind;\n";
     outSource << "}\n\n";
 
     outSource << "int32_t " << prefix << "_serialize_appconf(uint8_t *buffer, const app_configuration *conf) {\n";
     outSource << "\t" << "int32_t ind = 0;\n\n";
     outSource << "\t" << "buffer_append_uint32(buffer, APPCONF_SIGNATURE, &ind);\n\n";
-    serialFunc(vesc->appConfig(), outSource);
+    serialFunc(openroad->appConfig(), outSource);
     outSource << "\n\t" << "return ind;\n";
     outSource << "}\n\n";
 
@@ -1221,7 +1221,7 @@ bool Utility::createParamParserC(VescInterface *vesc, QString filename)
     outSource << "\t" << "if (signature != MCCONF_SIGNATURE) {\n";
     outSource << "\t\t" << "return false;\n";
     outSource << "\t" << "}\n\n";
-    deserialFunc(vesc->mcConfig(), outSource);
+    deserialFunc(openroad->mcConfig(), outSource);
     outSource << "\n\t" << "return true;\n";
     outSource << "}\n\n";
 
@@ -1231,16 +1231,16 @@ bool Utility::createParamParserC(VescInterface *vesc, QString filename)
     outSource << "\t" << "if (signature != APPCONF_SIGNATURE) {\n";
     outSource << "\t\t" << "return false;\n";
     outSource << "\t" << "}\n\n";
-    deserialFunc(vesc->appConfig(), outSource);
+    deserialFunc(openroad->appConfig(), outSource);
     outSource << "\n\t" << "return true;\n";
     outSource << "}\n\n";
 
     outSource << "void " << prefix << "_set_defaults_mcconf(mc_configuration *conf) {\n";
-    defaultFunc(vesc->mcConfig(), outSource);
+    defaultFunc(openroad->mcConfig(), outSource);
     outSource << "}\n\n";
 
     outSource << "void " << prefix << "_set_defaults_appconf(app_configuration *conf) {\n";
-    defaultFunc(vesc->appConfig(), outSource);
+    defaultFunc(openroad->appConfig(), outSource);
     outSource << "}\n";
 
     outHeader.flush();
@@ -1268,28 +1268,28 @@ uint32_t Utility::crc32c(uint8_t *data, uint32_t len)
     return ~crc;
 }
 
-bool Utility::checkFwCompatibility(VescInterface *vesc)
+bool Utility::checkFwCompatibility(VescInterface *openroad)
 {
     bool res = false;
 
-    auto conn = connect(vesc->commands(), &Commands::fwVersionReceived,
-            [&res, vesc](int major, int minor, QString hw, QByteArray uuid, bool isPaired) {
+    auto conn = connect(openroad->commands(), &Commands::fwVersionReceived,
+            [&res, openroad](int major, int minor, QString hw, QByteArray uuid, bool isPaired) {
         (void)hw;(void)uuid;(void)isPaired;
-        if (vesc->getSupportedFirmwarePairs().contains(qMakePair(major, minor))) {
+        if (openroad->getSupportedFirmwarePairs().contains(qMakePair(major, minor))) {
             res = true;
         }
     });
 
-    disconnect(vesc->commands(), SIGNAL(fwVersionReceived(int,int,QString,QByteArray,bool)),
-               vesc, SLOT(fwVersionReceived(int,int,QString,QByteArray,bool)));
+    disconnect(openroad->commands(), SIGNAL(fwVersionReceived(int,int,QString,QByteArray,bool)),
+               openroad, SLOT(fwVersionReceived(int,int,QString,QByteArray,bool)));
 
-    vesc->commands()->getFwVersion();
-    waitSignal(vesc->commands(), SIGNAL(fwVersionReceived(int,int,QString,QByteArray,bool)), 1500);
+    openroad->commands()->getFwVersion();
+    waitSignal(openroad->commands(), SIGNAL(fwVersionReceived(int,int,QString,QByteArray,bool)), 1500);
 
     disconnect(conn);
 
-    connect(vesc->commands(), SIGNAL(fwVersionReceived(int,int,QString,QByteArray,bool)),
-            vesc, SLOT(fwVersionReceived(int,int,QString,QByteArray,bool)));
+    connect(openroad->commands(), SIGNAL(fwVersionReceived(int,int,QString,QByteArray,bool)),
+            openroad, SLOT(fwVersionReceived(int,int,QString,QByteArray,bool)));
 
     return res;
 }
@@ -1312,7 +1312,7 @@ QVariantList Utility::getNetworkAddresses()
 void Utility::startGnssForegroundService()
 {
 #ifdef Q_OS_ANDROID
-    QAndroidJniObject::callStaticMethod<void>("com/vedder/vesc/Utils",
+    QAndroidJniObject::callStaticMethod<void>("com/vedder/openroad/Utils",
                                               "startVForegroundService",
                                               "(Landroid/content/Context;)V",
                                               QtAndroid::androidActivity().object());
@@ -1322,7 +1322,7 @@ void Utility::startGnssForegroundService()
 void Utility::stopGnssForegroundService()
 {
 #ifdef Q_OS_ANDROID
-    QAndroidJniObject::callStaticMethod<void>("com/vedder/vesc/Utils",
+    QAndroidJniObject::callStaticMethod<void>("com/vedder/openroad/Utils",
                                               "stopVForegroundService",
                                               "(Landroid/content/Context;)V",
                                               QtAndroid::androidActivity().object());
@@ -1445,7 +1445,7 @@ bool Utility::configCheckCompatibility(int fwMajor, int fwMinor)
     return false;
 }
 
-bool Utility::configLoad(VescInterface *vesc, int fwMajor, int fwMinor)
+bool Utility::configLoad(VescInterface *openroad, int fwMajor, int fwMinor)
 {
     QDirIterator it("://res/config");
 
@@ -1465,10 +1465,10 @@ bool Utility::configLoad(VescInterface *vesc, int fwMajor, int fwMinor)
                         QFileInfo fInfo(it.filePath() + "/info.xml");
 
                         if (fMc.exists() && fApp.exists() && fInfo.exists()) {
-                            vesc->mcConfig()->loadParamsXml(fMc.absoluteFilePath());
-                            vesc->appConfig()->loadParamsXml(fApp.absoluteFilePath());
-                            vesc->infoConfig()->loadParamsXml(fInfo.absoluteFilePath());
-                            vesc->emitConfigurationChanged();
+                            openroad->mcConfig()->loadParamsXml(fMc.absoluteFilePath());
+                            openroad->appConfig()->loadParamsXml(fApp.absoluteFilePath());
+                            openroad->infoConfig()->loadParamsXml(fInfo.absoluteFilePath());
+                            openroad->emitConfigurationChanged();
                             return true;
                         } else {
                             qWarning() << "Configurations not found in firmware directory" << it.path();
@@ -1508,12 +1508,12 @@ QPair<int, int> Utility::configLatestSupported()
     return res;
 }
 
-bool Utility::configLoadLatest(VescInterface *vesc)
+bool Utility::configLoadLatest(VescInterface *openroad)
 {
     auto latestSupported = configLatestSupported();
 
     if (latestSupported.first >= 0) {
-        configLoad(vesc, latestSupported.first, latestSupported.second);
+        configLoad(openroad, latestSupported.first, latestSupported.second);
         return true;
     } else {
         return false;
@@ -1544,18 +1544,18 @@ QVector<QPair<int, int> > Utility::configSupportedFws()
     return res;
 }
 
-bool Utility::configLoadCompatible(VescInterface *vesc, QString &uuidRx)
+bool Utility::configLoadCompatible(VescInterface *openroad, QString &uuidRx)
 {
     bool res = false;
 
-    auto conn = connect(vesc->commands(), &Commands::fwVersionReceived,
-            [&res, &uuidRx, vesc](int major, int minor, QString hw, QByteArray uuid, bool isPaired) {
+    auto conn = connect(openroad->commands(), &Commands::fwVersionReceived,
+            [&res, &uuidRx, openroad](int major, int minor, QString hw, QByteArray uuid, bool isPaired) {
         (void)hw;(void)uuid;(void)isPaired;
 
-        if (vesc->getSupportedFirmwarePairs().contains(qMakePair(major, minor))) {
+        if (openroad->getSupportedFirmwarePairs().contains(qMakePair(major, minor))) {
             res = true;
         } else {
-            res = configLoad(vesc, major, minor);
+            res = configLoad(openroad, major, minor);
         }
 
         QString uuidStr = uuid2Str(uuid, true);
@@ -1563,23 +1563,23 @@ bool Utility::configLoadCompatible(VescInterface *vesc, QString &uuidRx)
         uuidRx.replace(" ", "");
 
         if (!res) {
-            vesc->emitMessageDialog("Load Config", "Could not load configuration parser.", false, false);
+            openroad->emitMessageDialog("Load Config", "Could not load configuration parser.", false, false);
         }
     });
 
-    disconnect(vesc->commands(), SIGNAL(fwVersionReceived(int,int,QString,QByteArray,bool)),
-               vesc, SLOT(fwVersionReceived(int,int,QString,QByteArray,bool)));
+    disconnect(openroad->commands(), SIGNAL(fwVersionReceived(int,int,QString,QByteArray,bool)),
+               openroad, SLOT(fwVersionReceived(int,int,QString,QByteArray,bool)));
 
-    vesc->commands()->getFwVersion();
+    openroad->commands()->getFwVersion();
 
-    if (!waitSignal(vesc->commands(), SIGNAL(fwVersionReceived(int,int,QString,QByteArray,bool)), 1500)) {
-        vesc->emitMessageDialog("Load Config", "No response when reading firmware version.", false, false);
+    if (!waitSignal(openroad->commands(), SIGNAL(fwVersionReceived(int,int,QString,QByteArray,bool)), 1500)) {
+        openroad->emitMessageDialog("Load Config", "No response when reading firmware version.", false, false);
     }
 
     disconnect(conn);
 
-    connect(vesc->commands(), SIGNAL(fwVersionReceived(int,int,QString,QByteArray,bool)),
-            vesc, SLOT(fwVersionReceived(int,int,QString,QByteArray,bool)));
+    connect(openroad->commands(), SIGNAL(fwVersionReceived(int,int,QString,QByteArray,bool)),
+            openroad, SLOT(fwVersionReceived(int,int,QString,QByteArray,bool)));
 
     return res;
 }

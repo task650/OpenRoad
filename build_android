@@ -25,27 +25,27 @@ qmake -config release "CONFIG += release_android build_mobile"
 make clean
 make -j8
 make install INSTALL_ROOT=build/android/build
-androiddeployqt --gradle --no-gdbserver --output build/android/build --input android-libvesc_tool.so-deployment-settings.json --android-platform android-28
-mv build/android/build/build/outputs/apk/build-debug.apk build/android/vesc_tool_mobile.apk
+androiddeployqt --gradle --no-gdbserver --output build/android/build --input android-libopenroad_tool.so-deployment-settings.json --android-platform android-28
+mv build/android/build/build/outputs/apk/build-debug.apk build/android/openroad_tool_mobile.apk
 rm -rf build/android/build
 rm -rf build/android/obj
-rm -f build/android/libvesc_tool.so
+rm -f build/android/libopenroad_tool.so
 
 # Full
 qmake -config release "CONFIG += release_android"
 make clean
 make -j8
 make install INSTALL_ROOT=build/android/build
-androiddeployqt --gradle --no-gdbserver --output build/android/build --input android-libvesc_tool.so-deployment-settings.json --android-platform android-28
-mv build/android/build/build/outputs/apk/build-debug.apk build/android/vesc_tool_full.apk
+androiddeployqt --gradle --no-gdbserver --output build/android/build --input android-libopenroad_tool.so-deployment-settings.json --android-platform android-28
+mv build/android/build/build/outputs/apk/build-debug.apk build/android/openroad_tool_full.apk
 rm -rf build/android/build
 rm -rf build/android/obj
-rm -f build/android/libvesc_tool.so
+rm -f build/android/libopenroad_tool.so
 
 # Zip APKs
 cd build/android
-zip vesc_tool_android.zip vesc_tool_mobile.apk vesc_tool_full.apk
-rm -f vesc_tool_mobile.apk
-rm -f vesc_tool_full.apk
+zip openroad_tool_android.zip openroad_tool_mobile.apk openroad_tool_full.apk
+rm -f openroad_tool_mobile.apk
+rm -f openroad_tool_full.apk
 cd ../..
 

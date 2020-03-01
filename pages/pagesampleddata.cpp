@@ -75,14 +75,14 @@ PageSampledData::~PageSampledData()
     delete ui;
 }
 
-VescInterface *PageSampledData::vesc() const
+VescInterface *PageSampledData::openroad() const
 {
     return mVesc;
 }
 
-void PageSampledData::setVesc(VescInterface *vesc)
+void PageSampledData::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     if (mVesc) {
         connect(mVesc->commands(), SIGNAL(samplesReceived(QByteArray)),

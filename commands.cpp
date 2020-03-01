@@ -206,10 +206,10 @@ void Commands::processPacket(QByteArray data)
 
         if (vb.size() >= 1) {
             if (mask & (uint32_t(1) << 17)) {
-                values.vesc_id = vb.vbPopFrontUint8();
+                values.openroad_id = vb.vbPopFrontUint8();
             }
         } else {
-            values.vesc_id = 255;
+            values.openroad_id = 255;
         }
 
         if (vb.size() >= 6) {
@@ -444,10 +444,10 @@ void Commands::processPacket(QByteArray data)
             values.fault_str = faultToStr(values.fault_code);
         }
         if (mask & (uint32_t(1) << 17)) {
-            values.vesc_id = vb.vbPopFrontUint8();
+            values.openroad_id = vb.vbPopFrontUint8();
         }
         if (mask & (uint32_t(1) << 18)) {
-            values.num_vescs = vb.vbPopFrontUint8();
+            values.num_openroads = vb.vbPopFrontUint8();
         }
         if (mask & (uint32_t(1) << 19)) {
             values.battery_wh = vb.vbPopFrontDouble32(1e3);
@@ -1477,7 +1477,7 @@ void Commands::emitEmptyValues()
     values.fault_code = FAULT_CODE_NONE;
     values.fault_str = faultToStr(values.fault_code);
     values.position = 0.0;
-    values.vesc_id = 0;
+    values.openroad_id = 0;
 
     emit valuesReceived(values, 0xFFFFFFFF);
 }
@@ -1503,8 +1503,8 @@ void Commands::emitEmptySetupValues()
     values.position = 0.0;
     values.fault_code = FAULT_CODE_NONE;
     values.fault_str = faultToStr(values.fault_code);
-    values.vesc_id = 0;
-    values.num_vescs = 1;
+    values.openroad_id = 0;
+    values.num_openroads = 1;
     values.battery_wh = 0.0;
 
     emit valuesSetupReceived(values, 0xFFFFFFFF);

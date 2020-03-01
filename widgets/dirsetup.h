@@ -21,7 +21,7 @@
 #define DIRSETUP_H
 
 #include <QWidget>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 namespace Ui {
 class DirSetup;
@@ -35,8 +35,8 @@ public:
     explicit DirSetup(QWidget *parent = 0);
     ~DirSetup();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
     void scanVescs();
 
 private slots:

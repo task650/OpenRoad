@@ -34,14 +34,14 @@ PageBldc::~PageBldc()
     delete ui;
 }
 
-VescInterface *PageBldc::vesc() const
+VescInterface *PageBldc::openroad() const
 {
     return mVesc;
 }
 
-void PageBldc::setVesc(VescInterface *vesc)
+void PageBldc::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     if (mVesc) {
         ui->detectBldc->setVesc(mVesc);

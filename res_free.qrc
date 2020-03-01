@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file alias="res/icon.png">res/version/free_v.png</file>
-        <file alias="res/logo.png">res/version/free_vesc_tool.png</file>
+        <file alias="res/logo.png">res/version/free_openroad_tool.png</file>
     </qresource>
 </RCC>

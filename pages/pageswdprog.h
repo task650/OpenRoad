@@ -22,7 +22,7 @@
 
 #include <QWidget>
 #include <QTimer>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 namespace Ui {
 class PageSwdProg;
@@ -36,8 +36,8 @@ public:
     explicit PageSwdProg(QWidget *parent = 0);
     ~PageSwdProg();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
 
     class SwdFw {
     public:

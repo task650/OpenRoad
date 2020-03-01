@@ -46,14 +46,14 @@ PageConnection::~PageConnection()
     delete ui;
 }
 
-VescInterface *PageConnection::vesc() const
+VescInterface *PageConnection::openroad() const
 {
     return mVesc;
 }
 
-void PageConnection::setVesc(VescInterface *vesc)
+void PageConnection::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     ui->tcpServerEdit->setText(mVesc->getLastTcpServer());
     ui->tcpPortBox->setValue(mVesc->getLastTcpPort());

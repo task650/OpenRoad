@@ -21,7 +21,7 @@
 #define PAGEDC_H
 
 #include <QWidget>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 namespace Ui {
 class PageDc;
@@ -35,8 +35,8 @@ public:
     explicit PageDc(QWidget *parent = nullptr);
     ~PageDc();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
     void reloadParams();
 
 private:

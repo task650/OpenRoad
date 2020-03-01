@@ -21,7 +21,7 @@
 #define PAGESETUPCALCULATORS_H
 
 #include <QWidget>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 namespace Ui {
 class PageSetupCalculators;
@@ -35,8 +35,8 @@ public:
     explicit PageSetupCalculators(QWidget *parent = 0);
     ~PageSetupCalculators();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
 
 private slots:
     void on_addSetupButton_clicked();

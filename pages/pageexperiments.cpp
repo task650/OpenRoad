@@ -119,14 +119,14 @@ PageExperiments::~PageExperiments()
     delete ui;
 }
 
-VescInterface *PageExperiments::vesc() const
+VescInterface *PageExperiments::openroad() const
 {
     return mVesc;
 }
 
-void PageExperiments::setVesc(VescInterface *vesc)
+void PageExperiments::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     connect(mVesc->commands(), SIGNAL(valuesReceived(MC_VALUES,uint)),
             this, SLOT(valuesReceived(MC_VALUES,uint)));

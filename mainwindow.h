@@ -25,7 +25,7 @@
 #include <QTimer>
 #include <QProcess>
 #include <QSettings>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 #include "widgets/pagelistitem.h"
 
 #include "pages/pagewelcome.h"

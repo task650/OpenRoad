@@ -155,14 +155,14 @@ PageImu::~PageImu()
     delete ui;
 }
 
-VescInterface *PageImu::vesc() const
+VescInterface *PageImu::openroad() const
 {
     return mVesc;
 }
 
-void PageImu::setVesc(VescInterface *vesc)
+void PageImu::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     if (mVesc) {
         connect(mVesc->commands(), SIGNAL(valuesImuReceived(IMU_VALUES,uint)),

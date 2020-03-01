@@ -120,7 +120,7 @@ struct MC_VALUES {
     Q_PROPERTY(int tachometer_abs MEMBER tachometer_abs)
     Q_PROPERTY(double position MEMBER position)
     Q_PROPERTY(mc_fault_code fault_code MEMBER fault_code)
-    Q_PROPERTY(int vesc_id MEMBER vesc_id)
+    Q_PROPERTY(int openroad_id MEMBER openroad_id)
     Q_PROPERTY(QString fault_str MEMBER fault_str)
     Q_PROPERTY(double vd MEMBER vd)
     Q_PROPERTY(double vq MEMBER vq)
@@ -147,7 +147,7 @@ public:
         tachometer_abs = 0;
         position = 0.0;
         fault_code = FAULT_CODE_NONE;
-        vesc_id = 0;
+        openroad_id = 0;
         vd = 0.0;
         vq = 0.0;
     }
@@ -182,7 +182,7 @@ public:
     int tachometer_abs;
     double position;
     mc_fault_code fault_code;
-    int vesc_id;
+    int openroad_id;
     QString fault_str;
     double vd;
     double vq;
@@ -210,8 +210,8 @@ struct SETUP_VALUES {
     Q_PROPERTY(double tachometer_abs MEMBER tachometer_abs)
     Q_PROPERTY(double position MEMBER position)
     Q_PROPERTY(mc_fault_code fault_code MEMBER fault_code)
-    Q_PROPERTY(int vesc_id MEMBER vesc_id)
-    Q_PROPERTY(int num_vescs MEMBER num_vescs)
+    Q_PROPERTY(int openroad_id MEMBER openroad_id)
+    Q_PROPERTY(int num_openroads MEMBER num_openroads)
     Q_PROPERTY(double battery_wh MEMBER battery_wh)
     Q_PROPERTY(QString fault_str MEMBER fault_str)
 
@@ -234,8 +234,8 @@ public:
         tachometer_abs = 0.0;
         position = 0.0;
         fault_code = FAULT_CODE_NONE;
-        vesc_id = 0;
-        num_vescs = 0;
+        openroad_id = 0;
+        num_openroads = 0;
         battery_wh = 0.0;
     }
 
@@ -266,8 +266,8 @@ public:
     double tachometer_abs;
     double position;
     mc_fault_code fault_code;
-    int vesc_id;
-    int num_vescs;
+    int openroad_id;
+    int num_openroads;
     double battery_wh;
     QString fault_str;
 };
@@ -420,13 +420,13 @@ struct CONFIG_BACKUP {
     Q_GADGET
 
     Q_PROPERTY(QString name MEMBER name)
-    Q_PROPERTY(QString vesc_uuid MEMBER vesc_uuid)
+    Q_PROPERTY(QString openroad_uuid MEMBER openroad_uuid)
     Q_PROPERTY(QString mcconf_xml_compressed MEMBER mcconf_xml_compressed)
     Q_PROPERTY(QString appconf_xml_compressed MEMBER appconf_xml_compressed)
 
 public:
     QString name;
-    QString vesc_uuid;
+    QString openroad_uuid;
     QString mcconf_xml_compressed;
     QString appconf_xml_compressed;
 };

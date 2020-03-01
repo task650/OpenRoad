@@ -1100,8 +1100,8 @@ void MainWindow::checkUdev()
 #ifdef Q_OS_LINUX
     QFileInfo fi_mm("/lib/udev/rules.d/77-mm-usb-device-blacklist.rules");
     if (fi_mm.exists()) {
-        QFileInfo fi_vesc("/lib/udev/rules.d/45-vesc.rules");
-        if (!fi_vesc.exists()) {
+        QFileInfo fi_openroad("/lib/udev/rules.d/45-openroad.rules");
+        if (!fi_openroad.exists()) {
             QMessageBox::StandardButton reply;
             reply = QMessageBox::information(this,
                                              tr("Modemmenager"),
@@ -1112,25 +1112,25 @@ void MainWindow::checkUdev()
                                              QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
 
             if (reply == QMessageBox::Yes) {
-                QFile f_vesc(QDir::temp().absoluteFilePath(fi_vesc.fileName()));
-                if (!f_vesc.open(QIODevice::WriteOnly | QIODevice::Text)) {
+                QFile f_openroad(QDir::temp().absoluteFilePath(fi_openroad.fileName()));
+                if (!f_openroad.open(QIODevice::WriteOnly | QIODevice::Text)) {
                     showMessageDialog(tr("Create File Error"),
-                                      f_vesc.errorString(),
+                                      f_openroad.errorString(),
                                       false, false);
                     return;
                 }
 
-                f_vesc.write("# Prevent modemmanager from grabbing the VESC\n"
+                f_openroad.write("# Prevent modemmanager from grabbing the VESC\n"
                              "ATTRS{idVendor}==\"0483\", ATTRS{idProduct}==\"5740\", ENV{ID_MM_DEVICE_IGNORE}=\"1\"\n");
-                f_vesc.close();
+                f_openroad.close();
 
-                QFileInfo fi_new(f_vesc);
+                QFileInfo fi_new(f_openroad);
                 QProcess process;
                 process.setEnvironment(QProcess::systemEnvironment());
                 process.start("pkexec", QStringList() <<
                               "mv" <<
                               fi_new.absoluteFilePath() <<
-                              fi_vesc.absolutePath());
+                              fi_openroad.absolutePath());
                 waitProcess(process);
 
                 if (process.exitCode() == 0) {
@@ -1325,7 +1325,7 @@ void MainWindow::on_actionWarrantyStatement_triggered()
 
 void MainWindow::on_actionVESCToolChangelog_triggered()
 {
-    HelpDialog::showHelp(this, "VESC® Tool Changelog", Utility::vescToolChangeLog());
+    HelpDialog::showHelp(this, "VESC® Tool Changelog", Utility::openroadToolChangeLog());
 }
 
 void MainWindow::on_actionFirmwareChangelog_triggered()
@@ -1335,7 +1335,7 @@ void MainWindow::on_actionFirmwareChangelog_triggered()
 
 void MainWindow::on_actionVESCProjectForums_triggered()
 {
-    QDesktopServices::openUrl(QUrl("http://vesc-project.com/forum"));
+    QDesktopServices::openUrl(QUrl("http://openroad-project.com/forum"));
 }
 
 void MainWindow::on_actionLicense_triggered()

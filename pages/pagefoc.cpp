@@ -34,14 +34,14 @@ PageFoc::~PageFoc()
     delete ui;
 }
 
-VescInterface *PageFoc::vesc() const
+VescInterface *PageFoc::openroad() const
 {
     return mVesc;
 }
 
-void PageFoc::setVesc(VescInterface *vesc)
+void PageFoc::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     if (mVesc) {
         ui->detectFoc->setVesc(mVesc);

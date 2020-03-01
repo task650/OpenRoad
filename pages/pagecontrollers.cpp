@@ -34,14 +34,14 @@ PageControllers::~PageControllers()
     delete ui;
 }
 
-VescInterface *PageControllers::vesc() const
+VescInterface *PageControllers::openroad() const
 {
     return mVesc;
 }
 
-void PageControllers::setVesc(VescInterface *vesc)
+void PageControllers::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     if (mVesc) {
         reloadParams();

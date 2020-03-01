@@ -21,7 +21,7 @@
 #define PAGEAPPNRF_H
 
 #include <QWidget>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 namespace Ui {
 class PageAppNrf;
@@ -35,8 +35,8 @@ public:
     explicit PageAppNrf(QWidget *parent = nullptr);
     ~PageAppNrf();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
     void reloadParams();
 
 private:

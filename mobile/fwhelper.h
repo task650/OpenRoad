@@ -22,7 +22,7 @@
 
 #include <QObject>
 #include <QVariantMap>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 class FwHelper : public QObject
 {
@@ -32,7 +32,7 @@ public:
     Q_INVOKABLE QVariantMap getHardwares(QString hw = "");
     Q_INVOKABLE QVariantMap getFirmwares(QString hw);
     Q_INVOKABLE QVariantMap getBootloaders(QString hw);
-    Q_INVOKABLE bool uploadFirmware(QString filename, VescInterface *vesc,
+    Q_INVOKABLE bool uploadFirmware(QString filename, VescInterface *openroad,
                                     bool isBootloader, bool isIncluded, bool fwdCan);
 
 signals:

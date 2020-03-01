@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
     */
 
-package com.vedder.vesc;
+package com.vedder.openroad;
 
 import android.content.Context;
 import android.content.Intent;

@@ -93,14 +93,14 @@ void DetectBldc::on_helpButton_clicked()
     }
 }
 
-VescInterface *DetectBldc::vesc() const
+VescInterface *DetectBldc::openroad() const
 {
     return mVesc;
 }
 
-void DetectBldc::setVesc(VescInterface *vesc)
+void DetectBldc::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     if (mVesc) {
         connect(mVesc->commands(), SIGNAL(bldcDetectReceived(bldc_detect)),

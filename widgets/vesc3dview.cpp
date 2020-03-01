@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
     */
 
-#include "vesc3dview.h"
+#include "openroad3dview.h"
 
 #include <QTimer>
 #include <QOpenGLShaderProgram>

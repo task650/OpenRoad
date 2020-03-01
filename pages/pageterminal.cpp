@@ -40,14 +40,14 @@ void PageTerminal::clearTerminal()
     ui->terminalEdit->setFocus();
 }
 
-VescInterface *PageTerminal::vesc() const
+VescInterface *PageTerminal::openroad() const
 {
     return mVesc;
 }
 
-void PageTerminal::setVesc(VescInterface *vesc)
+void PageTerminal::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     if (mVesc) {
         connect(mVesc->commands(), SIGNAL(printReceived(QString)),

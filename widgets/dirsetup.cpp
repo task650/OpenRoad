@@ -41,20 +41,20 @@ DirSetup::~DirSetup()
     delete ui;
 }
 
-VescInterface *DirSetup::vesc() const
+VescInterface *DirSetup::openroad() const
 {
     return mVesc;
 }
 
-void DirSetup::setVesc(VescInterface *vesc)
+void DirSetup::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 }
 
 void DirSetup::scanVescs()
 {
     if (mVesc) {
-        auto *wOld = ui->vescArea->widget();
+        auto *wOld = ui->openroadArea->widget();
         if (wOld) {
             wOld->deleteLater();
         }
@@ -143,7 +143,7 @@ void DirSetup::scanVescs()
         l->addStretch();
         auto *w = new QWidget;
         w->setLayout(l);
-        ui->vescArea->setWidget(w);
+        ui->openroadArea->setWidget(w);
 
         ui->progressBar->setRange(0, 100);
         ui->progressBar->setValue(100);

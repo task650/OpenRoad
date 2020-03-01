@@ -83,8 +83,8 @@ contains(DEFINES, HAS_POS) {
 
 android: QT += androidextras
 
-android: TARGET = vesc_tool
-!android: TARGET = vesc_tool_$$VT_VERSION
+android: TARGET = openroad_tool
+!android: TARGET = openroad_tool_$$VT_VERSION
 
 
 ANDROID_VERSION = 1
@@ -156,7 +156,7 @@ SOURCES += main.cpp\
     commands.cpp \
     configparams.cpp \
     configparam.cpp \
-    vescinterface.cpp \
+    openroadinterface.cpp \
     parametereditor.cpp \
     digitalfiltering.cpp \
     setupwizardapp.cpp \
@@ -172,7 +172,7 @@ HEADERS  += mainwindow.h \
     datatypes.h \
     configparams.h \
     configparam.h \
-    vescinterface.h \
+    openroadinterface.h \
     parametereditor.h \
     digitalfiltering.h \
     setupwizardapp.h \
@@ -235,7 +235,7 @@ DISTFILES += \
     android/res/values/libs.xml \
     android/build.gradle \
     android/gradle/wrapper/gradle-wrapper.properties \
-    android/src/com/vedder/vesc/VForegroundService.java \
-    android/src/com/vedder/vesc/Utils.java
+    android/src/com/vedder/openroad/VForegroundService.java \
+    android/src/com/vedder/openroad/Utils.java
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android

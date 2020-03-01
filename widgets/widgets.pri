@@ -48,7 +48,7 @@ HEADERS += \
     $$PWD/historylineedit.h \
     $$PWD/detectallfocdialog.h \
     $$PWD/dirsetup.h \
-    $$PWD/vesc3dview.h \
+    $$PWD/openroad3dview.h \
     $$PWD/superslider.h
 
 SOURCES += \
@@ -81,6 +81,6 @@ SOURCES += \
     $$PWD/historylineedit.cpp \
     $$PWD/detectallfocdialog.cpp \
     $$PWD/dirsetup.cpp \
-    $$PWD/vesc3dview.cpp \
+    $$PWD/openroad3dview.cpp \
     $$PWD/superslider.cpp
 

@@ -21,7 +21,7 @@
 #define DETECTFOC_H
 
 #include <QWidget>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 namespace Ui {
 class DetectFoc;
@@ -35,8 +35,8 @@ public:
     explicit DetectFoc(QWidget *parent = nullptr);
     ~DetectFoc();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
     bool allValuesOk() const;
     bool lastOkValuesApplied() const;
 

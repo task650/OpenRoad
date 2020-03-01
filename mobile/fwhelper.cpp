@@ -89,7 +89,7 @@ QVariantMap FwHelper::getBootloaders(QString hw)
     return bls;
 }
 
-bool FwHelper::uploadFirmware(QString filename, VescInterface *vesc,
+bool FwHelper::uploadFirmware(QString filename, VescInterface *openroad,
                               bool isBootloader, bool checkName, bool fwdCan)
 {
     if (filename.startsWith("file:/")) {
@@ -103,7 +103,7 @@ bool FwHelper::uploadFirmware(QString filename, VescInterface *vesc,
     if (checkName) {
         if (!(fileInfo.fileName().startsWith("BLDC_4") || fileInfo.fileName().startsWith("VESC"))
                 || !fileInfo.fileName().endsWith(".bin")) {
-            vesc->emitMessageDialog(
+            openroad->emitMessageDialog(
                         tr("Upload Error"),
                         tr("The selected file name seems to be invalid."),
                         false, false);
@@ -112,7 +112,7 @@ bool FwHelper::uploadFirmware(QString filename, VescInterface *vesc,
     }
 
     if (!file.open(QIODevice::ReadOnly)) {
-        vesc->emitMessageDialog(tr("Upload Error"),
+        openroad->emitMessageDialog(tr("Upload Error"),
                                 tr("Could not open file. Make sure that the path is valid."),
                                 false);
         qDebug() << fileInfo.fileName() << fileInfo.absolutePath();
@@ -120,14 +120,14 @@ bool FwHelper::uploadFirmware(QString filename, VescInterface *vesc,
     }
 
     if (file.size() > 400000) {
-        vesc->emitMessageDialog(tr("Upload Error"),
+        openroad->emitMessageDialog(tr("Upload Error"),
                                 tr("The selected file is too large to be a firmware."),
                                 false);
         return false;
     }
 
     QByteArray data = file.readAll();
-    vesc->fwUpload(data, isBootloader, fwdCan);
+    openroad->fwUpload(data, isBootloader, fwdCan);
 
     return true;
 }

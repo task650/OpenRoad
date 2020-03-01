@@ -7,8 +7,8 @@ set -e
 ./build_win
 ./build_android
 
-rm /storage/mnt_webserver/web/ubercart_downloads/vesc_tool_*
-mv build/lin/vesc_tool_* /storage/mnt_webserver/web/ubercart_downloads/
-mv build/win/vesc_tool_* /storage/mnt_webserver/web/ubercart_downloads/
-mv build/android/vesc_tool_* /storage/mnt_webserver/web/ubercart_downloads/
+rm /storage/mnt_webserver/web/ubercart_downloads/openroad_tool_*
+mv build/lin/openroad_tool_* /storage/mnt_webserver/web/ubercart_downloads/
+mv build/win/openroad_tool_* /storage/mnt_webserver/web/ubercart_downloads/
+mv build/android/openroad_tool_* /storage/mnt_webserver/web/ubercart_downloads/
 

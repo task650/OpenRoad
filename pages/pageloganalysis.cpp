@@ -260,14 +260,14 @@ PageLogAnalysis::~PageLogAnalysis()
     delete ui;
 }
 
-VescInterface *PageLogAnalysis::vesc() const
+VescInterface *PageLogAnalysis::openroad() const
 {
     return mVesc;
 }
 
-void PageLogAnalysis::setVesc(VescInterface *vesc)
+void PageLogAnalysis::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 }
 
 void PageLogAnalysis::on_openCsvButton_clicked()
@@ -714,7 +714,7 @@ void PageLogAnalysis::updateGraphs()
                 rowInd++;
             } else if (row == 51) {
                 if (yAxes.size() <= rowInd) yAxes.append(QVector<double>());
-                yAxes[rowInd].append(double(d.setupValues.num_vescs) * rowScale);
+                yAxes[rowInd].append(double(d.setupValues.num_openroads) * rowScale);
                 names.append(QString("VESC num (* %1)").arg(rowScale));
                 rowInd++;
             }
@@ -963,7 +963,7 @@ void PageLogAnalysis::updateDataAndPlot(double time)
     ui->dataTable->item(48, 1)->setText(QString::number(d.lon, 'f', 7) + " °");
     ui->dataTable->item(49, 1)->setText(QString::number(d.vVel * 3.6, 'f', 2) + " km/h");
     ui->dataTable->item(50, 1)->setText(QString::number(d.vAcc, 'f', 2) + " m");
-    ui->dataTable->item(51, 1)->setText(QString::number(d.setupValues.num_vescs));
+    ui->dataTable->item(51, 1)->setText(QString::number(d.setupValues.num_openroads));
 
     if (d.posTime >= 0 &&
             (!ui->filterOutlierBox->isChecked() ||

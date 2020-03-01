@@ -21,7 +21,7 @@
 #define PAGETERMINAL_H
 
 #include <QWidget>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 namespace Ui {
 class PageTerminal;
@@ -35,8 +35,8 @@ public:
     explicit PageTerminal(QWidget *parent = 0);
     ~PageTerminal();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
 
 public slots:
     void clearTerminal();

@@ -35,14 +35,14 @@ PageMotorInfo::~PageMotorInfo()
     delete ui;
 }
 
-VescInterface *PageMotorInfo::vesc() const
+VescInterface *PageMotorInfo::openroad() const
 {
     return mVesc;
 }
 
-void PageMotorInfo::setVesc(VescInterface *vesc)
+void PageMotorInfo::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     if (mVesc) {
         reloadParams();

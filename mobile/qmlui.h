@@ -23,7 +23,7 @@
 #include <QObject>
 #include <QQmlApplicationEngine>
 
-#include "vescinterface.h"
+#include "openroadinterface.h"
 #include "utility.h"
 
 class QmlUi : public QObject
@@ -35,7 +35,7 @@ public:
     bool eventFilter(QObject *object, QEvent *e);
     void setVisible(bool visible);
 
-    static VescInterface *vesc();
+    static VescInterface *openroad();
 
 signals:
 
@@ -45,7 +45,7 @@ private:
     QQmlApplicationEngine *mEngine;
 
     static VescInterface *mVesc;
-    static QObject *vescinterface_singletontype_provider(QQmlEngine *engine, QJSEngine *scriptEngine);
+    static QObject *openroadinterface_singletontype_provider(QQmlEngine *engine, QJSEngine *scriptEngine);
     static QObject *utility_singletontype_provider(QQmlEngine *engine, QJSEngine *scriptEngine);
 
 };

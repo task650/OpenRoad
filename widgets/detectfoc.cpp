@@ -105,14 +105,14 @@ void DetectFoc::on_helpButton_clicked()
     }
 }
 
-VescInterface *DetectFoc::vesc() const
+VescInterface *DetectFoc::openroad() const
 {
     return mVesc;
 }
 
-void DetectFoc::setVesc(VescInterface *vesc)
+void DetectFoc::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     if (mVesc) {
         connect(mVesc->commands(), SIGNAL(motorRLReceived(double,double)),

@@ -21,7 +21,7 @@
 #define PAGEFOC_H
 
 #include <QWidget>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 namespace Ui {
 class PageFoc;
@@ -35,8 +35,8 @@ public:
     explicit PageFoc(QWidget *parent = nullptr);
     ~PageFoc();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
     void reloadParams();
 
 private:

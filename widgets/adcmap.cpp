@@ -38,14 +38,14 @@ AdcMap::~AdcMap()
     delete ui;
 }
 
-VescInterface *AdcMap::vesc() const
+VescInterface *AdcMap::openroad() const
 {
     return mVesc;
 }
 
-void AdcMap::setVesc(VescInterface *vesc)
+void AdcMap::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     if (mVesc) {
         ConfigParam *p = mVesc->appConfig()->getParam("app_adc_conf.ctrl_type");

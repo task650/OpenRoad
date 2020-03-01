@@ -22,10 +22,10 @@ import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import Qt.labs.settings 1.0 as QSettings
 
-import Vedder.vesc.vescinterface 1.0
-import Vedder.vesc.commands 1.0
-import Vedder.vesc.configparams 1.0
-import Vedder.vesc.utility 1.0
+import Vedder.openroad.openroadinterface 1.0
+import Vedder.openroad.commands 1.0
+import Vedder.openroad.configparams 1.0
+import Vedder.openroad.utility 1.0
 
 ApplicationWindow {
     id: appWindow
@@ -159,7 +159,7 @@ ApplicationWindow {
                 onClicked: {
                     VescIf.emitMessageDialog(
                                 "VESC Tool Changelog",
-                                Utility.vescToolChangeLog(),
+                                Utility.openroadToolChangeLog(),
                                 true, false)
                 }
             }
@@ -220,7 +220,7 @@ ApplicationWindow {
                     enabled: true
                     clip: true
 
-                    property var vesc3dViewNow: 0
+                    property var openroad3dViewNow: 0
 
                     Layout.fillWidth: true
                     Layout.fillHeight: true
@@ -261,12 +261,12 @@ ApplicationWindow {
                     onCurrentIndexChanged: {
                         if (currentIndex == 2) {
                             var component = Qt.createComponent("Vesc3DView.qml");
-                            vesc3dViewNow = component.createObject(item3d, {"anchors.fill": item3d})
-                            vesc3dViewNow.setRotation(0.1, 0.1, 0.1)
+                            openroad3dViewNow = component.createObject(item3d, {"anchors.fill": item3d})
+                            openroad3dViewNow.setRotation(0.1, 0.1, 0.1)
                         } else {
-                            if (vesc3dViewNow != 0) {
-                                vesc3dViewNow.destroy()
-                                vesc3dViewNow = 0
+                            if (openroad3dViewNow != 0) {
+                                openroad3dViewNow.destroy()
+                                openroad3dViewNow = 0
                             }
                         }
                     }
@@ -737,7 +737,7 @@ ApplicationWindow {
     }
 
     Dialog {
-        id: vescDialog
+        id: openroadDialog
         standardButtons: Dialog.Ok
         modal: true
         focus: true
@@ -755,7 +755,7 @@ ApplicationWindow {
             contentWidth: parent.width - 20
 
             Text {
-                id: vescDialogLabel
+                id: openroadDialogLabel
                 color: "#ffffff"
                 linkColor: "lightblue"
                 verticalAlignment: Text.AlignVCenter
@@ -792,10 +792,10 @@ ApplicationWindow {
         }
 
         onMessageDialog: {
-            vescDialog.title = title
-            vescDialogLabel.text = (richText ? "<style>a:link { color: lightblue; }</style>" : "") + msg
-            vescDialogLabel.textFormat = richText ? Text.RichText : Text.AutoText
-            vescDialog.open()
+            openroadDialog.title = title
+            openroadDialogLabel.text = (richText ? "<style>a:link { color: lightblue; }</style>" : "") + msg
+            openroadDialogLabel.textFormat = richText ? Text.RichText : Text.AutoText
+            openroadDialog.open()
         }
 
         onFwRxChanged: {
@@ -834,8 +834,8 @@ ApplicationWindow {
         target: mCommands
 
         onValuesImuReceived: {
-            if (rtSwipeView.vesc3dViewNow != 0) {
-                rtSwipeView.vesc3dViewNow.setRotation(
+            if (rtSwipeView.openroad3dViewNow != 0) {
+                rtSwipeView.openroad3dViewNow.setRotation(
                             values.roll, values.pitch,
                             useYawBox.checked ? values.yaw : -Math.PI / 2.0)
             }

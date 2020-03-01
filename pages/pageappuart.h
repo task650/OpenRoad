@@ -21,7 +21,7 @@
 #define PAGEAPPUART_H
 
 #include <QWidget>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 namespace Ui {
 class PageAppUart;
@@ -35,8 +35,8 @@ public:
     explicit PageAppUart(QWidget *parent = nullptr);
     ~PageAppUart();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
     void reloadParams();
 
 private:

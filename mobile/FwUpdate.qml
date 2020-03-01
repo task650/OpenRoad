@@ -21,11 +21,11 @@ import QtQuick 2.7
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 
-import Vedder.vesc.vescinterface 1.0
-import Vedder.vesc.commands 1.0
-import Vedder.vesc.configparams 1.0
-import Vedder.vesc.fwhelper 1.0
-import Vedder.vesc.utility 1.0
+import Vedder.openroad.openroadinterface 1.0
+import Vedder.openroad.commands 1.0
+import Vedder.openroad.configparams 1.0
+import Vedder.openroad.fwhelper 1.0
+import Vedder.openroad.utility 1.0
 
 Item {
     property Commands mCommands: VescIf.commands()
@@ -147,7 +147,7 @@ Item {
                                 fwItems.clear()
 
                                 for (var name in fws) {
-                                    if (name.toLowerCase().indexOf("vesc_default.bin") !== -1) {
+                                    if (name.toLowerCase().indexOf("openroad_default.bin") !== -1) {
                                         fwItems.insert(0, { key: name, value: fws[name] })
                                     } else {
                                         fwItems.append({ key: name, value: fws[name] })

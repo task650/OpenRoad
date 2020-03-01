@@ -21,7 +21,7 @@
 #define PAGECONTROLLERS_H
 
 #include <QWidget>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 namespace Ui {
 class PageControllers;
@@ -35,8 +35,8 @@ public:
     explicit PageControllers(QWidget *parent = nullptr);
     ~PageControllers();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
     void reloadParams();
 
 private:

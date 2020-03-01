@@ -35,14 +35,14 @@ PageCanAnalyzer::~PageCanAnalyzer()
     delete ui;
 }
 
-VescInterface *PageCanAnalyzer::vesc() const
+VescInterface *PageCanAnalyzer::openroad() const
 {
     return mVesc;
 }
 
-void PageCanAnalyzer::setVesc(VescInterface *vesc)
+void PageCanAnalyzer::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     if (mVesc) {
         reloadParams();

@@ -22,9 +22,9 @@
 #define PAGELOGANALYSIS_H
 
 #include <QWidget>
-#include <vescinterface.h>
+#include <openroadinterface.h>
 #include "widgets/qcustomplot.h"
-#include "widgets/vesc3dview.h"
+#include "widgets/openroad3dview.h"
 
 namespace Ui {
 class PageLogAnalysis;
@@ -38,8 +38,8 @@ public:
     explicit PageLogAnalysis(QWidget *parent = nullptr);
     ~PageLogAnalysis();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
 
 private slots:
     void on_openCsvButton_clicked();

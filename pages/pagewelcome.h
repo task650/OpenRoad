@@ -21,7 +21,7 @@
 #define PAGEWELCOME_H
 
 #include <QWidget>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 namespace Ui {
 class PageWelcome;
@@ -35,8 +35,8 @@ public:
     explicit PageWelcome(QWidget *parent = 0);
     ~PageWelcome();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
 
 public slots:
     void startSetupWizardFocSimple();

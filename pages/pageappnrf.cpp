@@ -34,14 +34,14 @@ PageAppNrf::~PageAppNrf()
     delete ui;
 }
 
-VescInterface *PageAppNrf::vesc() const
+VescInterface *PageAppNrf::openroad() const
 {
     return mVesc;
 }
 
-void PageAppNrf::setVesc(VescInterface *vesc)
+void PageAppNrf::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     if (mVesc) {
         ui->nrfPair->setVesc(mVesc);

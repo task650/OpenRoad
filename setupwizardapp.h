@@ -26,7 +26,7 @@
 #include <QTimer>
 #include <QPushButton>
 
-#include "vescinterface.h"
+#include "openroadinterface.h"
 #include "widgets/paramtable.h"
 #include "widgets/nrfpair.h"
 #include "widgets/displaypercentage.h"
@@ -61,7 +61,7 @@ public:
         Input_NunchukNrf
     };
 
-    SetupWizardApp(VescInterface *vesc, QWidget *parent = 0);
+    SetupWizardApp(VescInterface *openroad, QWidget *parent = 0);
 
 private slots:
     void idChanged(int id);
@@ -80,7 +80,7 @@ class AppIntroPage : public QWizardPage
     Q_OBJECT
 
 public:
-    AppIntroPage(VescInterface *vesc, QWidget *parent = 0);
+    AppIntroPage(VescInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
 
@@ -96,7 +96,7 @@ class AppConnectionPage : public QWizardPage
     Q_OBJECT
 
 public:
-    AppConnectionPage(VescInterface *vesc, QWidget *parent = 0);
+    AppConnectionPage(VescInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool isComplete() const Q_DECL_OVERRIDE;
 
@@ -111,7 +111,7 @@ class AppFirmwarePage : public QWizardPage
     Q_OBJECT
 
 public:
-    AppFirmwarePage(VescInterface *vesc, QWidget *parent = 0);
+    AppFirmwarePage(VescInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
 
 private:
@@ -125,7 +125,7 @@ class AppMultiPage : public QWizardPage
     Q_OBJECT
 
 public:
-    AppMultiPage(VescInterface *vesc, QWidget *parent = 0);
+    AppMultiPage(VescInterface *openroad, QWidget *parent = 0);
     void initializePage() Q_DECL_OVERRIDE;
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
@@ -149,7 +149,7 @@ class AppGeneralPage : public QWizardPage
     Q_OBJECT
 
 public:
-    AppGeneralPage(VescInterface *vesc, QWidget *parent = 0);
+    AppGeneralPage(VescInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
     void cleanupPage() Q_DECL_OVERRIDE;
@@ -172,7 +172,7 @@ class AppNunchukPage : public QWizardPage
     Q_OBJECT
 
 public:
-    AppNunchukPage(VescInterface *vesc, QWidget *parent = 0);
+    AppNunchukPage(VescInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
     void initializePage() Q_DECL_OVERRIDE;
@@ -196,7 +196,7 @@ class AppPpmMapPage : public QWizardPage
     Q_OBJECT
 
 public:
-    AppPpmMapPage(VescInterface *vesc, QWidget *parent = 0);
+    AppPpmMapPage(VescInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
     void initializePage() Q_DECL_OVERRIDE;
@@ -218,7 +218,7 @@ class AppPpmPage : public QWizardPage
     Q_OBJECT
 
 public:
-    AppPpmPage(VescInterface *vesc, QWidget *parent = 0);
+    AppPpmPage(VescInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
     void initializePage() Q_DECL_OVERRIDE;
@@ -235,7 +235,7 @@ class AppAdcMapPage : public QWizardPage
     Q_OBJECT
 
 public:
-    AppAdcMapPage(VescInterface *vesc, QWidget *parent = 0);
+    AppAdcMapPage(VescInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
     void initializePage() Q_DECL_OVERRIDE;
@@ -258,7 +258,7 @@ class AppAdcPage : public QWizardPage
     Q_OBJECT
 
 public:
-    AppAdcPage(VescInterface *vesc, QWidget *parent = 0);
+    AppAdcPage(VescInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
     void initializePage() Q_DECL_OVERRIDE;
@@ -275,7 +275,7 @@ class AppConclusionPage : public QWizardPage
     Q_OBJECT
 
 public:
-    AppConclusionPage(VescInterface *vesc, QWidget *parent = 0);
+    AppConclusionPage(VescInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     void initializePage() Q_DECL_OVERRIDE;
 

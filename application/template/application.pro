@@ -33,7 +33,7 @@ SOURCES += main.cpp\
     configparam.cpp \
     configparams.cpp \
     packet.cpp \
-    vescinterface.cpp \
+    openroadinterface.cpp \
     vbytearray.cpp \
     utility.cpp \
     tcpserversimple.cpp
@@ -44,7 +44,7 @@ HEADERS  += mainwindow.h \
     configparams.h \
     datatypes.h \
     packet.h \
-    vescinterface.h \
+    openroadinterface.h \
     vbytearray.h \
     utility.h \
     tcpserversimple.h

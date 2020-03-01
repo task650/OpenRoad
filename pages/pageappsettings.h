@@ -21,7 +21,7 @@
 #define PAGEAPPSETTINGS_H
 
 #include <QWidget>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 namespace Ui {
 class PageAppSettings;
@@ -35,8 +35,8 @@ public:
     explicit PageAppSettings(QWidget *parent = nullptr);
     ~PageAppSettings();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
     void reloadParams();
 
 private slots:

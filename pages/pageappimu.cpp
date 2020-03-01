@@ -131,14 +131,14 @@ PageAppImu::~PageAppImu()
     delete ui;
 }
 
-VescInterface *PageAppImu::vesc() const
+VescInterface *PageAppImu::openroad() const
 {
     return mVesc;
 }
 
-void PageAppImu::setVesc(VescInterface *vesc)
+void PageAppImu::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     if (mVesc) {
         reloadParams();

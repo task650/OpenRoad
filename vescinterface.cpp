@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
     */
 
-#include "vescinterface.h"
+#include "openroadinterface.h"
 #include <QDebug>
 #include <QHostInfo>
 #include <QFileInfo>
@@ -215,7 +215,7 @@ VescInterface::VescInterface(QObject *parent) : QObject(parent)
             CONFIG_BACKUP cfg;
             mSettings.setArrayIndex(i);
             QString uuid = mSettings.value("uuid").toString();
-            cfg.vesc_uuid = uuid;
+            cfg.openroad_uuid = uuid;
             cfg.mcconf_xml_compressed = mSettings.value("mcconf").toString();
             cfg.appconf_xml_compressed = mSettings.value("appconf").toString();
             cfg.name = mSettings.value("name", QString("")).toString();
@@ -329,7 +329,7 @@ VescInterface::VescInterface(QObject *parent) : QObject(parent)
             os << v.tachometer_abs << ";";
             os << v.position << ";";
             os << v.fault_code << ";";
-            os << v.vesc_id << ";";
+            os << v.openroad_id << ";";
             os << v.vd << ";";
             os << v.vq << ";";
 
@@ -345,7 +345,7 @@ VescInterface::VescInterface(QObject *parent) : QObject(parent)
             os << mLastSetupValues.speed << ";";
             os << mLastSetupValues.tachometer << ";";
             os << mLastSetupValues.tachometer_abs << ";";
-            os << mLastSetupValues.num_vescs << ";";
+            os << mLastSetupValues.num_openroads << ";";
 
             os << msImu << ";";
             os << mLastImuValues.roll << ";";
@@ -1426,7 +1426,7 @@ bool VescInterface::openRtLogFile(QString outDirectory)
         os << "tachometer_abs" << ";";
         os << "encoder_position" << ";";
         os << "fault_code" << ";";
-        os << "vesc_id" << ";";
+        os << "openroad_id" << ";";
         os << "d_axis_voltage" << ";";
         os << "q_axis_voltage" << ";";
 
@@ -1442,7 +1442,7 @@ bool VescInterface::openRtLogFile(QString outDirectory)
         os << "speed_meters_per_sec" << ";";
         os << "tacho_meters" << ";";
         os << "tacho_abs_meters" << ";";
-        os << "num_vescs" << ";";
+        os << "num_openroads" << ";";
 
         os << "ms_today_imu" << ";";
         os << "roll" << ";";
@@ -1556,7 +1556,7 @@ bool VescInterface::loadRtLogFile(QString file)
                 d.values.tachometer_abs = tokens.at(18).toInt();
                 d.values.position = tokens.at(19).toDouble();
                 d.values.fault_code = mc_fault_code(tokens.at(20).toInt());
-                d.values.vesc_id = tokens.at(21).toInt();
+                d.values.openroad_id = tokens.at(21).toInt();
 
                 // Possibly populate setup values too, but these values would
                 // not correspond to setupValTime.
@@ -1565,7 +1565,7 @@ bool VescInterface::loadRtLogFile(QString file)
 //                d.setupValues.temp_mos = d.values.temp_mos;
 //                d.setupValues.temp_motor = d.values.temp_motor;
 //                d.setupValues.fault_code = d.values.fault_code;
-//                d.setupValues.vesc_id = d.values.vesc_id;
+//                d.setupValues.openroad_id = d.values.openroad_id;
 
                 if (tokens.size() >= 55) {
                     d.values.vd = tokens.at(22).toDouble();
@@ -1583,7 +1583,7 @@ bool VescInterface::loadRtLogFile(QString file)
                     d.setupValues.speed = tokens.at(33).toDouble();
                     d.setupValues.tachometer = tokens.at(34).toDouble();
                     d.setupValues.tachometer_abs = tokens.at(35).toDouble();
-                    d.setupValues.num_vescs = tokens.at(36).toInt();
+                    d.setupValues.num_openroads = tokens.at(36).toInt();
 
                     d.imuValTime = tokens.at(37).toInt();
                     d.imuValues.roll = tokens.at(38).toDouble();
@@ -2714,7 +2714,7 @@ void VescInterface::packetDataToSend(QByteArray &data)
                 payload.clear();
             }
 
-            payload[0] = char(254); // vesc tool node ID
+            payload[0] = char(254); // openroad tool node ID
             payload[1] = char(0); // process
             payload[2] = char(len >> 8);
             payload[3] = char(len & 0xFF);
@@ -3053,7 +3053,7 @@ bool VescInterface::confStoreBackup(bool can, QString name)
         if (rxMc && rxApp) {
             CONFIG_BACKUP cfg;
             cfg.name = name;
-            cfg.vesc_uuid = uuid;
+            cfg.openroad_uuid = uuid;
             cfg.mcconf_xml_compressed = pMc->saveCompressed("mcconf");
             cfg.appconf_xml_compressed = pApp->saveCompressed("appconf");
             mConfigurationBackups.insert(uuid, cfg);

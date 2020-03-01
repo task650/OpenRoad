@@ -32,14 +32,14 @@ PageGPD::~PageGPD()
     delete ui;
 }
 
-VescInterface *PageGPD::vesc() const
+VescInterface *PageGPD::openroad() const
 {
     return mVesc;
 }
 
-void PageGPD::setVesc(VescInterface *vesc)
+void PageGPD::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     if (mVesc) {
         reloadParams();

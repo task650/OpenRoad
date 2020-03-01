@@ -21,7 +21,7 @@
 #define PAGEAPPADC_H
 
 #include <QWidget>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 namespace Ui {
 class PageAppAdc;
@@ -35,8 +35,8 @@ public:
     explicit PageAppAdc(QWidget *parent = nullptr);
     ~PageAppAdc();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
     void reloadParams();
 
 private slots:

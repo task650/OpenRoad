@@ -43,11 +43,11 @@ Scene3D {
         var q2 = cr * sp * cy + sr * cp * sy
         var q3 = cr * cp * sy - sr * sp * cy
 
-        vescObj.tr.rotation = Qt.quaternion(q0, q1, q2, q3)
+        openroadObj.tr.rotation = Qt.quaternion(q0, q1, q2, q3)
     }
 
     function setRotationQuat(q0, q1, q2, q3) {
-        vescObj.tr.rotation = Qt.quaternion(q0, q1, q2, q3)
+        openroadObj.tr.rotation = Qt.quaternion(q0, q1, q2, q3)
     }
 
     Entity {
@@ -74,7 +74,7 @@ Scene3D {
         ]
 
         Entity {
-            id: vescObj
+            id: openroadObj
 
             Entity {
                 id: obj1

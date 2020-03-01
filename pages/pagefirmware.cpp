@@ -59,14 +59,14 @@ PageFirmware::~PageFirmware()
     delete ui;
 }
 
-VescInterface *PageFirmware::vesc() const
+VescInterface *PageFirmware::openroad() const
 {
     return mVesc;
 }
 
-void PageFirmware::setVesc(VescInterface *vesc)
+void PageFirmware::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     if (mVesc) {
         ui->display->setText(mVesc->getFwUploadStatus());
@@ -194,7 +194,7 @@ void PageFirmware::updateFwList()
         while (it.hasNext()) {
             QFileInfo fi(it.next());
             if (ui->showNonDefaultBox->isChecked() ||
-                    fi.fileName().toLower() == "vesc_default.bin") {
+                    fi.fileName().toLower() == "openroad_default.bin") {
                 QListWidgetItem *item = new QListWidgetItem;
                 item->setText(fi.fileName());
                 item->setData(Qt::UserRole, fi.absoluteFilePath());

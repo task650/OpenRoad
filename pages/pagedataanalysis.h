@@ -21,7 +21,7 @@
 #define PAGEDATAANALYSIS_H
 
 #include <QWidget>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 namespace Ui {
 class PageDataAnalysis;
@@ -35,8 +35,8 @@ public:
     explicit PageDataAnalysis(QWidget *parent = 0);
     ~PageDataAnalysis();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
 
 private:
     Ui::PageDataAnalysis *ui;

@@ -354,7 +354,7 @@
 
 == 0.82 ==
 * Only show introduction if it has changed since the previous version.
-* Proper fix for RT data time scale https://github.com/vedderb/vesc_tool/pull/5
+* Proper fix for RT data time scale https://github.com/vedderb/openroad_tool/pull/5
 * FW 3.29 support.
 
 == 0.81 ==

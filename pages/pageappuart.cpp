@@ -34,14 +34,14 @@ PageAppUart::~PageAppUart()
     delete ui;
 }
 
-VescInterface *PageAppUart::vesc() const
+VescInterface *PageAppUart::openroad() const
 {
     return mVesc;
 }
 
-void PageAppUart::setVesc(VescInterface *vesc)
+void PageAppUart::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     if (mVesc) {
         reloadParams();

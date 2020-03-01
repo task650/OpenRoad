@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 {
     // Settings
     QCoreApplication::setOrganizationName("VESC");
-    QCoreApplication::setOrganizationDomain("vesc-project.com");
+    QCoreApplication::setOrganizationDomain("openroad-project.com");
     QCoreApplication::setApplicationName("VESC Tool");
 
     // DPI settings

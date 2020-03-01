@@ -23,8 +23,8 @@
 #include <QWidget>
 #include <QVector>
 #include <QTimer>
-#include "vescinterface.h"
-#include "widgets/vesc3dview.h"
+#include "openroadinterface.h"
+#include "widgets/openroad3dview.h"
 
 namespace Ui {
 class PageImu;
@@ -38,8 +38,8 @@ public:
     explicit PageImu(QWidget *parent = nullptr);
     ~PageImu();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
 
 
 private slots:

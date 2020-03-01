@@ -23,24 +23,24 @@
 #include <QProgressDialog>
 #include "utility.h"
 
-SetupWizardApp::SetupWizardApp(VescInterface *vesc, QWidget *parent)
+SetupWizardApp::SetupWizardApp(VescInterface *openroad, QWidget *parent)
     : QWizard(parent)
 {
-    mVesc = vesc;
+    mVesc = openroad;
     mCanLastFwd = mVesc->commands()->getSendCan();
     mCanLastId = mVesc->commands()->getCanSendId();
 
-    setPage(Page_Intro, new AppIntroPage(vesc));
-    setPage(Page_Connection, new AppConnectionPage(vesc));
-    setPage(Page_Firmware, new AppFirmwarePage(vesc));
-    setPage(Page_Multi, new AppMultiPage(vesc));
-    setPage(Page_General, new AppGeneralPage(vesc));
-    setPage(Page_Nunchuk, new AppNunchukPage(vesc));
-    setPage(Page_Ppm_Map, new AppPpmMapPage(vesc));
-    setPage(Page_Ppm, new AppPpmPage(vesc));
-    setPage(Page_Adc_Map, new AppAdcMapPage(vesc));
-    setPage(Page_Adc, new AppAdcPage(vesc));
-    setPage(Page_Conclusion, new AppConclusionPage(vesc));
+    setPage(Page_Intro, new AppIntroPage(openroad));
+    setPage(Page_Connection, new AppConnectionPage(openroad));
+    setPage(Page_Firmware, new AppFirmwarePage(openroad));
+    setPage(Page_Multi, new AppMultiPage(openroad));
+    setPage(Page_General, new AppGeneralPage(openroad));
+    setPage(Page_Nunchuk, new AppNunchukPage(openroad));
+    setPage(Page_Ppm_Map, new AppPpmMapPage(openroad));
+    setPage(Page_Ppm, new AppPpmPage(openroad));
+    setPage(Page_Adc_Map, new AppAdcMapPage(openroad));
+    setPage(Page_Adc, new AppAdcPage(openroad));
+    setPage(Page_Conclusion, new AppConclusionPage(openroad));
 
     setStartId(Page_Intro);
     setWizardStyle(ModernStyle);
@@ -79,10 +79,10 @@ void SetupWizardApp::ended()
     mVesc->commands()->getAppConf();
 }
 
-AppIntroPage::AppIntroPage(VescInterface *vesc, QWidget *parent)
+AppIntroPage::AppIntroPage(VescInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = vesc;
+    mVesc = openroad;
     setTitle(tr("VESC® Input Setup Wizard"));
 
     mLabel = new QLabel(tr("This wizard will help you choose what type of input to use "
@@ -152,10 +152,10 @@ bool AppIntroPage::validatePage()
     return !res;
 }
 
-AppConnectionPage::AppConnectionPage(VescInterface *vesc, QWidget *parent)
+AppConnectionPage::AppConnectionPage(VescInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     setTitle(tr("Connect VESC"));
     setSubTitle(tr("The VESC has to be connected in order to use this "
@@ -187,10 +187,10 @@ bool AppConnectionPage::isComplete() const
     return mVesc->fwRx();
 }
 
-AppFirmwarePage::AppFirmwarePage(VescInterface *vesc, QWidget *parent)
+AppFirmwarePage::AppFirmwarePage(VescInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     setTitle(tr("Update Firmware"));
     setSubTitle(tr("You need to update the firmware on the VESC in order "
@@ -212,10 +212,10 @@ int AppFirmwarePage::nextId() const
     return -1;
 }
 
-AppMultiPage::AppMultiPage(VescInterface *vesc, QWidget *parent)
+AppMultiPage::AppMultiPage(VescInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     setTitle(tr("Multiple VESCs"));
     setSubTitle(tr("Found multiple VESCs on the CAN-bus, choose "
@@ -291,10 +291,10 @@ int AppMultiPage::getCanFwd()
     return canFwd;
 }
 
-AppGeneralPage::AppGeneralPage(VescInterface *vesc, QWidget *parent)
+AppGeneralPage::AppGeneralPage(VescInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     setTitle(tr("Choose App"));
     setSubTitle(tr("Choose what type of input you want to control this VESC with."));
@@ -376,10 +376,10 @@ int AppGeneralPage::getInputType()
     return input;
 }
 
-AppNunchukPage::AppNunchukPage(VescInterface *vesc, QWidget *parent)
+AppNunchukPage::AppNunchukPage(VescInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     setTitle(tr("Nunchuk Configuration"));
 
@@ -492,10 +492,10 @@ void AppNunchukPage::timerSlot()
     mVesc->commands()->getDecodedChuk();
 }
 
-AppPpmMapPage::AppPpmMapPage(VescInterface *vesc, QWidget *parent)
+AppPpmMapPage::AppPpmMapPage(VescInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     setTitle(tr("PPM Mapping"));
     setSubTitle(tr("Map your PPM receiver."));
@@ -564,10 +564,10 @@ void AppPpmMapPage::timerSlot()
     mVesc->commands()->getDecodedPpm();
 }
 
-AppPpmPage::AppPpmPage(VescInterface *vesc, QWidget *parent)
+AppPpmPage::AppPpmPage(VescInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     setTitle(tr("PPM Configuration"));
     setSubTitle(tr("Configure your PPM receiver."));
@@ -621,10 +621,10 @@ void AppPpmPage::initializePage()
     mVesc->commands()->setAppConf();
 }
 
-AppAdcMapPage::AppAdcMapPage(VescInterface *vesc, QWidget *parent)
+AppAdcMapPage::AppAdcMapPage(VescInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     setTitle(tr("ADC Mapping"));
     setSubTitle(tr("Map your analog throttle."));
@@ -712,10 +712,10 @@ void AppAdcMapPage::timerSlot()
     mVesc->commands()->getDecodedAdc();
 }
 
-AppAdcPage::AppAdcPage(VescInterface *vesc, QWidget *parent)
+AppAdcPage::AppAdcPage(VescInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     setTitle(tr("ADC Configuration"));
     setSubTitle(tr("Configure your analog throttle."));
@@ -767,10 +767,10 @@ void AppAdcPage::initializePage()
     mVesc->commands()->setAppConf();
 }
 
-AppConclusionPage::AppConclusionPage(VescInterface *vesc, QWidget *parent)
+AppConclusionPage::AppConclusionPage(VescInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = vesc;
+    mVesc = openroad;
     setTitle(tr("Conclusion"));
 
     mLabel = new QLabel;

@@ -55,7 +55,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QScrollArea" name="vescArea">
+    <widget class="QScrollArea" name="openroadArea">
      <property name="widgetResizable">
       <bool>true</bool>
      </property>

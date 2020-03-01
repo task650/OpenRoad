@@ -21,7 +21,7 @@
 #define DETECTALLFOCDIALOG_H
 
 #include <QDialog>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 namespace Ui {
 class DetectAllFocDialog;
@@ -63,10 +63,10 @@ public:
         int poles;
     };
 
-    explicit DetectAllFocDialog(VescInterface *vesc, QWidget *parent = 0);
+    explicit DetectAllFocDialog(VescInterface *openroad, QWidget *parent = 0);
     ~DetectAllFocDialog();
 
-    static void showDialog(VescInterface *vesc, QWidget *parent = 0);
+    static void showDialog(VescInterface *openroad, QWidget *parent = 0);
 
 protected:
     void reject();

@@ -21,7 +21,7 @@
 #define PAGEAPPNUNCHUK_H
 
 #include <QWidget>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 namespace Ui {
 class PageAppNunchuk;
@@ -35,8 +35,8 @@ public:
     explicit PageAppNunchuk(QWidget *parent = nullptr);
     ~PageAppNunchuk();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
     void reloadParams();
 
 private slots:

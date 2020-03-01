@@ -21,7 +21,7 @@
 #define PAGEAPPPPM_H
 
 #include <QWidget>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 namespace Ui {
 class PageAppPpm;
@@ -35,8 +35,8 @@ public:
     explicit PageAppPpm(QWidget *parent = nullptr);
     ~PageAppPpm();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
     void reloadParams();
 
 private slots:

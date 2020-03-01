@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
     */
 
-package com.vedder.vesc;
+package com.vedder.openroad;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -28,7 +28,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
 
-import vedder.vesctool.R;
+import vedder.openroadtool.R;
 
 public class VForegroundService extends Service {
     public static final String ACTION_START_FOREGROUND_SERVICE = "ACTION_START_FOREGROUND_SERVICE";

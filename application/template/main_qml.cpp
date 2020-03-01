@@ -17,19 +17,19 @@
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 #include "utility.h"
 
-QObject *vescinterface_singletontype_provider(QQmlEngine *engine, QJSEngine *scriptEngine)
+QObject *openroadinterface_singletontype_provider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
     (void)engine;
     (void)scriptEngine;
 
-    VescInterface *vesc = new VescInterface();
-	vesc->fwConfig()->loadParamsXml("://res/config/fw.xml");
-    Utility::configLoadLatest(vesc);
+    VescInterface *openroad = new VescInterface();
+	openroad->fwConfig()->loadParamsXml("://res/config/fw.xml");
+    Utility::configLoadLatest(openroad);
 
-    return vesc;
+    return openroad;
 }
 
 QObject *utility_singletontype_provider(QQmlEngine *engine, QJSEngine *scriptEngine)
@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
 {
     // Settings
     QCoreApplication::setOrganizationName("VESC");
-    QCoreApplication::setOrganizationDomain("vesc-project.com");
+    QCoreApplication::setOrganizationDomain("openroad-project.com");
     QCoreApplication::setApplicationName("VESC Application");
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -54,13 +54,13 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
     
-    qmlRegisterSingletonType<VescInterface>("Vedder.vesc.vescinterface", 1, 0, "VescIf", vescinterface_singletontype_provider);
-    qmlRegisterSingletonType<Utility>("Vedder.vesc.utility", 1, 0, "Utility", utility_singletontype_provider);
+    qmlRegisterSingletonType<VescInterface>("Vedder.openroad.openroadinterface", 1, 0, "VescIf", openroadinterface_singletontype_provider);
+    qmlRegisterSingletonType<Utility>("Vedder.openroad.utility", 1, 0, "Utility", utility_singletontype_provider);
 #ifdef HAS_BLUETOOTH
-    qmlRegisterType<BleUart>("Vedder.vesc.bleuart", 1, 0, "BleUart");
+    qmlRegisterType<BleUart>("Vedder.openroad.bleuart", 1, 0, "BleUart");
 #endif
-    qmlRegisterType<Commands>("Vedder.vesc.commands", 1, 0, "Commands");
-    qmlRegisterType<ConfigParams>("Vedder.vesc.configparams", 1, 0, "ConfigParams");
+    qmlRegisterType<Commands>("Vedder.openroad.commands", 1, 0, "Commands");
+    qmlRegisterType<ConfigParams>("Vedder.openroad.configparams", 1, 0, "ConfigParams");
     
     engine.load(QUrl(QLatin1String("qrc:/res/main.qml")));
     if (engine.rootObjects().isEmpty())

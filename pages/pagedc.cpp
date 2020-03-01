@@ -34,14 +34,14 @@ PageDc::~PageDc()
     delete ui;
 }
 
-VescInterface *PageDc::vesc() const
+VescInterface *PageDc::openroad() const
 {
     return mVesc;
 }
 
-void PageDc::setVesc(VescInterface *vesc)
+void PageDc::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     if (mVesc) {
         reloadParams();

@@ -24,7 +24,7 @@
 #include <QLabel>
 #include <QComboBox>
 
-#include "vescinterface.h"
+#include "openroadinterface.h"
 #include "widgets/paramtable.h"
 #include "widgets/batterycalculator.h"
 #include "widgets/detectbldc.h"
@@ -65,7 +65,7 @@ public:
         Sensor_EncoderBiSS
     };
 
-    SetupWizardMotor(VescInterface *vesc, QWidget *parent = 0);
+    SetupWizardMotor(VescInterface *openroad, QWidget *parent = 0);
 
 private slots:
     void idChanged(int id);
@@ -80,7 +80,7 @@ class IntroPage : public QWizardPage
     Q_OBJECT
 
 public:
-    IntroPage(VescInterface *vesc, QWidget *parent = 0);
+    IntroPage(VescInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
 
@@ -95,7 +95,7 @@ class ConnectionPage : public QWizardPage
     Q_OBJECT
 
 public:
-    ConnectionPage(VescInterface *vesc, QWidget *parent = 0);
+    ConnectionPage(VescInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool isComplete() const Q_DECL_OVERRIDE;
 
@@ -110,7 +110,7 @@ class FirmwarePage : public QWizardPage
     Q_OBJECT
 
 public:
-    FirmwarePage(VescInterface *vesc, QWidget *parent = 0);
+    FirmwarePage(VescInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool isComplete() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
@@ -127,7 +127,7 @@ class MotorTypePage : public QWizardPage
     Q_OBJECT
 
 public:
-    MotorTypePage(VescInterface *vesc, QWidget *parent = 0);
+    MotorTypePage(VescInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
@@ -144,7 +144,7 @@ class CurrentsPage : public QWizardPage
     Q_OBJECT
 
 public:
-    CurrentsPage(VescInterface *vesc, QWidget *parent = 0);
+    CurrentsPage(VescInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
@@ -163,7 +163,7 @@ class VoltagesPage : public QWizardPage
     Q_OBJECT
 
 public:
-    VoltagesPage(VescInterface *vesc, QWidget *parent = 0);
+    VoltagesPage(VescInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
 
@@ -179,7 +179,7 @@ class SensorsPage : public QWizardPage
     Q_OBJECT
 
 public:
-    SensorsPage(VescInterface *vesc, QWidget *parent = 0);
+    SensorsPage(VescInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
     void initializePage() Q_DECL_OVERRIDE;
@@ -201,7 +201,7 @@ class BldcPage : public QWizardPage
     Q_OBJECT
 
 public:
-    BldcPage(VescInterface *vesc, QWidget *parent = 0);
+    BldcPage(VescInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
     void initializePage() Q_DECL_OVERRIDE;
@@ -218,7 +218,7 @@ class FocPage : public QWizardPage
     Q_OBJECT
 
 public:
-    FocPage(VescInterface *vesc, QWidget *parent = 0);
+    FocPage(VescInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
 
@@ -234,7 +234,7 @@ class FocEncoderPage : public QWizardPage
     Q_OBJECT
 
 public:
-    FocEncoderPage(VescInterface *vesc, QWidget *parent = 0);
+    FocEncoderPage(VescInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
 
@@ -250,7 +250,7 @@ class FocHallPage : public QWizardPage
     Q_OBJECT
 
 public:
-    FocHallPage(VescInterface *vesc, QWidget *parent = 0);
+    FocHallPage(VescInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
 
@@ -266,7 +266,7 @@ class ConclusionPage : public QWizardPage
     Q_OBJECT
 
 public:
-    ConclusionPage(VescInterface *vesc, QWidget *parent = 0);
+    ConclusionPage(VescInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
 
 private:

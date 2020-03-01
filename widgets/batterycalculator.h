@@ -21,7 +21,7 @@
 #define BATTERYCALCULATOR_H
 
 #include <QWidget>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 namespace Ui {
 class BatteryCalculator;
@@ -35,8 +35,8 @@ public:
     explicit BatteryCalculator(QWidget *parent = 0);
     ~BatteryCalculator();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
 
 private slots:
     void on_batteryCalcButton_clicked();

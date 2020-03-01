@@ -69,14 +69,14 @@ void DetectFocEncoder::on_applyButton_clicked()
     }
 }
 
-VescInterface *DetectFocEncoder::vesc() const
+VescInterface *DetectFocEncoder::openroad() const
 {
     return mVesc;
 }
 
-void DetectFocEncoder::setVesc(VescInterface *vesc)
+void DetectFocEncoder::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     if (mVesc) {
         connect(mVesc->commands(), SIGNAL(encoderParamReceived(double,double,bool)),

@@ -23,15 +23,15 @@
 #include <QScrollBar>
 #include <QDesktopServices>
 
-StartupWizard::StartupWizard(VescInterface *vesc, QWidget *parent)
+StartupWizard::StartupWizard(VescInterface *openroad, QWidget *parent)
     : QWizard(parent)
 {
     QSettings().setValue("intro_done", false);
 
-    setPage(Page_Intro, new StartupIntroPage(vesc));
-    setPage(Page_Usage, new StartupUsagePage(vesc));
-    setPage(Page_Warranty, new StartupWarrantyPage(vesc));
-    setPage(Page_Conclusion, new StartupConclusionPage(vesc));
+    setPage(Page_Intro, new StartupIntroPage(openroad));
+    setPage(Page_Usage, new StartupUsagePage(openroad));
+    setPage(Page_Warranty, new StartupWarrantyPage(openroad));
+    setPage(Page_Conclusion, new StartupConclusionPage(openroad));
 
     setStartId(Page_Intro);
     setWizardStyle(ModernStyle);
@@ -62,14 +62,14 @@ void StartupWizard::idChanged(int id)
     }
 }
 
-StartupIntroPage::StartupIntroPage(VescInterface *vesc, QWidget *parent)
+StartupIntroPage::StartupIntroPage(VescInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
     mBrowser = new VTextBrowser;
     mBrowser->setFrameStyle(QFrame::NoFrame);
     mBrowser->viewport()->setAutoFillBackground(false);
 
-    ConfigParam *p = vesc->infoConfig()->getParam("wizard_startup_intro");
+    ConfigParam *p = openroad->infoConfig()->getParam("wizard_startup_intro");
     if (p != 0) {
         setTitle(p->longName);
         mBrowser->setHtml(p->description);
@@ -88,13 +88,13 @@ int StartupIntroPage::nextId() const
     return StartupWizard::Page_Usage;
 }
 
-StartupUsagePage::StartupUsagePage(VescInterface *vesc, QWidget *parent)
+StartupUsagePage::StartupUsagePage(VescInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
     mBrowser = new VTextBrowser;
     mAcceptBox = new QCheckBox("Yes, I understand and accept");
 
-    ConfigParam *p = vesc->infoConfig()->getParam("wizard_startup_usage");
+    ConfigParam *p = openroad->infoConfig()->getParam("wizard_startup_usage");
     if (p != 0) {
         setTitle(p->longName);
         setSubTitle(p->valString);
@@ -138,13 +138,13 @@ void StartupUsagePage::scrollRangeChanged()
     scrollValueChanged(mBrowser->verticalScrollBar()->value());
 }
 
-StartupWarrantyPage::StartupWarrantyPage(VescInterface *vesc, QWidget *parent)
+StartupWarrantyPage::StartupWarrantyPage(VescInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
     mBrowser = new VTextBrowser;
     mAcceptBox = new QCheckBox("Yes, I understand and accept");
 
-    ConfigParam *p = vesc->infoConfig()->getParam("wizard_startup_warranty");
+    ConfigParam *p = openroad->infoConfig()->getParam("wizard_startup_warranty");
     if (p != 0) {
         setTitle(p->longName);
         setSubTitle(p->valString);
@@ -188,14 +188,14 @@ void StartupWarrantyPage::scrollRangeChanged()
     scrollValueChanged(mBrowser->verticalScrollBar()->value());
 }
 
-StartupConclusionPage::StartupConclusionPage(VescInterface *vesc, QWidget *parent)
+StartupConclusionPage::StartupConclusionPage(VescInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
     mBrowser = new VTextBrowser;
     mBrowser->setFrameStyle(QFrame::NoFrame);
     mBrowser->viewport()->setAutoFillBackground(false);
 
-    ConfigParam *p = vesc->infoConfig()->getParam("wizard_startup_conclusion");
+    ConfigParam *p = openroad->infoConfig()->getParam("wizard_startup_conclusion");
     if (p != 0) {
         setTitle(p->longName);
         mBrowser->setHtml(p->description);

@@ -34,14 +34,14 @@ PageAppGeneral::~PageAppGeneral()
     delete ui;
 }
 
-VescInterface *PageAppGeneral::vesc() const
+VescInterface *PageAppGeneral::openroad() const
 {
     return mVesc;
 }
 
-void PageAppGeneral::setVesc(VescInterface *vesc)
+void PageAppGeneral::setVesc(VescInterface *openroad)
 {
-    mVesc = vesc;
+    mVesc = openroad;
 
     if (mVesc) {
         reloadParams();

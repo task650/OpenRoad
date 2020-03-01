@@ -21,7 +21,7 @@
 #define DETECTBLDC_H
 
 #include <QWidget>
-#include "vescinterface.h"
+#include "openroadinterface.h"
 
 namespace Ui {
 class DetectBldc;
@@ -35,8 +35,8 @@ public:
     explicit DetectBldc(QWidget *parent = 0);
     ~DetectBldc();
 
-    VescInterface *vesc() const;
-    void setVesc(VescInterface *vesc);
+    VescInterface *openroad() const;
+    void setVesc(VescInterface *openroad);
 
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
 

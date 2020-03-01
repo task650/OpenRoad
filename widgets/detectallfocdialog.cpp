@@ -23,13 +23,13 @@
 
 #include <QMessageBox>
 
-DetectAllFocDialog::DetectAllFocDialog(VescInterface *vesc, QWidget *parent) :
+DetectAllFocDialog::DetectAllFocDialog(VescInterface *openroad, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DetectAllFocDialog)
 {
     ui->setupUi(this);
 
-    mVesc = vesc;
+    mVesc = openroad;
     mRejectOk = true;
     mPulleyMotorOld = 1;
     mPulleyWheelOld = 1;
@@ -130,10 +130,10 @@ DetectAllFocDialog::~DetectAllFocDialog()
     delete ui;
 }
 
-void DetectAllFocDialog::showDialog(VescInterface *vesc, QWidget *parent)
+void DetectAllFocDialog::showDialog(VescInterface *openroad, QWidget *parent)
 {
-    DetectAllFocDialog *p = new DetectAllFocDialog(vesc, parent);
-    vesc->mcConfig()->updateParamInt("si_battery_cells", 3);
+    DetectAllFocDialog *p = new DetectAllFocDialog(openroad, parent);
+    openroad->mcConfig()->updateParamInt("si_battery_cells", 3);
     p->exec();
 }
 
