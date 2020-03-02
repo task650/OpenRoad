@@ -36,8 +36,8 @@ public:
     explicit PageConnection(QWidget *parent = nullptr);
     ~PageConnection();
 
-    VescInterface *openroad() const;
-    void setVesc(VescInterface *openroad);
+    OpenroadInterface *openroad() const;
+    void setOpenroad(OpenroadInterface *openroad);
 
 private slots:
     void timerSlot();
@@ -75,7 +75,7 @@ private slots:
 
 private:
     Ui::PageConnection *ui;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     QTimer *mTimer;
 
 };

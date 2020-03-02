@@ -28,7 +28,7 @@ PageSampledData::PageSampledData(QWidget *parent) :
     ui->setupUi(this);
 
     layout()->setContentsMargins(0, 0, 0, 0);
-    mVesc = 0;
+    mOpenroad = 0;
 
     mDoReplot = false;
     mDoFilterReplot = false;
@@ -75,17 +75,17 @@ PageSampledData::~PageSampledData()
     delete ui;
 }
 
-VescInterface *PageSampledData::openroad() const
+OpenroadInterface *PageSampledData::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void PageSampledData::setVesc(VescInterface *openroad)
+void PageSampledData::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    if (mVesc) {
-        connect(mVesc->commands(), SIGNAL(samplesReceived(QByteArray)),
+    if (mOpenroad) {
+        connect(mOpenroad->commands(), SIGNAL(samplesReceived(QByteArray)),
                 this, SLOT(samplesReceived(QByteArray)));
     }
 }
@@ -505,71 +505,71 @@ void PageSampledData::replotAll()
 
 void PageSampledData::on_sampleNowButton_clicked()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         clearBuffers();
-        mVesc->commands()->samplePrint(DEBUG_SAMPLING_NOW, ui->samplesBox->value(), ui->decimationBox->value());
+        mOpenroad->commands()->samplePrint(DEBUG_SAMPLING_NOW, ui->samplesBox->value(), ui->decimationBox->value());
         mSamplesToWait = ui->samplesBox->value();
     }
 }
 
 void PageSampledData::on_sampleStartButton_clicked()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         clearBuffers();
-        mVesc->commands()->samplePrint(DEBUG_SAMPLING_START, ui->samplesBox->value(), ui->decimationBox->value());
+        mOpenroad->commands()->samplePrint(DEBUG_SAMPLING_START, ui->samplesBox->value(), ui->decimationBox->value());
         mSamplesToWait = ui->samplesBox->value();
     }
 }
 
 void PageSampledData::on_sampleTriggerStartButton_clicked()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         clearBuffers();
-        mVesc->commands()->samplePrint(DEBUG_SAMPLING_TRIGGER_START, ui->samplesBox->value(), ui->decimationBox->value());
+        mOpenroad->commands()->samplePrint(DEBUG_SAMPLING_TRIGGER_START, ui->samplesBox->value(), ui->decimationBox->value());
         mSamplesToWait = ui->samplesBox->maximum();
     }
 }
 
 void PageSampledData::on_sampleTriggerFaultButton_clicked()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         clearBuffers();
-        mVesc->commands()->samplePrint(DEBUG_SAMPLING_TRIGGER_FAULT, ui->samplesBox->value(), ui->decimationBox->value());
+        mOpenroad->commands()->samplePrint(DEBUG_SAMPLING_TRIGGER_FAULT, ui->samplesBox->value(), ui->decimationBox->value());
         mSamplesToWait = ui->samplesBox->maximum();
     }
 }
 
 void PageSampledData::on_sampleTriggerStartNosendButton_clicked()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         clearBuffers();
-        mVesc->commands()->samplePrint(DEBUG_SAMPLING_TRIGGER_START_NOSEND, ui->samplesBox->value(), ui->decimationBox->value());
+        mOpenroad->commands()->samplePrint(DEBUG_SAMPLING_TRIGGER_START_NOSEND, ui->samplesBox->value(), ui->decimationBox->value());
         mSamplesToWait = ui->samplesBox->maximum();
     }
 }
 
 void PageSampledData::on_sampleTriggerFaultNosendButton_clicked()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         clearBuffers();
-        mVesc->commands()->samplePrint(DEBUG_SAMPLING_TRIGGER_FAULT_NOSEND, ui->samplesBox->value(), ui->decimationBox->value());
+        mOpenroad->commands()->samplePrint(DEBUG_SAMPLING_TRIGGER_FAULT_NOSEND, ui->samplesBox->value(), ui->decimationBox->value());
         mSamplesToWait = ui->samplesBox->maximum();
     }
 }
 
 void PageSampledData::on_sampleLastButton_clicked()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         clearBuffers();
-        mVesc->commands()->samplePrint(DEBUG_SAMPLING_SEND_LAST_SAMPLES, ui->samplesBox->value(), ui->decimationBox->value());
+        mOpenroad->commands()->samplePrint(DEBUG_SAMPLING_SEND_LAST_SAMPLES, ui->samplesBox->value(), ui->decimationBox->value());
         mSamplesToWait = ui->samplesBox->maximum();
     }
 }
 
 void PageSampledData::on_sampleStopButton_clicked()
 {
-    if (mVesc) {
-        mVesc->commands()->samplePrint(DEBUG_SAMPLING_OFF, ui->samplesBox->value(), ui->decimationBox->value());
+    if (mOpenroad) {
+        mOpenroad->commands()->samplePrint(DEBUG_SAMPLING_OFF, ui->samplesBox->value(), ui->decimationBox->value());
     }
 }
 

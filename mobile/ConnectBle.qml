@@ -28,8 +28,8 @@ import Vedder.openroad.commands 1.0
 Item {
     id: topItem
 
-    property BleUart mBle: VescIf.bleDevice()
-    property Commands mCommands: VescIf.commands()
+    property BleUart mBle: OpenroadIf.bleDevice()
+    property Commands mCommands: OpenroadIf.commands()
     property alias disconnectButton: disconnectButton
     property bool isHorizontal: width > height
     signal requestOpenControls()
@@ -85,7 +85,7 @@ Item {
                             if (bleItems.rowCount() > 0) {
                                 bleNameDialog.open()
                             } else {
-                                VescIf.emitMessageDialog("Set BLE Device Name",
+                                OpenroadIf.emitMessageDialog("Set BLE Device Name",
                                                          "No device selected.",
                                                          false, false);
                             }
@@ -138,7 +138,7 @@ Item {
                         Layout.columnSpan: 3
 
                         onClicked: {
-                            VescIf.disconnectPort()
+                            OpenroadIf.disconnectPort()
                         }
                     }
 
@@ -153,7 +153,7 @@ Item {
                         onClicked: {
                             if (bleItems.rowCount() > 0) {
                                 connectButton.enabled = false
-                                VescIf.connectBle(bleItems.get(bleBox.currentIndex).value)
+                                OpenroadIf.connectBle(bleItems.get(bleBox.currentIndex).value)
                             }
                         }
                     }
@@ -177,8 +177,8 @@ Item {
                         Layout.preferredWidth: 500
 
                         onClicked: {
-                            if (!VescIf.isPortConnected()) {
-                                VescIf.emitMessageDialog("FOC Setup Wizard",
+                            if (!OpenroadIf.isPortConnected()) {
+                                OpenroadIf.emitMessageDialog("FOC Setup Wizard",
                                                          "You are not connected to the VESC. Please connect in order " +
                                                          "to run this wizard.", false, false)
                             } else {
@@ -192,8 +192,8 @@ Item {
                         Layout.fillWidth: true
 
                         onClicked: {
-                            if (!VescIf.isPortConnected()) {
-                                VescIf.emitMessageDialog("Input Setup Wizard",
+                            if (!OpenroadIf.isPortConnected()) {
+                                OpenroadIf.emitMessageDialog("Input Setup Wizard",
                                                          "You are not connected to the VESC. Please connect in order " +
                                                          "to run this wizard.", false, false)
                             } else {
@@ -214,8 +214,8 @@ Item {
                         Layout.preferredWidth: 500
 
                         onClicked: {
-                            if (!VescIf.isPortConnected()) {
-                                VescIf.emitMessageDialog("NRF Quick Pair",
+                            if (!OpenroadIf.isPortConnected()) {
+                                OpenroadIf.emitMessageDialog("NRF Quick Pair",
                                                          "You are not connected to the VESC. Please connect in order " +
                                                          "to quick pair an NRF-based remote.", false, false)
                             } else {
@@ -364,8 +364,8 @@ Item {
                         Layout.preferredWidth: 500
 
                         onClicked: {
-                            if (!VescIf.isPortConnected()) {
-                                VescIf.emitMessageDialog("Directions",
+                            if (!OpenroadIf.isPortConnected()) {
+                                OpenroadIf.emitMessageDialog("Directions",
                                                          "You are not connected to the VESC. Please connect in order " +
                                                          "to map directions.", false, false)
                             } else {
@@ -440,8 +440,8 @@ Item {
         repeat: true
 
         onTriggered: {
-            connectButton.enabled = (bleItems.rowCount() > 0) && !VescIf.isPortConnected() && !mBle.isConnecting()
-            disconnectButton.enabled = VescIf.isPortConnected()
+            connectButton.enabled = (bleItems.rowCount() > 0) && !OpenroadIf.isPortConnected() && !mBle.isConnecting()
+            disconnectButton.enabled = OpenroadIf.isPortConnected()
         }
     }
 
@@ -458,7 +458,7 @@ Item {
             for (var addr in devs) {
                 var name = devs[addr]
                 var name2 = name + " [" + addr + "]"
-                var setName = VescIf.getBleName(addr)
+                var setName = OpenroadIf.getBleName(addr)
                 if (setName.length > 0) {
                     setName += " [" + addr + "]"
                     bleItems.insert(0, { key: setName, value: addr })
@@ -469,13 +469,13 @@ Item {
                 }
             }
 
-            connectButton.enabled = (bleItems.rowCount() > 0) && !VescIf.isPortConnected()
+            connectButton.enabled = (bleItems.rowCount() > 0) && !OpenroadIf.isPortConnected()
 
             bleBox.currentIndex = 0
         }
 
         onBleError: {
-            VescIf.emitMessageDialog("BLE Error", info, false, false)
+            OpenroadIf.emitMessageDialog("BLE Error", info, false, false)
         }
     }
 
@@ -539,8 +539,8 @@ Item {
                 var addr = bleItems.get(bleBox.currentIndex).value
                 var setName = stringInput.text + " [" + addr + "]"
 
-                VescIf.storeBleName(addr, stringInput.text)
-                VescIf.storeSettings()
+                OpenroadIf.storeBleName(addr, stringInput.text)
+                OpenroadIf.storeSettings()
 
                 bleItems.set(bleBox.currentIndex, { key: setName, value: addr })
                 bleBox.currentText
@@ -625,7 +625,7 @@ Item {
 
         onAccepted: {
             progDialog.open()
-            VescIf.confStoreBackup(true, "")
+            OpenroadIf.confStoreBackup(true, "")
             progDialog.close()
         }
     }
@@ -656,7 +656,7 @@ Item {
 
         onAccepted: {
             progDialog.open()
-            VescIf.confRestoreBackup(true)
+            OpenroadIf.confRestoreBackup(true)
             progDialog.close()
         }
     }

@@ -27,7 +27,7 @@ BatteryCalculator::BatteryCalculator(QWidget *parent) :
 {
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
-    mVesc = 0;
+    mOpenroad = 0;
     on_batteryCellBox_valueChanged(ui->batteryCellBox->value());
 }
 
@@ -38,20 +38,20 @@ BatteryCalculator::~BatteryCalculator()
 
 void BatteryCalculator::on_batteryCalcButton_clicked()
 {
-    if (mVesc) {
-        mVesc->mcConfig()->updateParamDouble("l_battery_cut_start", mValStart);
-        mVesc->mcConfig()->updateParamDouble("l_battery_cut_end", mValEnd);
+    if (mOpenroad) {
+        mOpenroad->mcConfig()->updateParamDouble("l_battery_cut_start", mValStart);
+        mOpenroad->mcConfig()->updateParamDouble("l_battery_cut_end", mValEnd);
     }
 }
 
-VescInterface *BatteryCalculator::openroad() const
+OpenroadInterface *BatteryCalculator::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void BatteryCalculator::setVesc(VescInterface *openroad)
+void BatteryCalculator::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 }
 
 void BatteryCalculator::on_batteryCellBox_valueChanged(int arg1)
@@ -88,7 +88,7 @@ void BatteryCalculator::calc()
 
 void BatteryCalculator::on_helpButton_clicked()
 {
-    if (mVesc) {
-        HelpDialog::showHelp(this, mVesc->infoConfig(), "help_battery_cutoff");
+    if (mOpenroad) {
+        HelpDialog::showHelp(this, mOpenroad->infoConfig(), "help_battery_cutoff");
     }
 }

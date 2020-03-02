@@ -23,7 +23,7 @@
 #include <QScrollBar>
 #include <QDesktopServices>
 
-StartupWizard::StartupWizard(VescInterface *openroad, QWidget *parent)
+StartupWizard::StartupWizard(OpenroadInterface *openroad, QWidget *parent)
     : QWizard(parent)
 {
     QSettings().setValue("intro_done", false);
@@ -62,7 +62,7 @@ void StartupWizard::idChanged(int id)
     }
 }
 
-StartupIntroPage::StartupIntroPage(VescInterface *openroad, QWidget *parent)
+StartupIntroPage::StartupIntroPage(OpenroadInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
     mBrowser = new VTextBrowser;
@@ -88,7 +88,7 @@ int StartupIntroPage::nextId() const
     return StartupWizard::Page_Usage;
 }
 
-StartupUsagePage::StartupUsagePage(VescInterface *openroad, QWidget *parent)
+StartupUsagePage::StartupUsagePage(OpenroadInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
     mBrowser = new VTextBrowser;
@@ -138,7 +138,7 @@ void StartupUsagePage::scrollRangeChanged()
     scrollValueChanged(mBrowser->verticalScrollBar()->value());
 }
 
-StartupWarrantyPage::StartupWarrantyPage(VescInterface *openroad, QWidget *parent)
+StartupWarrantyPage::StartupWarrantyPage(OpenroadInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
     mBrowser = new VTextBrowser;
@@ -188,7 +188,7 @@ void StartupWarrantyPage::scrollRangeChanged()
     scrollValueChanged(mBrowser->verticalScrollBar()->value());
 }
 
-StartupConclusionPage::StartupConclusionPage(VescInterface *openroad, QWidget *parent)
+StartupConclusionPage::StartupConclusionPage(OpenroadInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
     mBrowser = new VTextBrowser;

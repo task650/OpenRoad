@@ -27,7 +27,7 @@ PageAppNunchuk::PageAppNunchuk(QWidget *parent) :
 {
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
-    mVesc = nullptr;
+    mOpenroad = nullptr;
     ui->display->setDual(true);
 
     ui->throttlePlot->addGraph();
@@ -43,24 +43,24 @@ PageAppNunchuk::~PageAppNunchuk()
     delete ui;
 }
 
-VescInterface *PageAppNunchuk::openroad() const
+OpenroadInterface *PageAppNunchuk::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void PageAppNunchuk::setVesc(VescInterface *openroad)
+void PageAppNunchuk::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    if (mVesc) {
+    if (mOpenroad) {
         reloadParams();
 
-        connect(mVesc->commands(), SIGNAL(decodedChukReceived(double)),
+        connect(mOpenroad->commands(), SIGNAL(decodedChukReceived(double)),
                 this, SLOT(decodedChukReceived(double)));
 
-        connect(mVesc->appConfig(), SIGNAL(paramChangedDouble(QObject*,QString,double)),
+        connect(mOpenroad->appConfig(), SIGNAL(paramChangedDouble(QObject*,QString,double)),
                 this, SLOT(paramChangedDouble(QObject*,QString,double)));
-        connect(mVesc->appConfig(), SIGNAL(paramChangedEnum(QObject*,QString,int)),
+        connect(mOpenroad->appConfig(), SIGNAL(paramChangedEnum(QObject*,QString,int)),
                 this, SLOT(paramChangedEnum(QObject*,QString,int)));
 
         paramChangedEnum(nullptr, "app_chuk_conf.throttle_exp_mode", 0);
@@ -69,12 +69,12 @@ void PageAppNunchuk::setVesc(VescInterface *openroad)
 
 void PageAppNunchuk::reloadParams()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         ui->generalTab->clearParams();
         ui->throttleCurveTab->clearParams();
 
-        ui->generalTab->addParamSubgroup(mVesc->appConfig(), "openroad remote", "general");
-        ui->throttleCurveTab->addParamSubgroup(mVesc->appConfig(), "openroad remote", "throttle curve");
+        ui->generalTab->addParamSubgroup(mOpenroad->appConfig(), "openroad remote", "general");
+        ui->throttleCurveTab->addParamSubgroup(mOpenroad->appConfig(), "openroad remote", "throttle curve");
     }
 }
 
@@ -92,9 +92,9 @@ void PageAppNunchuk::paramChangedDouble(QObject *src, QString name, double newPa
     (void)newParam;
 
     if (name == "app_chuk_conf.throttle_exp" || name == "app_chuk_conf.throttle_exp_brake") {
-        int mode = mVesc->appConfig()->getParamEnum("app_chuk_conf.throttle_exp_mode");
-        float val_acc = mVesc->appConfig()->getParamDouble("app_chuk_conf.throttle_exp");
-        float val_brake = mVesc->appConfig()->getParamDouble("app_chuk_conf.throttle_exp_brake");
+        int mode = mOpenroad->appConfig()->getParamEnum("app_chuk_conf.throttle_exp_mode");
+        float val_acc = mOpenroad->appConfig()->getParamDouble("app_chuk_conf.throttle_exp");
+        float val_brake = mOpenroad->appConfig()->getParamDouble("app_chuk_conf.throttle_exp_brake");
 
         QVector<double> x;
         QVector<double> y;

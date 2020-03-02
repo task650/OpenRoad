@@ -26,7 +26,7 @@ PageFoc::PageFoc(QWidget *parent) :
 {
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
-    mVesc = 0;
+    mOpenroad = 0;
 }
 
 PageFoc::~PageFoc()
@@ -34,19 +34,19 @@ PageFoc::~PageFoc()
     delete ui;
 }
 
-VescInterface *PageFoc::openroad() const
+OpenroadInterface *PageFoc::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void PageFoc::setVesc(VescInterface *openroad)
+void PageFoc::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    if (mVesc) {
-        ui->detectFoc->setVesc(mVesc);
-        ui->detectFocHall->setVesc(mVesc);
-        ui->detectFocEncoder->setVesc(mVesc);
+    if (mOpenroad) {
+        ui->detectFoc->setOpenroad(mOpenroad);
+        ui->detectFocHall->setOpenroad(mOpenroad);
+        ui->detectFocEncoder->setOpenroad(mOpenroad);
 
         reloadParams();
     }
@@ -54,7 +54,7 @@ void PageFoc::setVesc(VescInterface *openroad)
 
 void PageFoc::reloadParams()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         ui->generalTab->clearParams();
         ui->sensorlessTab->clearParams();
         ui->hallTab->clearParams();
@@ -62,11 +62,11 @@ void PageFoc::reloadParams()
         ui->hfiTab->clearParams();
         ui->advancedTab->clearParams();
 
-        ui->generalTab->addParamSubgroup(mVesc->mcConfig(), "foc", "general");
-        ui->sensorlessTab->addParamSubgroup(mVesc->mcConfig(), "foc", "sensorless");
-        ui->hallTab->addParamSubgroup(mVesc->mcConfig(), "foc", "hall sensors");
-        ui->encoderTab->addParamSubgroup(mVesc->mcConfig(), "foc", "encoder");
-        ui->hfiTab->addParamSubgroup(mVesc->mcConfig(), "foc", "hfi");
-        ui->advancedTab->addParamSubgroup(mVesc->mcConfig(), "foc", "advanced");
+        ui->generalTab->addParamSubgroup(mOpenroad->mcConfig(), "foc", "general");
+        ui->sensorlessTab->addParamSubgroup(mOpenroad->mcConfig(), "foc", "sensorless");
+        ui->hallTab->addParamSubgroup(mOpenroad->mcConfig(), "foc", "hall sensors");
+        ui->encoderTab->addParamSubgroup(mOpenroad->mcConfig(), "foc", "encoder");
+        ui->hfiTab->addParamSubgroup(mOpenroad->mcConfig(), "foc", "hfi");
+        ui->advancedTab->addParamSubgroup(mOpenroad->mcConfig(), "foc", "advanced");
     }
 }

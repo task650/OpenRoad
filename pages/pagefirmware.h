@@ -36,8 +36,8 @@ public:
     explicit PageFirmware(QWidget *parent = 0);
     ~PageFirmware();
 
-    VescInterface *openroad() const;
-    void setVesc(VescInterface *openroad);
+    OpenroadInterface *openroad() const;
+    void setOpenroad(OpenroadInterface *openroad);
     void reloadParams();
 
 private slots:
@@ -58,7 +58,7 @@ private slots:
 
 private:
     Ui::PageFirmware *ui;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     QTimer *mTimer;
 
     void uploadFw(bool allOverCan);

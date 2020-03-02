@@ -26,7 +26,7 @@ PageSetupCalculators::PageSetupCalculators(QWidget *parent) :
 {
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
-    mVesc = 0;
+    mOpenroad = 0;
 
 }
 
@@ -45,12 +45,12 @@ void PageSetupCalculators::on_removeSetupButton_clicked()
 
 }
 
-VescInterface *PageSetupCalculators::openroad() const
+OpenroadInterface *PageSetupCalculators::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void PageSetupCalculators::setVesc(VescInterface *openroad)
+void PageSetupCalculators::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 }

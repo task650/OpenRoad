@@ -35,8 +35,8 @@ public:
     explicit PageWelcome(QWidget *parent = 0);
     ~PageWelcome();
 
-    VescInterface *openroad() const;
-    void setVesc(VescInterface *openroad);
+    OpenroadInterface *openroad() const;
+    void setOpenroad(OpenroadInterface *openroad);
 
 public slots:
     void startSetupWizardFocSimple();
@@ -48,7 +48,7 @@ private slots:
 
 private:
     Ui::PageWelcome *ui;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
 
 };
 

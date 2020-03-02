@@ -24,7 +24,7 @@
 #include <QApplication>
 #include <QQuickWindow>
 
-VescInterface *QmlUi::mVesc = nullptr;
+OpenroadInterface *QmlUi::mOpenroad = nullptr;
 
 QmlUi::QmlUi(QObject *parent) : QObject(parent)
 {
@@ -36,7 +36,7 @@ QmlUi::QmlUi(QObject *parent) : QObject(parent)
 
 bool QmlUi::startQmlUi()
 {
-    qmlRegisterSingletonType<VescInterface>("Vedder.openroad.openroadinterface", 1, 0, "VescIf", openroadinterface_singletontype_provider);
+    qmlRegisterSingletonType<OpenroadInterface>("Vedder.openroad.openroadinterface", 1, 0, "OpenroadIf", openroadinterface_singletontype_provider);
     qmlRegisterSingletonType<Utility>("Vedder.openroad.utility", 1, 0, "Utility", utility_singletontype_provider);
 #ifdef HAS_BLUETOOTH
     qmlRegisterType<BleUart>("Vedder.openroad.bleuart", 1, 0, "BleUart");
@@ -83,9 +83,9 @@ void QmlUi::setVisible(bool visible)
     }
 }
 
-VescInterface *QmlUi::openroad()
+OpenroadInterface *QmlUi::openroad()
 {
-    return mVesc;
+    return mOpenroad;
 }
 
 QObject *QmlUi::openroadinterface_singletontype_provider(QQmlEngine *engine, QJSEngine *scriptEngine)
@@ -93,8 +93,8 @@ QObject *QmlUi::openroadinterface_singletontype_provider(QQmlEngine *engine, QJS
     (void)engine;
     (void)scriptEngine;
 
-    VescInterface *openroad = new VescInterface();
-    mVesc = openroad;
+    OpenroadInterface *openroad = new OpenroadInterface();
+    mOpenroad = openroad;
     openroad->fwConfig()->loadParamsXml("://res/config/fw.xml");
     Utility::configLoadLatest(openroad);
 

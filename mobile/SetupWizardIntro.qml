@@ -26,7 +26,7 @@ import Vedder.openroad.openroadinterface 1.0
 import Vedder.openroad.configparams 1.0
 
 Item {
-    property ConfigParams mInfoConf: VescIf.infoConfig()
+    property ConfigParams mInfoConf: OpenroadIf.infoConfig()
 
     function openDialog() {
         dialog.open()
@@ -228,7 +228,7 @@ Item {
 
                 onClicked: {
                     if (stackLayout.currentIndex == (stackLayout.count - 1)) {
-                        VescIf.setIntroDone(true)
+                        OpenroadIf.setIntroDone(true)
                         dialog.close()
                     } else {
                         stackLayout.currentIndex++

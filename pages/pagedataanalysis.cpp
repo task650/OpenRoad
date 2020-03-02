@@ -26,7 +26,7 @@ PageDataAnalysis::PageDataAnalysis(QWidget *parent) :
 {
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
-    mVesc = 0;
+    mOpenroad = 0;
 }
 
 PageDataAnalysis::~PageDataAnalysis()
@@ -34,17 +34,17 @@ PageDataAnalysis::~PageDataAnalysis()
     delete ui;
 }
 
-VescInterface *PageDataAnalysis::openroad() const
+OpenroadInterface *PageDataAnalysis::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void PageDataAnalysis::setVesc(VescInterface *openroad)
+void PageDataAnalysis::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    if (mVesc) {
-        ConfigParam *p = mVesc->infoConfig()->getParam("data_analysis_description");
+    if (mOpenroad) {
+        ConfigParam *p = mOpenroad->infoConfig()->getParam("data_analysis_description");
         if (p != 0) {
             ui->textEdit->setHtml(p->description);
         } else {

@@ -31,7 +31,7 @@ Item {
             scrollCol.children[i - 1].destroy(1) // Only works with delay on android, seems to be a bug
         }
 
-        var prof = VescIf.getProfiles()
+        var prof = OpenroadIf.getProfiles()
         for (i = 0;i < prof.length;i++) {
             var component = Qt.createComponent("ProfileDisplay.qml");
             var disp = component.createObject(scrollCol, {"index": i})
@@ -48,7 +48,7 @@ Item {
 
     function handleProfileEdit(index) {
         editButtonEditor.indexNow = index
-        editButtonEditor.updateFromMcConfTemp(VescIf.getProfile(index))
+        editButtonEditor.updateFromMcConfTemp(OpenroadIf.getProfile(index))
         editButtonEditor.openDialog()
     }
 
@@ -66,8 +66,8 @@ Item {
 
         onClosed: {
             if (ok) {
-                VescIf.addProfile(getMcConfTemp())
-                VescIf.storeSettings()
+                OpenroadIf.addProfile(getMcConfTemp())
+                OpenroadIf.storeSettings()
             }
         }
     }
@@ -78,8 +78,8 @@ Item {
 
         onClosed: {
             if (ok) {
-                VescIf.updateProfile(indexNow, getMcConfTemp())
-                VescIf.storeSettings()
+                OpenroadIf.updateProfile(indexNow, getMcConfTemp())
+                OpenroadIf.storeSettings()
             }
         }
     }
@@ -106,8 +106,8 @@ Item {
         }
 
         onAccepted: {
-            VescIf.deleteProfile(indexNow)
-            VescIf.storeSettings()
+            OpenroadIf.deleteProfile(indexNow)
+            OpenroadIf.storeSettings()
         }
     }
 
@@ -187,13 +187,13 @@ Item {
         }
 
         onAccepted: {
-            VescIf.clearProfiles()
-            VescIf.storeSettings()
+            OpenroadIf.clearProfiles()
+            OpenroadIf.storeSettings()
         }
     }
 
     Connections {
-        target: VescIf
+        target: OpenroadIf
 
         onProfilesUpdated: {
             updateVisibleProfiles()

@@ -58,12 +58,12 @@
 #include <QAndroidJniEnvironment>
 #endif
 
-class VescInterface : public QObject
+class OpenroadInterface : public QObject
 {
     Q_OBJECT
 public:
-    explicit VescInterface(QObject *parent = nullptr);
-    ~VescInterface();
+    explicit OpenroadInterface(QObject *parent = nullptr);
+    ~OpenroadInterface();
     Q_INVOKABLE Commands *commands() const;
     Q_INVOKABLE ConfigParams *mcConfig();
     Q_INVOKABLE ConfigParams *appConfig();

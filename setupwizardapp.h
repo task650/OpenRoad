@@ -61,7 +61,7 @@ public:
         Input_NunchukNrf
     };
 
-    SetupWizardApp(VescInterface *openroad, QWidget *parent = 0);
+    SetupWizardApp(OpenroadInterface *openroad, QWidget *parent = 0);
 
 private slots:
     void idChanged(int id);
@@ -69,7 +69,7 @@ private slots:
 
 private:
     AspectImgLabel *mSideLabel;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     bool mCanLastFwd;
     int mCanLastId;
 
@@ -80,12 +80,12 @@ class AppIntroPage : public QWizardPage
     Q_OBJECT
 
 public:
-    AppIntroPage(VescInterface *openroad, QWidget *parent = 0);
+    AppIntroPage(OpenroadInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
 
 private:
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     QLabel *mLabel;
     bool mResetInputOk;
 
@@ -96,12 +96,12 @@ class AppConnectionPage : public QWizardPage
     Q_OBJECT
 
 public:
-    AppConnectionPage(VescInterface *openroad, QWidget *parent = 0);
+    AppConnectionPage(OpenroadInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool isComplete() const Q_DECL_OVERRIDE;
 
 private:
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     PageConnection *mPageConnection;
 
 };
@@ -111,11 +111,11 @@ class AppFirmwarePage : public QWizardPage
     Q_OBJECT
 
 public:
-    AppFirmwarePage(VescInterface *openroad, QWidget *parent = 0);
+    AppFirmwarePage(OpenroadInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
 
 private:
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     QLabel *mLabel;
 
 };
@@ -125,7 +125,7 @@ class AppMultiPage : public QWizardPage
     Q_OBJECT
 
 public:
-    AppMultiPage(VescInterface *openroad, QWidget *parent = 0);
+    AppMultiPage(OpenroadInterface *openroad, QWidget *parent = 0);
     void initializePage() Q_DECL_OVERRIDE;
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
@@ -139,7 +139,7 @@ signals:
     int canFwdChanged();
 
 private:
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     QListWidget *mCanFwdList;
 
 };
@@ -149,7 +149,7 @@ class AppGeneralPage : public QWizardPage
     Q_OBJECT
 
 public:
-    AppGeneralPage(VescInterface *openroad, QWidget *parent = 0);
+    AppGeneralPage(OpenroadInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
     void cleanupPage() Q_DECL_OVERRIDE;
@@ -162,7 +162,7 @@ signals:
     void inputTypeChanged();
 
 private:
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     QListWidget *mInputList;
 
 };
@@ -172,7 +172,7 @@ class AppNunchukPage : public QWizardPage
     Q_OBJECT
 
 public:
-    AppNunchukPage(VescInterface *openroad, QWidget *parent = 0);
+    AppNunchukPage(OpenroadInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
     void initializePage() Q_DECL_OVERRIDE;
@@ -182,7 +182,7 @@ private slots:
     void timerSlot();
 
 private:
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     ParamTable *mParamTab;
     NrfPair *mNrfPair;
     DisplayPercentage *mDisplay;
@@ -196,7 +196,7 @@ class AppPpmMapPage : public QWizardPage
     Q_OBJECT
 
 public:
-    AppPpmMapPage(VescInterface *openroad, QWidget *parent = 0);
+    AppPpmMapPage(OpenroadInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
     void initializePage() Q_DECL_OVERRIDE;
@@ -206,7 +206,7 @@ private slots:
     void timerSlot();
 
 private:
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     ParamTable *mParamTab;
     PpmMap *mPpmMap;
     QTimer *mTimer;
@@ -218,13 +218,13 @@ class AppPpmPage : public QWizardPage
     Q_OBJECT
 
 public:
-    AppPpmPage(VescInterface *openroad, QWidget *parent = 0);
+    AppPpmPage(OpenroadInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
     void initializePage() Q_DECL_OVERRIDE;
 
 private:
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     ParamTable *mParamTab;
     QPushButton *mWriteButton;
 
@@ -235,7 +235,7 @@ class AppAdcMapPage : public QWizardPage
     Q_OBJECT
 
 public:
-    AppAdcMapPage(VescInterface *openroad, QWidget *parent = 0);
+    AppAdcMapPage(OpenroadInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
     void initializePage() Q_DECL_OVERRIDE;
@@ -246,7 +246,7 @@ private slots:
     void timerSlot();
 
 private:
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     ParamTable *mParamTab;
     AdcMap *mAdcMap;
     QTimer *mTimer;
@@ -258,13 +258,13 @@ class AppAdcPage : public QWizardPage
     Q_OBJECT
 
 public:
-    AppAdcPage(VescInterface *openroad, QWidget *parent = 0);
+    AppAdcPage(OpenroadInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
     void initializePage() Q_DECL_OVERRIDE;
 
 private:
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     ParamTable *mParamTab;
     QPushButton *mWriteButton;
 
@@ -275,12 +275,12 @@ class AppConclusionPage : public QWizardPage
     Q_OBJECT
 
 public:
-    AppConclusionPage(VescInterface *openroad, QWidget *parent = 0);
+    AppConclusionPage(OpenroadInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     void initializePage() Q_DECL_OVERRIDE;
 
 private:
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     QLabel *mLabel;
 
 };

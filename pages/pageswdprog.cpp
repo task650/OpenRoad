@@ -29,7 +29,7 @@ PageSwdProg::PageSwdProg(QWidget *parent) :
 {
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
-    mVesc = 0;
+    mOpenroad = 0;
 
     mTimer = new QTimer(this);
     mTimer->start(500);
@@ -65,19 +65,19 @@ void PageSwdProg::on_chooseButton_clicked()
 
 void PageSwdProg::on_connectButton_clicked()
 {
-    if (mVesc) {
-        mVesc->commands()->bmMapPinsDefault();
+    if (mOpenroad) {
+        mOpenroad->commands()->bmMapPinsDefault();
         ui->connectButton->setEnabled(false);
-        Utility::waitSignal(mVesc->commands(), SIGNAL(bmMapPinsDefaultRes(bool)), 100);
+        Utility::waitSignal(mOpenroad->commands(), SIGNAL(bmMapPinsDefaultRes(bool)), 100);
         ui->connectButton->setEnabled(true);
-        mVesc->commands()->bmConnect();
+        mOpenroad->commands()->bmConnect();
     }
 }
 
 void PageSwdProg::on_uploadButton_clicked()
 {
-    if (mVesc) {
-        if (!mVesc->isPortConnected()) {
+    if (mOpenroad) {
+        if (!mOpenroad->isPortConnected()) {
             QMessageBox::critical(this,
                                   tr("Connection Error"),
                                   tr("The VESC is not connected."));
@@ -90,7 +90,7 @@ void PageSwdProg::on_uploadButton_clicked()
             if (current) {
                 SwdFw fw = current->data(Qt::UserRole).value<SwdFw>();
 
-                if (!mVesc->swdEraseFlash()) {
+                if (!mOpenroad->swdEraseFlash()) {
                     return;
                 }
 
@@ -109,7 +109,7 @@ void PageSwdProg::on_uploadButton_clicked()
                     return;
                 }
 
-                mVesc->swdUploadFw(file.readAll(), mFlashOffset + fw.addr, ui->verifyBox->isChecked());
+                mOpenroad->swdUploadFw(file.readAll(), mFlashOffset + fw.addr, ui->verifyBox->isChecked());
 
                 if (!fw.bootloaderPath.isEmpty()) {
                     QFile file2(fw.bootloaderPath);
@@ -127,7 +127,7 @@ void PageSwdProg::on_uploadButton_clicked()
                         return;
                     }
 
-                    mVesc->swdUploadFw(file2.readAll(), mFlashOffset + fw.bootloaderAddr, ui->verifyBox->isChecked());
+                    mOpenroad->swdUploadFw(file2.readAll(), mFlashOffset + fw.bootloaderAddr, ui->verifyBox->isChecked());
                 }
             } else {
                 QMessageBox::critical(this,
@@ -155,33 +155,33 @@ void PageSwdProg::on_uploadButton_clicked()
                                       tr("The selected file is too large to be a firmware."));
                 return;
             }
-            if (!mVesc->swdEraseFlash()) {
+            if (!mOpenroad->swdEraseFlash()) {
                 return;
             }
-            mVesc->swdUploadFw(file.readAll(), mFlashOffset, ui->verifyBox->isChecked());
+            mOpenroad->swdUploadFw(file.readAll(), mFlashOffset, ui->verifyBox->isChecked());
         }
 
-        mVesc->swdReboot();
+        mOpenroad->swdReboot();
     }
 }
 
-VescInterface *PageSwdProg::openroad() const
+OpenroadInterface *PageSwdProg::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void PageSwdProg::setVesc(VescInterface *openroad)
+void PageSwdProg::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    connect(mVesc, SIGNAL(fwUploadStatus(QString,double,bool)),
+    connect(mOpenroad, SIGNAL(fwUploadStatus(QString,double,bool)),
             this, SLOT(fwUploadStatus(QString,double,bool)));
-    connect(mVesc->commands(), SIGNAL(bmConnRes(int)),
+    connect(mOpenroad->commands(), SIGNAL(bmConnRes(int)),
             this, SLOT(bmConnRes(int)));
 
-    connect(mVesc->commands(), &Commands::bmMapPinsNrf5xRes, [this](bool res) {
+    connect(mOpenroad->commands(), &Commands::bmMapPinsNrf5xRes, [this](bool res) {
         if (!res) {
-            mVesc->emitMessageDialog("Connect NRF5X",
+            mOpenroad->emitMessageDialog("Connect NRF5X",
                                      "This hardware version does not have a SWD connection to the "
                                      "NRF5X module.",
                                      false, false);
@@ -191,7 +191,7 @@ void PageSwdProg::setVesc(VescInterface *openroad)
 
 void PageSwdProg::timerSlot()
 {
-    if (mVesc && !mVesc->isPortConnected()) {
+    if (mOpenroad && !mOpenroad->isPortConnected()) {
         ui->targetLabel->clear();
         ui->fwList->clear();
     }
@@ -223,10 +223,10 @@ void PageSwdProg::bmConnRes(int res)
 
     if (res == -2) {
         ui->targetLabel->clear();
-        mVesc->emitMessageDialog("Connect to SWD Target", "Could not recognize target", false, false);
+        mOpenroad->emitMessageDialog("Connect to SWD Target", "Could not recognize target", false, false);
     } else if (res == -1) {
         ui->targetLabel->clear();
-        mVesc->emitMessageDialog("Connect to SWD Target", "Could not connect to target", false, false);
+        mOpenroad->emitMessageDialog("Connect to SWD Target", "Could not connect to target", false, false);
     } else if (res == 1) {
         ui->targetLabel->setText("STM32F40x");
         mFlashOffset = 0x08000000;
@@ -313,8 +313,8 @@ void PageSwdProg::bmConnRes(int res)
 
 void PageSwdProg::on_disconnectButton_clicked()
 {
-    if (mVesc) {
-        mVesc->commands()->bmDisconnect();
+    if (mOpenroad) {
+        mOpenroad->commands()->bmDisconnect();
         ui->targetLabel->clear();
         ui->fwList->clear();
     }
@@ -322,8 +322,8 @@ void PageSwdProg::on_disconnectButton_clicked()
 
 void PageSwdProg::on_cancelButton_clicked()
 {
-    if (mVesc) {
-        mVesc->swdCancel();
+    if (mOpenroad) {
+        mOpenroad->swdCancel();
     }
 }
 
@@ -342,15 +342,15 @@ void PageSwdProg::addSwdFw(QString name, QString path, uint32_t addr, QString bl
 
 void PageSwdProg::on_eraseFlashButton_clicked()
 {
-    if (mVesc) {
-        if (!mVesc->isPortConnected()) {
+    if (mOpenroad) {
+        if (!mOpenroad->isPortConnected()) {
             QMessageBox::critical(this,
                                   tr("Connection Error"),
                                   tr("The VESC is not connected."));
             return;
         }
 
-        if (mVesc->swdEraseFlash()) {
+        if (mOpenroad->swdEraseFlash()) {
             QMessageBox::information(this,
                                   tr("Erase Flash"),
                                   tr("The flash memory on the target was erased successfully!"));
@@ -360,11 +360,11 @@ void PageSwdProg::on_eraseFlashButton_clicked()
 
 void PageSwdProg::on_connectNrf5xButton_clicked()
 {
-    if (mVesc) {
-        mVesc->commands()->bmMapPinsNrf5x();
+    if (mOpenroad) {
+        mOpenroad->commands()->bmMapPinsNrf5x();
         ui->connectNrf5xButton->setEnabled(false);
-        Utility::waitSignal(mVesc->commands(), SIGNAL(bmMapPinsNrf5xRes(bool)), 100);
+        Utility::waitSignal(mOpenroad->commands(), SIGNAL(bmMapPinsNrf5xRes(bool)), 100);
         ui->connectNrf5xButton->setEnabled(true);
-        mVesc->commands()->bmConnect();
+        mOpenroad->commands()->bmConnect();
     }
 }

@@ -37,8 +37,8 @@ public:
 
     static double map(double x, double in_min, double in_max, double out_min, double out_max);
     static float throttle_curve(float val, float curve_acc, float curve_brake, int mode);
-    static bool autoconnectBlockingWithProgress(VescInterface *openroad, QWidget *parent = nullptr);
-    Q_INVOKABLE static void checkVersion(VescInterface *openroad = nullptr);
+    static bool autoconnectBlockingWithProgress(OpenroadInterface *openroad, QWidget *parent = nullptr);
+    Q_INVOKABLE static void checkVersion(OpenroadInterface *openroad = nullptr);
     Q_INVOKABLE static QString fwChangeLog();
     Q_INVOKABLE static QString openroadToolChangeLog();
     Q_INVOKABLE static QString aboutText();
@@ -47,21 +47,21 @@ public:
     Q_INVOKABLE static void keepScreenOn(bool on);
     Q_INVOKABLE static bool waitSignal(QObject *sender, QString signal, int timeoutMs);
     Q_INVOKABLE static void sleepWithEventLoop(int timeMs);
-    Q_INVOKABLE static QString detectAllFoc(VescInterface *openroad,
+    Q_INVOKABLE static QString detectAllFoc(OpenroadInterface *openroad,
                                             bool detect_can, double max_power_loss, double min_current_in,
                                             double max_current_in, double openloop_rpm, double sl_erpm);
-    Q_INVOKABLE static bool resetInputCan(VescInterface *openroad, QVector<int> canIds);
-    Q_INVOKABLE static bool setBatteryCutCan(VescInterface *openroad, QVector<int> canIds,
+    Q_INVOKABLE static bool resetInputCan(OpenroadInterface *openroad, QVector<int> canIds);
+    Q_INVOKABLE static bool setBatteryCutCan(OpenroadInterface *openroad, QVector<int> canIds,
                                              double cutStart, double cutEnd);
-    Q_INVOKABLE static bool setBatteryCutCanFromCurrentConfig(VescInterface *openroad, QVector<int> canIds);
-    Q_INVOKABLE static bool setInvertDirection(VescInterface *openroad, int canId, bool inverted);
-    Q_INVOKABLE static bool getInvertDirection(VescInterface *openroad, int canId);
-    Q_INVOKABLE static QString testDirection(VescInterface *openroad, int canId, double duty, int ms);
-    Q_INVOKABLE static bool restoreConfAll(VescInterface *openroad, bool can, bool mc, bool app);
+    Q_INVOKABLE static bool setBatteryCutCanFromCurrentConfig(OpenroadInterface *openroad, QVector<int> canIds);
+    Q_INVOKABLE static bool setInvertDirection(OpenroadInterface *openroad, int canId, bool inverted);
+    Q_INVOKABLE static bool getInvertDirection(OpenroadInterface *openroad, int canId);
+    Q_INVOKABLE static QString testDirection(OpenroadInterface *openroad, int canId, double duty, int ms);
+    Q_INVOKABLE static bool restoreConfAll(OpenroadInterface *openroad, bool can, bool mc, bool app);
     Q_INVOKABLE static bool almostEqual(double A, double B, double eps);
-    static bool createParamParserC(VescInterface *openroad, QString filename);
+    static bool createParamParserC(OpenroadInterface *openroad, QString filename);
     static uint32_t crc32c(uint8_t *data, uint32_t len);
-    static bool checkFwCompatibility(VescInterface *openroad);
+    static bool checkFwCompatibility(OpenroadInterface *openroad);
     Q_INVOKABLE static QVariantList getNetworkAddresses();
     Q_INVOKABLE static void startGnssForegroundService();
     Q_INVOKABLE static void stopGnssForegroundService();
@@ -73,11 +73,11 @@ public:
     static void enuToLlh(const double *iLlh, const double *xyz, double *llh);
 
     static bool configCheckCompatibility(int fwMajor, int fwMinor);
-    static bool configLoad(VescInterface *openroad, int fwMajor, int fwMinor);
+    static bool configLoad(OpenroadInterface *openroad, int fwMajor, int fwMinor);
     static QPair<int, int> configLatestSupported();
-    static bool configLoadLatest(VescInterface *openroad);
+    static bool configLoadLatest(OpenroadInterface *openroad);
     static QVector<QPair<int, int>> configSupportedFws();
-    static bool configLoadCompatible(VescInterface *openroad, QString &uuidRx);
+    static bool configLoadCompatible(OpenroadInterface *openroad, QString &uuidRx);
 
     template<typename QEnum>
     static QString QEnumToQString (const QEnum value) {

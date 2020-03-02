@@ -37,8 +37,8 @@ public:
     explicit PageRtData(QWidget *parent = nullptr);
     ~PageRtData();
 
-    VescInterface *openroad() const;
-    void setVesc(VescInterface *openroad);
+    OpenroadInterface *openroad() const;
+    void setOpenroad(OpenroadInterface *openroad);
 
 private slots:
     void timerSlot();
@@ -72,7 +72,7 @@ private slots:
 
 private:
     Ui::PageRtData *ui;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     QTimer *mTimer;
 
     QVector<double> mTempMosVec;

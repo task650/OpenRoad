@@ -37,8 +37,8 @@ public:
     explicit PageSampledData(QWidget *parent = 0);
     ~PageSampledData();
 
-    VescInterface *openroad() const;
-    void setVesc(VescInterface *openroad);
+    OpenroadInterface *openroad() const;
+    void setOpenroad(OpenroadInterface *openroad);
 
 private slots:
     void timerSlot();
@@ -62,7 +62,7 @@ private slots:
 
 private:
     Ui::PageSampledData *ui;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     QTimer *mTimer;
 
     int mSampleInt;

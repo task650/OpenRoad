@@ -43,7 +43,7 @@
 #define VT_INTRO_VERSION 1
 #endif
 
-VescInterface::VescInterface(QObject *parent) : QObject(parent)
+OpenroadInterface::OpenroadInterface(QObject *parent) : QObject(parent)
 {
     qRegisterMetaType<MCCONF_TEMP>();
     qRegisterMetaType<MC_VALUES>();
@@ -407,7 +407,7 @@ VescInterface::VescInterface(QObject *parent) : QObject(parent)
     });
 }
 
-VescInterface::~VescInterface()
+OpenroadInterface::~OpenroadInterface()
 {
     storeSettings();
     closeRtLogFile();
@@ -419,32 +419,32 @@ VescInterface::~VescInterface()
     Utility::stopGnssForegroundService();
 }
 
-Commands *VescInterface::commands() const
+Commands *OpenroadInterface::commands() const
 {
     return mCommands;
 }
 
-ConfigParams *VescInterface::mcConfig()
+ConfigParams *OpenroadInterface::mcConfig()
 {
     return mMcConfig;
 }
 
-ConfigParams *VescInterface::appConfig()
+ConfigParams *OpenroadInterface::appConfig()
 {
     return mAppConfig;
 }
 
-ConfigParams *VescInterface::infoConfig()
+ConfigParams *OpenroadInterface::infoConfig()
 {
     return mInfoConfig;
 }
 
-ConfigParams *VescInterface::fwConfig()
+ConfigParams *OpenroadInterface::fwConfig()
 {
     return mFwConfig;
 }
 
-QStringList VescInterface::getSupportedFirmwares()
+QStringList OpenroadInterface::getSupportedFirmwares()
 {
     QList<QPair<int, int> > fwPairs = getSupportedFirmwarePairs();
     QStringList fws;
@@ -457,7 +457,7 @@ QStringList VescInterface::getSupportedFirmwares()
     return fws;
 }
 
-QList<QPair<int, int> > VescInterface::getSupportedFirmwarePairs()
+QList<QPair<int, int> > OpenroadInterface::getSupportedFirmwarePairs()
 {
     QList<QPair<int, int> > fws;
 
@@ -476,32 +476,32 @@ QList<QPair<int, int> > VescInterface::getSupportedFirmwarePairs()
     return fws;
 }
 
-QString VescInterface::getFirmwareNow()
+QString OpenroadInterface::getFirmwareNow()
 {
     return mFwTxt;
 }
 
-QPair<int, int> VescInterface::getFirmwareNowPair()
+QPair<int, int> OpenroadInterface::getFirmwareNowPair()
 {
     return mFwPair;
 }
 
-void VescInterface::emitStatusMessage(const QString &msg, bool isGood)
+void OpenroadInterface::emitStatusMessage(const QString &msg, bool isGood)
 {
     emit statusMessage(msg, isGood);
 }
 
-void VescInterface::emitMessageDialog(const QString &title, const QString &msg, bool isGood, bool richText)
+void OpenroadInterface::emitMessageDialog(const QString &title, const QString &msg, bool isGood, bool richText)
 {
     emit messageDialog(title, msg, isGood, richText);
 }
 
-bool VescInterface::fwRx()
+bool OpenroadInterface::fwRx()
 {
     return mFwVersionReceived;
 }
 
-void VescInterface::storeSettings()
+void OpenroadInterface::storeSettings()
 {
     mSettings.remove("bleNames");
     {
@@ -566,24 +566,24 @@ void VescInterface::storeSettings()
     mSettings.sync();
 }
 
-QVariantList VescInterface::getProfiles()
+QVariantList OpenroadInterface::getProfiles()
 {
     return mProfiles;
 }
 
-void VescInterface::addProfile(QVariant profile)
+void OpenroadInterface::addProfile(QVariant profile)
 {
     mProfiles.append(profile);
     emit profilesUpdated();
 }
 
-void VescInterface::clearProfiles()
+void OpenroadInterface::clearProfiles()
 {
     mProfiles.clear();
     emit profilesUpdated();
 }
 
-void VescInterface::deleteProfile(int index)
+void OpenroadInterface::deleteProfile(int index)
 {
     if (index >= 0 && mProfiles.length() > index) {
         mProfiles.removeAt(index);
@@ -591,7 +591,7 @@ void VescInterface::deleteProfile(int index)
     }
 }
 
-void VescInterface::moveProfileUp(int index)
+void OpenroadInterface::moveProfileUp(int index)
 {
     if (index > 0 && index < mProfiles.size()) {
         mProfiles.swap(index, index - 1);
@@ -599,7 +599,7 @@ void VescInterface::moveProfileUp(int index)
     }
 }
 
-void VescInterface::moveProfileDown(int index)
+void OpenroadInterface::moveProfileDown(int index)
 {
     if (index >= 0 && index < (mProfiles.size() - 1)) {
         mProfiles.swap(index, index + 1);
@@ -607,7 +607,7 @@ void VescInterface::moveProfileDown(int index)
     }
 }
 
-MCCONF_TEMP VescInterface::getProfile(int index)
+MCCONF_TEMP OpenroadInterface::getProfile(int index)
 {
     MCCONF_TEMP conf = createMcconfTemp();
 
@@ -618,7 +618,7 @@ MCCONF_TEMP VescInterface::getProfile(int index)
     return conf;
 }
 
-void VescInterface::updateProfile(int index, QVariant profile)
+void OpenroadInterface::updateProfile(int index, QVariant profile)
 {
     if (index >= 0 && mProfiles.length() > index) {
         mProfiles[index] = profile;
@@ -626,7 +626,7 @@ void VescInterface::updateProfile(int index, QVariant profile)
     }
 }
 
-bool VescInterface::isProfileInUse(int index)
+bool OpenroadInterface::isProfileInUse(int index)
 {
     MCCONF_TEMP conf = getProfile(index);
 
@@ -679,7 +679,7 @@ bool VescInterface::isProfileInUse(int index)
     return res;
 }
 
-MCCONF_TEMP VescInterface::createMcconfTemp()
+MCCONF_TEMP OpenroadInterface::createMcconfTemp()
 {
     MCCONF_TEMP conf;
     conf.name = "Unnamed Profile";
@@ -694,7 +694,7 @@ MCCONF_TEMP VescInterface::createMcconfTemp()
     return conf;
 }
 
-void VescInterface::updateMcconfFromProfile(MCCONF_TEMP profile)
+void OpenroadInterface::updateMcconfFromProfile(MCCONF_TEMP profile)
 {
     double speedFact = ((double(mMcConfig->getParamInt("si_motor_poles")) / 2.0) * 60.0 *
             mMcConfig->getParamDouble("si_gear_ratio")) /
@@ -710,12 +710,12 @@ void VescInterface::updateMcconfFromProfile(MCCONF_TEMP profile)
     mMcConfig->updateParamDouble("l_max_duty", profile.duty_max);
 }
 
-QStringList VescInterface::getPairedUuids()
+QStringList OpenroadInterface::getPairedUuids()
 {
     return mPairedUuids;
 }
 
-bool VescInterface::addPairedUuid(QString uuid)
+bool OpenroadInterface::addPairedUuid(QString uuid)
 {
     bool res = false;
 
@@ -745,7 +745,7 @@ bool VescInterface::addPairedUuid(QString uuid)
     return res;
 }
 
-bool VescInterface::deletePairedUuid(QString uuid)
+bool OpenroadInterface::deletePairedUuid(QString uuid)
 {
     bool res = false;
 
@@ -764,13 +764,13 @@ bool VescInterface::deletePairedUuid(QString uuid)
     return res;
 }
 
-void VescInterface::clearPairedUuids()
+void OpenroadInterface::clearPairedUuids()
 {
     mPairedUuids.clear();
     emit pairingListUpdated();
 }
 
-bool VescInterface::hasPairedUuid(QString uuid)
+bool OpenroadInterface::hasPairedUuid(QString uuid)
 {
     bool res = false;
 
@@ -787,7 +787,7 @@ bool VescInterface::hasPairedUuid(QString uuid)
     return res;
 }
 
-QString VescInterface::getConnectedUuid()
+QString OpenroadInterface::getConnectedUuid()
 {
     QString res;
 
@@ -798,7 +798,7 @@ QString VescInterface::getConnectedUuid()
     return res;
 }
 
-bool VescInterface::isIntroDone()
+bool OpenroadInterface::isIntroDone()
 {
     if (mSettings.contains("introVersion")) {
         if (mSettings.value("introVersion").toInt() != VT_INTRO_VERSION) {
@@ -811,23 +811,23 @@ bool VescInterface::isIntroDone()
     return mSettings.value("intro_done", false).toBool();
 }
 
-void VescInterface::setIntroDone(bool done)
+void OpenroadInterface::setIntroDone(bool done)
 {
     mSettings.setValue("introVersion", VT_INTRO_VERSION);
     mSettings.setValue("intro_done", done);
 }
 
-QString VescInterface::getLastTcpServer() const
+QString OpenroadInterface::getLastTcpServer() const
 {
     return mLastTcpServer;
 }
 
-int VescInterface::getLastTcpPort() const
+int OpenroadInterface::getLastTcpPort() const
 {
     return mLastTcpPort;
 }
 
-bool VescInterface::swdEraseFlash()
+bool OpenroadInterface::swdEraseFlash()
 {
     auto waitBmEraseRes = [this]() {
         int res = -10;
@@ -875,7 +875,7 @@ bool VescInterface::swdEraseFlash()
     return true;
 }
 
-bool VescInterface::swdUploadFw(QByteArray newFirmware, uint32_t startAddr,
+bool OpenroadInterface::swdUploadFw(QByteArray newFirmware, uint32_t startAddr,
                                 bool verify, bool isLzo)
 {
     bool supportsLzo = mCommands->getLimitedCompatibilityCommands().
@@ -1035,12 +1035,12 @@ bool VescInterface::swdUploadFw(QByteArray newFirmware, uint32_t startAddr,
     return true;
 }
 
-void VescInterface::swdCancel()
+void OpenroadInterface::swdCancel()
 {
     mCancelSwdUpload = true;
 }
 
-bool VescInterface::swdReboot()
+bool OpenroadInterface::swdReboot()
 {
     auto waitBmReboot = [this]() {
         int res = -10;
@@ -1083,7 +1083,7 @@ bool VescInterface::swdReboot()
     return true;
 }
 
-bool VescInterface::fwEraseNewApp(bool fwdCan, quint32 fwSize)
+bool OpenroadInterface::fwEraseNewApp(bool fwdCan, quint32 fwSize)
 {
     auto waitEraseRes = [this]() {
         int res = -10;
@@ -1128,7 +1128,7 @@ bool VescInterface::fwEraseNewApp(bool fwdCan, quint32 fwSize)
     return true;
 }
 
-bool VescInterface::fwEraseBootloader(bool fwdCan)
+bool OpenroadInterface::fwEraseBootloader(bool fwdCan)
 {
     auto waitEraseRes = [this]() {
         int res = -10;
@@ -1173,7 +1173,7 @@ bool VescInterface::fwEraseBootloader(bool fwdCan)
     return true;
 }
 
-bool VescInterface::fwUpload(QByteArray &newFirmware, bool isBootloader, bool fwdCan, bool isLzo)
+bool OpenroadInterface::fwUpload(QByteArray &newFirmware, bool isBootloader, bool fwdCan, bool isLzo)
 {
     mIsLastFwBootloader = isBootloader;
     mFwUploadProgress = 0.0;
@@ -1354,27 +1354,27 @@ bool VescInterface::fwUpload(QByteArray &newFirmware, bool isBootloader, bool fw
     return true;
 }
 
-void VescInterface::fwUploadCancel()
+void OpenroadInterface::fwUploadCancel()
 {
     mCancelFwUpload = true;
 }
 
-double VescInterface::getFwUploadProgress()
+double OpenroadInterface::getFwUploadProgress()
 {
     return mFwUploadProgress;
 }
 
-QString VescInterface::getFwUploadStatus()
+QString OpenroadInterface::getFwUploadStatus()
 {
     return mFwUploadStatus;
 }
 
-bool VescInterface::isCurrentFwBootloader()
+bool OpenroadInterface::isCurrentFwBootloader()
 {
     return mIsLastFwBootloader;
 }
 
-bool VescInterface::openRtLogFile(QString outDirectory)
+bool OpenroadInterface::openRtLogFile(QString outDirectory)
 {
     if (outDirectory.startsWith("file:/")) {
         outDirectory.remove(0, 6);
@@ -1498,24 +1498,24 @@ bool VescInterface::openRtLogFile(QString outDirectory)
     return res;
 }
 
-void VescInterface::closeRtLogFile()
+void OpenroadInterface::closeRtLogFile()
 {
     if (mRtLogFile.isOpen()) {
         mRtLogFile.close();
     }
 }
 
-bool VescInterface::isRtLogOpen()
+bool OpenroadInterface::isRtLogOpen()
 {
     return mRtLogFile.isOpen();
 }
 
-QVector<LOG_DATA> VescInterface::getRtLogData()
+QVector<LOG_DATA> OpenroadInterface::getRtLogData()
 {
     return mRtLogData;
 }
 
-bool VescInterface::loadRtLogFile(QString file)
+bool OpenroadInterface::loadRtLogFile(QString file)
 {
     bool res = false;
 
@@ -1627,7 +1627,7 @@ bool VescInterface::loadRtLogFile(QString file)
     return res;
 }
 
-LOG_DATA VescInterface::getRtLogSample(double progress)
+LOG_DATA OpenroadInterface::getRtLogSample(double progress)
 {
     LOG_DATA d;
 
@@ -1639,7 +1639,7 @@ LOG_DATA VescInterface::getRtLogSample(double progress)
     return d;
 }
 
-LOG_DATA VescInterface::getRtLogSampleAtValTimeFromStart(int time)
+LOG_DATA OpenroadInterface::getRtLogSampleAtValTimeFromStart(int time)
 {
     LOG_DATA d;
 
@@ -1663,12 +1663,12 @@ LOG_DATA VescInterface::getRtLogSampleAtValTimeFromStart(int time)
     return d;
 }
 
-bool VescInterface::useImperialUnits()
+bool OpenroadInterface::useImperialUnits()
 {
     return mUseImperialUnits;
 }
 
-void VescInterface::setUseImperialUnits(bool useImperialUnits)
+void OpenroadInterface::setUseImperialUnits(bool useImperialUnits)
 {
     bool changed = useImperialUnits != mUseImperialUnits;
     mUseImperialUnits = useImperialUnits;
@@ -1677,27 +1677,27 @@ void VescInterface::setUseImperialUnits(bool useImperialUnits)
     }
 }
 
-bool VescInterface::keepScreenOn()
+bool OpenroadInterface::keepScreenOn()
 {
     return mKeepScreenOn;
 }
 
-void VescInterface::setKeepScreenOn(bool on)
+void OpenroadInterface::setKeepScreenOn(bool on)
 {
     mKeepScreenOn = on;
 }
 
-bool VescInterface::useWakeLock()
+bool OpenroadInterface::useWakeLock()
 {
     return mUseWakeLock;
 }
 
-void VescInterface::setUseWakeLock(bool on)
+void OpenroadInterface::setUseWakeLock(bool on)
 {
     mUseWakeLock = on;
 }
 
-bool VescInterface::setWakeLock(bool lock)
+bool OpenroadInterface::setWakeLock(bool lock)
 {
 #ifdef Q_OS_ANDROID
     if (mWakeLock.isValid()) {
@@ -1723,41 +1723,41 @@ bool VescInterface::setWakeLock(bool lock)
 }
 
 #ifdef HAS_SERIALPORT
-QString VescInterface::getLastSerialPort() const
+QString OpenroadInterface::getLastSerialPort() const
 {
     return mLastSerialPort;
 }
 
-int VescInterface::getLastSerialBaud() const
+int OpenroadInterface::getLastSerialBaud() const
 {
     return mLastSerialBaud;
 }
 #endif
 
 #ifdef HAS_CANBUS
-QString VescInterface::getLastCANbusInterface() const
+QString OpenroadInterface::getLastCANbusInterface() const
 {
     return mLastCanDeviceInterface;
 }
 
-int VescInterface::getLastCANbusBitrate() const
+int OpenroadInterface::getLastCANbusBitrate() const
 {
     return mLastCanDeviceBitrate;
 }
 #endif
 
 #ifdef HAS_BLUETOOTH
-BleUart *VescInterface::bleDevice()
+BleUart *OpenroadInterface::bleDevice()
 {
     return mBleUart;
 }
 
-void VescInterface::storeBleName(QString address, QString name)
+void OpenroadInterface::storeBleName(QString address, QString name)
 {
     mBleNames.insert(address, name);
 }
 
-QString VescInterface::getBleName(QString address)
+QString OpenroadInterface::getBleName(QString address)
 {
     QString res;
     if(mBleNames.contains(address)) {
@@ -1766,13 +1766,13 @@ QString VescInterface::getBleName(QString address)
     return res;
 }
 
-QString VescInterface::getLastBleAddr() const
+QString OpenroadInterface::getLastBleAddr() const
 {
     return mLastBleAddr;
 }
 #endif
 
-bool VescInterface::isPortConnected()
+bool OpenroadInterface::isPortConnected()
 {
     bool res = false;
 
@@ -1801,7 +1801,7 @@ bool VescInterface::isPortConnected()
     return res;
 }
 
-void VescInterface::disconnectPort()
+void OpenroadInterface::disconnectPort()
 {
 #ifdef HAS_SERIALPORT
     if(mSerialPort->isOpen()) {
@@ -1835,7 +1835,7 @@ void VescInterface::disconnectPort()
     mFwRetries = 0;
 }
 
-bool VescInterface::reconnectLastPort()
+bool OpenroadInterface::reconnectLastPort()
 {
     if (mLastConnType == CONN_SERIAL) {
 #ifdef HAS_SERIALPORT
@@ -1876,7 +1876,7 @@ bool VescInterface::reconnectLastPort()
     }
 }
 
-bool VescInterface::autoconnect()
+bool OpenroadInterface::autoconnect()
 {
     bool res = false;
 
@@ -1929,7 +1929,7 @@ bool VescInterface::autoconnect()
     return res;
 }
 
-QString VescInterface::getConnectedPortName()
+QString OpenroadInterface::getConnectedPortName()
 {
     QString res = tr("Not connected");
     bool connected = false;
@@ -1967,7 +1967,7 @@ QString VescInterface::getConnectedPortName()
     return res;
 }
 
-bool VescInterface::connectSerial(QString port, int baudrate)
+bool OpenroadInterface::connectSerial(QString port, int baudrate)
 {
 #ifdef HAS_SERIALPORT
     bool found = false;
@@ -2034,7 +2034,7 @@ bool VescInterface::connectSerial(QString port, int baudrate)
 #endif
 }
 
-QList<VSerialInfo_t> VescInterface::listSerialPorts()
+QList<VSerialInfo_t> OpenroadInterface::listSerialPorts()
 {
     QList<VSerialInfo_t> res;
 
@@ -2049,10 +2049,10 @@ QList<VSerialInfo_t> VescInterface::listSerialPorts()
 
         if(port.manufacturer().startsWith("STMicroelectronics")) {
             info.name.insert(0, "VESC - ");
-            info.isVesc = true;
+            info.isOpenroad = true;
             index = 0;
         } else {
-            info.isVesc = false;
+            info.isOpenroad = false;
         }
 
         res.insert(index, info);
@@ -2062,7 +2062,7 @@ QList<VSerialInfo_t> VescInterface::listSerialPorts()
     return res;
 }
 
-QList<QString> VescInterface::listCANbusInterfaces()
+QList<QString> OpenroadInterface::listCANbusInterfaces()
 {
     QList<QString> res;
 #ifdef HAS_CANBUS
@@ -2088,7 +2088,7 @@ QList<QString> VescInterface::listCANbusInterfaces()
     return res;
 }
 
-bool VescInterface::connectCANbus(QString backend, QString interface, int bitrate)
+bool OpenroadInterface::connectCANbus(QString backend, QString interface, int bitrate)
 {
 #ifdef HAS_CANBUS
     QString errorString;
@@ -2147,7 +2147,7 @@ bool VescInterface::connectCANbus(QString backend, QString interface, int bitrat
 #endif
 }
 
-bool VescInterface::isCANbusConnected()
+bool OpenroadInterface::isCANbusConnected()
 {
 #ifdef HAS_CANBUS
     if (mCanDevice != nullptr) {
@@ -2159,7 +2159,7 @@ bool VescInterface::isCANbusConnected()
     return false;
 }
 
-void VescInterface::setCANbusReceiverID(int node_ID)
+void OpenroadInterface::setCANbusReceiverID(int node_ID)
 {
 #ifdef HAS_CANBUS
     mLastCanDeviceID = node_ID;
@@ -2168,7 +2168,7 @@ void VescInterface::setCANbusReceiverID(int node_ID)
 #endif
 }
 
-void VescInterface::connectTcp(QString server, int port)
+void OpenroadInterface::connectTcp(QString server, int port)
 {
     mLastTcpServer = server;
     mLastTcpPort = port;
@@ -2189,7 +2189,7 @@ void VescInterface::connectTcp(QString server, int port)
     mTcpSocket->connectToHost(host, port);
 }
 
-void VescInterface::connectBle(QString address)
+void OpenroadInterface::connectBle(QString address)
 {
 #ifdef HAS_BLUETOOTH
     mBleUart->startConnect(address);
@@ -2199,17 +2199,17 @@ void VescInterface::connectBle(QString address)
 #endif
 }
 
-bool VescInterface::isAutoconnectOngoing() const
+bool OpenroadInterface::isAutoconnectOngoing() const
 {
     return mAutoconnectOngoing;
 }
 
-double VescInterface::getAutoconnectProgress() const
+double OpenroadInterface::getAutoconnectProgress() const
 {
     return mAutoconnectProgress;
 }
 
-void VescInterface::scanCANbus()
+void OpenroadInterface::scanCANbus()
 {
 #ifdef HAS_CANBUS
     if (!isCANbusConnected()) {
@@ -2246,7 +2246,7 @@ void VescInterface::scanCANbus()
     return;
 }
 
-QVector<int> VescInterface::scanCan()
+QVector<int> OpenroadInterface::scanCan()
 {
     QVector<int> canDevs;
 
@@ -2280,17 +2280,17 @@ QVector<int> VescInterface::scanCan()
     return canDevs;
 }
 
-QVector<int> VescInterface::getCanDevsLast() const
+QVector<int> OpenroadInterface::getCanDevsLast() const
 {
     return mCanDevsLast;
 }
 
-void VescInterface::ignoreCanChange(bool ignore)
+void OpenroadInterface::ignoreCanChange(bool ignore)
 {
     mIgnoreCanChange = ignore;
 }
 
-bool VescInterface::tcpServerStart(int port)
+bool OpenroadInterface::tcpServerStart(int port)
 {
     bool res = mTcpServer->startServer(port);
 
@@ -2303,40 +2303,40 @@ bool VescInterface::tcpServerStart(int port)
     return res;
 }
 
-void VescInterface::tcpServerStop()
+void OpenroadInterface::tcpServerStop()
 {
     mTcpServer->stopServer();
 }
 
-bool VescInterface::tcpServerIsRunning()
+bool OpenroadInterface::tcpServerIsRunning()
 {
     return mTcpServer->isServerRunning();
 }
 
-bool VescInterface::tcpServerIsClientConnected()
+bool OpenroadInterface::tcpServerIsClientConnected()
 {
     return mTcpServer->isClientConnected();
 }
 
-QString VescInterface::tcpServerClientIp()
+QString OpenroadInterface::tcpServerClientIp()
 {
     return mTcpServer->getConnectedClientIp();
 }
 
-void VescInterface::emitConfigurationChanged()
+void OpenroadInterface::emitConfigurationChanged()
 {
     emit configurationChanged();
 }
 
 #ifdef HAS_SERIALPORT
-void VescInterface::serialDataAvailable()
+void OpenroadInterface::serialDataAvailable()
 {
     while (mSerialPort->bytesAvailable() > 0) {
         mPacket->processData(mSerialPort->readAll());
     }
 }
 
-void VescInterface::serialPortError(QSerialPort::SerialPortError error)
+void OpenroadInterface::serialPortError(QSerialPort::SerialPortError error)
 {
     QString message;
     switch (error) {
@@ -2361,7 +2361,7 @@ void VescInterface::serialPortError(QSerialPort::SerialPortError error)
 #endif
 
 #ifdef HAS_CANBUS
-void VescInterface::CANbusDataAvailable()
+void OpenroadInterface::CANbusDataAvailable()
 {
     QCanBusFrame frame;
     QByteArray payload;
@@ -2454,7 +2454,7 @@ void VescInterface::CANbusDataAvailable()
     }
 }
 
-void VescInterface::CANbusError(QCanBusDevice::CanBusError error)
+void OpenroadInterface::CANbusError(QCanBusDevice::CanBusError error)
 {
     QString message;
     switch (error) {
@@ -2474,7 +2474,7 @@ void VescInterface::CANbusError(QCanBusDevice::CanBusError error)
 }
 #endif
 
-void VescInterface::tcpInputConnected()
+void OpenroadInterface::tcpInputConnected()
 {
     mSettings.setValue("tcp_server", mLastTcpServer);
     mSettings.setValue("tcp_port", mLastTcpPort);
@@ -2484,20 +2484,20 @@ void VescInterface::tcpInputConnected()
     updateFwRx(false);
 }
 
-void VescInterface::tcpInputDisconnected()
+void OpenroadInterface::tcpInputDisconnected()
 {
     mTcpConnected = false;
     updateFwRx(false);
 }
 
-void VescInterface::tcpInputDataAvailable()
+void OpenroadInterface::tcpInputDataAvailable()
 {
     while (mTcpSocket->bytesAvailable() > 0) {
         mPacket->processData(mTcpSocket->readAll());
     }
 }
 
-void VescInterface::tcpInputError(QAbstractSocket::SocketError socketError)
+void OpenroadInterface::tcpInputError(QAbstractSocket::SocketError socketError)
 {
     (void)socketError;
 
@@ -2508,13 +2508,13 @@ void VescInterface::tcpInputError(QAbstractSocket::SocketError socketError)
 }
 
 #ifdef HAS_BLUETOOTH
-void VescInterface::bleDataRx(QByteArray data)
+void OpenroadInterface::bleDataRx(QByteArray data)
 {
     mPacket->processData(data);
 }
 #endif
 
-void VescInterface::timerSlot()
+void OpenroadInterface::timerSlot()
 {
     // Poll the serial port as well since readyRead is not emitted recursively. This
     // can be a problem when waiting for input with an additional event loop, such as
@@ -2617,7 +2617,7 @@ void VescInterface::timerSlot()
     }
 }
 
-void VescInterface::packetDataToSend(QByteArray &data)
+void OpenroadInterface::packetDataToSend(QByteArray &data)
 {
 #ifdef HAS_SERIALPORT
     if (mSerialPort->isOpen()) {
@@ -2741,17 +2741,17 @@ void VescInterface::packetDataToSend(QByteArray &data)
 #endif
 }
 
-void VescInterface::packetReceived(QByteArray &data)
+void OpenroadInterface::packetReceived(QByteArray &data)
 {
     mCommands->processPacket(data);
 }
 
-void VescInterface::cmdDataToSend(QByteArray &data)
+void OpenroadInterface::cmdDataToSend(QByteArray &data)
 {
     mPacket->sendPacket(data);
 }
 
-void VescInterface::fwVersionReceived(int major, int minor, QString hw, QByteArray uuid, bool isPaired)
+void OpenroadInterface::fwVersionReceived(int major, int minor, QString hw, QByteArray uuid, bool isPaired)
 {
     QString uuidStr = Utility::uuid2Str(uuid, true);
     mUuidStr = uuidStr.toUpper();
@@ -3005,27 +3005,27 @@ void VescInterface::fwVersionReceived(int major, int minor, QString hw, QByteArr
     }
 }
 
-void VescInterface::appconfUpdated()
+void OpenroadInterface::appconfUpdated()
 {
     emit statusMessage(tr("App configuration updated"), true);
 }
 
-void VescInterface::mcconfUpdated()
+void OpenroadInterface::mcconfUpdated()
 {
     emit statusMessage(tr("MC configuration updated"), true);
 }
 
-void VescInterface::ackReceived(QString ackType)
+void OpenroadInterface::ackReceived(QString ackType)
 {
     emit statusMessage(ackType, true);
 }
 
-bool VescInterface::getFwSupportsConfiguration() const
+bool OpenroadInterface::getFwSupportsConfiguration() const
 {
     return mFwSupportsConfiguration;
 }
 
-bool VescInterface::confStoreBackup(bool can, QString name)
+bool OpenroadInterface::confStoreBackup(bool can, QString name)
 {
     if (!isPortConnected()) {
         emitMessageDialog("Backup Configuration", "The VESC must be connected to perform this operation.", false, false);
@@ -3111,7 +3111,7 @@ bool VescInterface::confStoreBackup(bool can, QString name)
     return res;
 }
 
-bool VescInterface::confRestoreBackup(bool can)
+bool OpenroadInterface::confRestoreBackup(bool can)
 {
     if (!isPortConnected()) {
         emitMessageDialog("Restore Configuration", "The VESC must be connected to perform this operation.", false, false);
@@ -3236,7 +3236,7 @@ bool VescInterface::confRestoreBackup(bool can)
     return res;
 }
 
-bool VescInterface::confLoadBackup(QString uuid)
+bool OpenroadInterface::confLoadBackup(QString uuid)
 {
     if (mConfigurationBackups.contains(uuid)) {
         mMcConfig->loadCompressed(mConfigurationBackups[uuid].mcconf_xml_compressed, "mcconf");
@@ -3247,7 +3247,7 @@ bool VescInterface::confLoadBackup(QString uuid)
     }
 }
 
-QStringList VescInterface::confListBackups()
+QStringList OpenroadInterface::confListBackups()
 {
     QStringList res;
     QHashIterator<QString, CONFIG_BACKUP> i(mConfigurationBackups);
@@ -3259,14 +3259,14 @@ QStringList VescInterface::confListBackups()
     return res;
 }
 
-void VescInterface::confClearBackups()
+void OpenroadInterface::confClearBackups()
 {
     mConfigurationBackups.clear();
     storeSettings();
     emit configurationBackupsChanged();
 }
 
-QString VescInterface::confBackupName(QString uuid)
+QString OpenroadInterface::confBackupName(QString uuid)
 {
     QString res;
     if (mConfigurationBackups.contains(uuid)) {
@@ -3275,12 +3275,12 @@ QString VescInterface::confBackupName(QString uuid)
     return res;
 }
 
-bool VescInterface::deserializeFailedSinceConnected()
+bool OpenroadInterface::deserializeFailedSinceConnected()
 {
     return mDeserialFailedMessageShown;
 }
 
-void VescInterface::updateFwRx(bool fwRx)
+void OpenroadInterface::updateFwRx(bool fwRx)
 {
     bool change = mFwVersionReceived != fwRx;
     mFwVersionReceived = fwRx;
@@ -3289,7 +3289,7 @@ void VescInterface::updateFwRx(bool fwRx)
     }
 }
 
-void VescInterface::setLastConnectionType(conn_t type)
+void OpenroadInterface::setLastConnectionType(conn_t type)
 {
     mLastConnType = type;
     mSettings.setValue("connection_type", type);

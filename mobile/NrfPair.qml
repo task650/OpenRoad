@@ -34,8 +34,8 @@ Item {
     }
 
     property real pairCnt: 0.0
-    property Commands mCommands: VescIf.commands()
-    property ConfigParams mInfoConf: VescIf.infoConfig()
+    property Commands mCommands: OpenroadIf.commands()
+    property ConfigParams mInfoConf: OpenroadIf.infoConfig()
 
     ColumnLayout {
         id: column
@@ -71,7 +71,7 @@ Item {
                 flat: true
 
                 onClicked: {
-                    VescIf.emitMessageDialog(
+                    OpenroadIf.emitMessageDialog(
                                 mInfoConf.getLongName("help_nrf_pair"),
                                 mInfoConf.getDescription("help_nrf_pair"),
                                 true, true)
@@ -131,8 +131,8 @@ Item {
                 startButton.enabled = true
                 pairCnt = 0.0
                 cntBar.value = 0
-                VescIf.emitStatusMessage("Pairing NRF Sucessful", true)
-                VescIf.emitMessageDialog(
+                OpenroadIf.emitStatusMessage("Pairing NRF Sucessful", true)
+                OpenroadIf.emitMessageDialog(
                             "NRF Pairing",
                             "Pairing was successful.",
                             true, false)
@@ -142,8 +142,8 @@ Item {
                 startButton.enabled = true
                 pairCnt = 0.0
                 cntBar.value = 0
-                VescIf.emitStatusMessage("Pairing NRF Timed Out", false)
-                VescIf.emitMessageDialog(
+                OpenroadIf.emitStatusMessage("Pairing NRF Timed Out", false)
+                OpenroadIf.emitMessageDialog(
                             "NRF Pairing",
                             "Pairing timed out. Make sure to put your device (e.g. NRF nunchuk) " +
                             "in pairing mode before the time runs out." +
@@ -152,7 +152,7 @@ Item {
                             "pairing mode, just switch it on using any of the buttons. Then it " +
                             "will enter pairing mode if it was switched off previously.",
                             false, false)
-//                VescIf.emitMessageDialog("Test", "test23", false, false)
+//                OpenroadIf.emitMessageDialog("Test", "test23", false, false)
                 break;
 
             default:

@@ -35,16 +35,16 @@ public:
     explicit DirSetup(QWidget *parent = 0);
     ~DirSetup();
 
-    VescInterface *openroad() const;
-    void setVesc(VescInterface *openroad);
-    void scanVescs();
+    OpenroadInterface *openroad() const;
+    void setOpenroad(OpenroadInterface *openroad);
+    void scanOpenroads();
 
 private slots:
     void on_refreshButton_clicked();
 
 private:
     Ui::DirSetup *ui;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
 
 };
 

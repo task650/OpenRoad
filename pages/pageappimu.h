@@ -38,8 +38,8 @@ public:
     explicit PageAppImu(QWidget *parent = nullptr);
     ~PageAppImu();
 
-    VescInterface *openroad() const;
-    void setVesc(VescInterface *openroad);
+    OpenroadInterface *openroad() const;
+    void setOpenroad(OpenroadInterface *openroad);
     void reloadParams();
 
 private slots:
@@ -48,7 +48,7 @@ private slots:
 
 private:
     Ui::PageAppImu *ui;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
 
     QTimer *mTimer;
 
@@ -71,7 +71,7 @@ private:
     double mSecondCounter;
     qint64 mLastUpdateTime;
 
-    Vesc3DView *m3dView;
+    Openroad3DView *m3dView;
     QCheckBox *mUseYawBox;
 
     void appendDoubleAndTrunc(QVector<double> *vec, double num, int maxSize);

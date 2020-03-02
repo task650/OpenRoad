@@ -26,8 +26,8 @@ import Vedder.openroad.commands 1.0
 import Vedder.openroad.configparams 1.0
 
 Item {
-    property ConfigParams mMcConf: VescIf.mcConfig()
-    property ConfigParams mAppConf: VescIf.appConfig()
+    property ConfigParams mMcConf: OpenroadIf.mcConfig()
+    property ConfigParams mAppConf: OpenroadIf.appConfig()
 
     function createEditor(parent, name, conf) {
         if (conf.hasParam(name)) {

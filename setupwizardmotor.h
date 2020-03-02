@@ -65,7 +65,7 @@ public:
         Sensor_EncoderBiSS
     };
 
-    SetupWizardMotor(VescInterface *openroad, QWidget *parent = 0);
+    SetupWizardMotor(OpenroadInterface *openroad, QWidget *parent = 0);
 
 private slots:
     void idChanged(int id);
@@ -80,12 +80,12 @@ class IntroPage : public QWizardPage
     Q_OBJECT
 
 public:
-    IntroPage(VescInterface *openroad, QWidget *parent = 0);
+    IntroPage(OpenroadInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
 
 private:
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     QLabel *mLabel;
 
 };
@@ -95,12 +95,12 @@ class ConnectionPage : public QWizardPage
     Q_OBJECT
 
 public:
-    ConnectionPage(VescInterface *openroad, QWidget *parent = 0);
+    ConnectionPage(OpenroadInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool isComplete() const Q_DECL_OVERRIDE;
 
 private:
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     PageConnection *mPageConnection;
 
 };
@@ -110,14 +110,14 @@ class FirmwarePage : public QWizardPage
     Q_OBJECT
 
 public:
-    FirmwarePage(VescInterface *openroad, QWidget *parent = 0);
+    FirmwarePage(OpenroadInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool isComplete() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
     void initializePage() Q_DECL_OVERRIDE;
 
 private:
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     PageFirmware *mPageFirmware;
 
 };
@@ -127,13 +127,13 @@ class MotorTypePage : public QWizardPage
     Q_OBJECT
 
 public:
-    MotorTypePage(VescInterface *openroad, QWidget *parent = 0);
+    MotorTypePage(OpenroadInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
 
 private:
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     ParamTable *mParamTab;
     bool mLoadDefaultAsked;
 
@@ -144,13 +144,13 @@ class CurrentsPage : public QWizardPage
     Q_OBJECT
 
 public:
-    CurrentsPage(VescInterface *openroad, QWidget *parent = 0);
+    CurrentsPage(OpenroadInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
 
 private:
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     ParamTable *mParamTab;
     QLabel *mLabel;
     bool mWarningShown;
@@ -163,12 +163,12 @@ class VoltagesPage : public QWizardPage
     Q_OBJECT
 
 public:
-    VoltagesPage(VescInterface *openroad, QWidget *parent = 0);
+    VoltagesPage(OpenroadInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
 
 private:
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     ParamTable *mParamTab;
     BatteryCalculator *mCalc;
 
@@ -179,7 +179,7 @@ class SensorsPage : public QWizardPage
     Q_OBJECT
 
 public:
-    SensorsPage(VescInterface *openroad, QWidget *parent = 0);
+    SensorsPage(OpenroadInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
     void initializePage() Q_DECL_OVERRIDE;
@@ -189,7 +189,7 @@ private slots:
     void indexChanged(int ind);
 
 private:
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     QComboBox *mSensorMode;
     ParamTable *mParamTab;
     int mTypeBefore;
@@ -201,13 +201,13 @@ class BldcPage : public QWizardPage
     Q_OBJECT
 
 public:
-    BldcPage(VescInterface *openroad, QWidget *parent = 0);
+    BldcPage(OpenroadInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
     void initializePage() Q_DECL_OVERRIDE;
 
 private:
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     ParamTable *mParamTab;
     DetectBldc *mDetect;
 
@@ -218,12 +218,12 @@ class FocPage : public QWizardPage
     Q_OBJECT
 
 public:
-    FocPage(VescInterface *openroad, QWidget *parent = 0);
+    FocPage(OpenroadInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
 
 private:
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     ParamTable *mParamTab;
     DetectFoc *mDetect;
 
@@ -234,12 +234,12 @@ class FocEncoderPage : public QWizardPage
     Q_OBJECT
 
 public:
-    FocEncoderPage(VescInterface *openroad, QWidget *parent = 0);
+    FocEncoderPage(OpenroadInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
 
 private:
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     ParamTable *mParamTab;
     DetectFocEncoder *mDetect;
 
@@ -250,12 +250,12 @@ class FocHallPage : public QWizardPage
     Q_OBJECT
 
 public:
-    FocHallPage(VescInterface *openroad, QWidget *parent = 0);
+    FocHallPage(OpenroadInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
 
 private:
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     ParamTable *mParamTab;
     DetectFocHall *mDetect;
 
@@ -266,11 +266,11 @@ class ConclusionPage : public QWizardPage
     Q_OBJECT
 
 public:
-    ConclusionPage(VescInterface *openroad, QWidget *parent = 0);
+    ConclusionPage(OpenroadInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
 
 private:
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     QLabel *mLabel;
 
 };

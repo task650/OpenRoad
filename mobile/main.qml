@@ -29,10 +29,10 @@ import Vedder.openroad.utility 1.0
 
 ApplicationWindow {
     id: appWindow
-    property Commands mCommands: VescIf.commands()
-    property ConfigParams mMcConf: VescIf.mcConfig()
-    property ConfigParams mAppConf: VescIf.appConfig()
-    property ConfigParams mInfoConf: VescIf.infoConfig()
+    property Commands mCommands: OpenroadIf.commands()
+    property ConfigParams mMcConf: OpenroadIf.mcConfig()
+    property ConfigParams mAppConf: OpenroadIf.appConfig()
+    property ConfigParams mInfoConf: OpenroadIf.infoConfig()
 
     visible: true
     width: 500
@@ -40,15 +40,15 @@ ApplicationWindow {
     title: qsTr("VESC Tool")
 
     Component.onCompleted: {
-        //        Utility.checkVersion(VescIf)
+        //        Utility.checkVersion(OpenroadIf)
         //        swipeView.setCurrentIndex(1)
         //        rtSwipeView.setCurrentIndex(1)
 
-        if (!VescIf.isIntroDone()) {
+        if (!OpenroadIf.isIntroDone()) {
             introWizard.openDialog()
         }
 
-        Utility.keepScreenOn(VescIf.keepScreenOn())
+        Utility.keepScreenOn(OpenroadIf.keepScreenOn())
         Utility.stopGnssForegroundService()
     }
 
@@ -95,7 +95,7 @@ ApplicationWindow {
                 flat: true
 
                 onClicked: {
-                    VescIf.reconnectLastPort()
+                    OpenroadIf.reconnectLastPort()
                 }
             }
 
@@ -106,7 +106,7 @@ ApplicationWindow {
                 flat: true
 
                 onClicked: {
-                    VescIf.disconnectPort()
+                    OpenroadIf.disconnectPort()
                 }
             }
 
@@ -144,7 +144,7 @@ ApplicationWindow {
                 flat: true
 
                 onClicked: {
-                    VescIf.emitMessageDialog(
+                    OpenroadIf.emitMessageDialog(
                                 "About",
                                 Utility.aboutText(),
                                 true, true)
@@ -157,7 +157,7 @@ ApplicationWindow {
                 flat: true
 
                 onClicked: {
-                    VescIf.emitMessageDialog(
+                    OpenroadIf.emitMessageDialog(
                                 "VESC Tool Changelog",
                                 Utility.openroadToolChangeLog(),
                                 true, false)
@@ -170,7 +170,7 @@ ApplicationWindow {
                 flat: true
 
                 onClicked: {
-                    VescIf.emitMessageDialog(
+                    OpenroadIf.emitMessageDialog(
                                 mInfoConf.getLongName("gpl_text"),
                                 mInfoConf.getDescription("gpl_text"),
                                 true, true)
@@ -260,7 +260,7 @@ ApplicationWindow {
                     // Create 3d view on demand, due to high CPU usage even when hidden
                     onCurrentIndexChanged: {
                         if (currentIndex == 2) {
-                            var component = Qt.createComponent("Vesc3DView.qml");
+                            var component = Qt.createComponent("Openroad3DView.qml");
                             openroad3dViewNow = component.createObject(item3d, {"anchors.fill": item3d})
                             openroad3dViewNow.setRotation(0.1, 0.1, 0.1)
                         } else {
@@ -345,7 +345,7 @@ ApplicationWindow {
                             Layout.fillWidth: true
 
                             onClicked: {
-                                VescIf.emitMessageDialog(
+                                OpenroadIf.emitMessageDialog(
                                             mInfoConf.getLongName("help_rt_logging"),
                                             mInfoConf.getDescription("help_rt_logging"),
                                             true, true)
@@ -361,7 +361,7 @@ ApplicationWindow {
                                     logFilePicker.enabled = true
                                     logFilePicker.visible = true
                                 } else {
-                                    VescIf.emitMessageDialog(
+                                    OpenroadIf.emitMessageDialog(
                                                 "File Permissions",
                                                 "Unable to request file system permission.",
                                                 false, false)
@@ -402,16 +402,16 @@ ApplicationWindow {
 
                             onClicked: {
                                 if (checked) {
-                                    if (VescIf.openRtLogFile(rtLogFileText.text)) {
+                                    if (OpenroadIf.openRtLogFile(rtLogFileText.text)) {
                                         Utility.startGnssForegroundService()
-                                        VescIf.setWakeLock(true)
+                                        OpenroadIf.setWakeLock(true)
                                     }
                                 } else {
-                                    VescIf.closeRtLogFile()
+                                    OpenroadIf.closeRtLogFile()
                                     Utility.stopGnssForegroundService()
 
-                                    if (!VescIf.useWakeLock()) {
-                                        VescIf.setWakeLock(false)
+                                    if (!OpenroadIf.useWakeLock()) {
+                                        OpenroadIf.setWakeLock(false)
                                     }
                                 }
                             }
@@ -422,15 +422,15 @@ ApplicationWindow {
                                 interval: 500
 
                                 onTriggered: {
-                                    if (rtLogEnBox.checked && !VescIf.isRtLogOpen()) {
+                                    if (rtLogEnBox.checked && !OpenroadIf.isRtLogOpen()) {
                                         Utility.stopGnssForegroundService()
 
-                                        if (!VescIf.useWakeLock()) {
-                                            VescIf.setWakeLock(false)
+                                        if (!OpenroadIf.useWakeLock()) {
+                                            OpenroadIf.setWakeLock(false)
                                         }
                                     }
 
-                                    rtLogEnBox.checked = VescIf.isRtLogOpen()
+                                    rtLogEnBox.checked = OpenroadIf.isRtLogOpen()
                                 }
                             }
                         }
@@ -463,9 +463,9 @@ ApplicationWindow {
 
                             onClicked: {
                                 if (checked) {
-                                    VescIf.tcpServerStart(tcpServerPortBox.value)
+                                    OpenroadIf.tcpServerStart(tcpServerPortBox.value)
                                 } else {
-                                    VescIf.tcpServerStop()
+                                    OpenroadIf.tcpServerStop()
                                 }
                             }
                         }
@@ -494,9 +494,9 @@ ApplicationWindow {
                             interval: 500
 
                             onTriggered: {
-                                tcpServerEnBox.checked = VescIf.tcpServerIsRunning()
+                                tcpServerEnBox.checked = OpenroadIf.tcpServerIsRunning()
 
-                                if (VescIf.tcpServerIsRunning()) {
+                                if (OpenroadIf.tcpServerIsRunning()) {
                                     var ipTxt = "IP(s)\n"
                                     var addresses = Utility.getNetworkAddresses()
                                     for (var i = 0;i < addresses.length;i++) {
@@ -512,8 +512,8 @@ ApplicationWindow {
 
                                 tcpRemoteAddress.text = "Connected Client"
 
-                                if (VescIf.tcpServerIsClientConnected()) {
-                                    tcpRemoteAddress.text += "\n" + VescIf.tcpServerClientIp()
+                                if (OpenroadIf.tcpServerIsClientConnected()) {
+                                    tcpRemoteAddress.text += "\n" + OpenroadIf.tcpServerClientIp()
                                 }
                             }
                         }
@@ -645,7 +645,7 @@ ApplicationWindow {
         Text {
             id: connectedText
             color: "white"
-            text: VescIf.getConnectedPortName()
+            text: OpenroadIf.getConnectedPortName()
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
             anchors.fill: parent
@@ -661,7 +661,7 @@ ApplicationWindow {
         running: false
         repeat: false
         onTriggered: {
-            connectedText.text = VescIf.getConnectedPortName()
+            connectedText.text = OpenroadIf.getConnectedPortName()
             connectedRect.color = "#4f4f4f"
         }
     }
@@ -672,8 +672,8 @@ ApplicationWindow {
         running: true
         repeat: true
         onTriggered: {
-            if (!statusTimer.running && connectedText.text !== VescIf.getConnectedPortName()) {
-                connectedText.text = VescIf.getConnectedPortName()
+            if (!statusTimer.running && connectedText.text !== OpenroadIf.getConnectedPortName()) {
+                connectedText.text = OpenroadIf.getConnectedPortName()
             }
         }
     }
@@ -688,7 +688,7 @@ ApplicationWindow {
         property bool appConfRx: false
 
         onTriggered: {
-            if (VescIf.isPortConnected()) {
+            if (OpenroadIf.isPortConnected()) {
                 if (!mcConfRx) {
                     mCommands.getMcconf()
                 }
@@ -707,11 +707,11 @@ ApplicationWindow {
         repeat: true
 
         onTriggered: {
-            if (VescIf.isPortConnected()) {
+            if (OpenroadIf.isPortConnected()) {
                 // Sample RT data when the corresponding page is selected, or when
                 // RT logging is active.
 
-                if (VescIf.isRtLogOpen()) {
+                if (OpenroadIf.isRtLogOpen()) {
                     interval = 50
                     mCommands.getValues()
                     mCommands.getValuesSetup()
@@ -770,18 +770,18 @@ ApplicationWindow {
     }
 
     Connections {
-        target: VescIf
+        target: OpenroadIf
         onPortConnectedChanged: {
-            connectedText.text = VescIf.getConnectedPortName()
-            if (VescIf.isPortConnected()) {
+            connectedText.text = OpenroadIf.getConnectedPortName()
+            if (OpenroadIf.isPortConnected()) {
                 reconnectButton.enabled = true
             } else {
                 confTimer.mcConfRx = false
                 confTimer.appConfRx = false
             }
 
-            if (VescIf.useWakeLock()) {
-                VescIf.setWakeLock(VescIf.isPortConnected())
+            if (OpenroadIf.useWakeLock()) {
+                OpenroadIf.setWakeLock(OpenroadIf.isPortConnected())
             }
         }
 
@@ -800,7 +800,7 @@ ApplicationWindow {
 
         onFwRxChanged: {
             if (rx) {
-                if (limited && !VescIf.getFwSupportsConfiguration()) {
+                if (limited && !OpenroadIf.getFwSupportsConfiguration()) {
                     confPageMotor.enabled = false
                     confPageApp.enabled = false
                     swipeView.setCurrentIndex(5)

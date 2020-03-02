@@ -35,8 +35,8 @@ public:
     explicit DetectFoc(QWidget *parent = nullptr);
     ~DetectFoc();
 
-    VescInterface *openroad() const;
-    void setVesc(VescInterface *openroad);
+    OpenroadInterface *openroad() const;
+    void setOpenroad(OpenroadInterface *openroad);
     bool allValuesOk() const;
     bool lastOkValuesApplied() const;
 
@@ -55,7 +55,7 @@ private slots:
 
 private:
     Ui::DetectFoc *ui;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     bool mLastCalcOk;
     bool mAllValuesOk;
     bool mLastOkValuesApplied;

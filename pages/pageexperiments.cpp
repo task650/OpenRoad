@@ -37,7 +37,7 @@ PageExperiments::PageExperiments(QWidget *parent) :
 {
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
-    mVesc = 0;
+    mOpenroad = 0;
 
     mTimer = new QTimer(this);
     mTimer->start(ui->sampleIntervalBox->value());
@@ -119,22 +119,22 @@ PageExperiments::~PageExperiments()
     delete ui;
 }
 
-VescInterface *PageExperiments::openroad() const
+OpenroadInterface *PageExperiments::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void PageExperiments::setVesc(VescInterface *openroad)
+void PageExperiments::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    connect(mVesc->commands(), SIGNAL(valuesReceived(MC_VALUES,uint)),
+    connect(mOpenroad->commands(), SIGNAL(valuesReceived(MC_VALUES,uint)),
             this, SLOT(valuesReceived(MC_VALUES,uint)));
 }
 
 void PageExperiments::stop()
 {
-    mVesc->commands()->setCurrent(0);
+    mOpenroad->commands()->setCurrent(0);
     mState = EXPERIMENT_OFF;
     ui->progressBar->setValue(100);
 }
@@ -184,7 +184,7 @@ void PageExperiments::timerSlot()
 #endif
 
     if (mState != EXPERIMENT_OFF) {
-        mVesc->commands()->getValues();
+        mOpenroad->commands()->getValues();
 
         double from = 0.0;
         double to = 0.0;
@@ -230,21 +230,21 @@ void PageExperiments::timerSlot()
 
         if (progress >= 1.0) {
             mState = EXPERIMENT_OFF;
-            mVesc->commands()->setCurrent(0);
+            mOpenroad->commands()->setCurrent(0);
         } else {
             ui->progressBar->setValue(progress * 100);
 
             switch (mState) {
             case EXPERIMENT_DUTY:
-                mVesc->commands()->setDutyCycle(valueNow);
+                mOpenroad->commands()->setDutyCycle(valueNow);
                 break;
 
             case EXPERIMENT_CURRENT:
-                mVesc->commands()->setCurrent(valueNow);
+                mOpenroad->commands()->setCurrent(valueNow);
                 break;
 
             case EXPERIMENT_RPM:
-                mVesc->commands()->setRpm(valueNow);
+                mOpenroad->commands()->setRpm(valueNow);
                 break;
 
             default:

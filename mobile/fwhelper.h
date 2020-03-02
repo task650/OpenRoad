@@ -32,7 +32,7 @@ public:
     Q_INVOKABLE QVariantMap getHardwares(QString hw = "");
     Q_INVOKABLE QVariantMap getFirmwares(QString hw);
     Q_INVOKABLE QVariantMap getBootloaders(QString hw);
-    Q_INVOKABLE bool uploadFirmware(QString filename, VescInterface *openroad,
+    Q_INVOKABLE bool uploadFirmware(QString filename, OpenroadInterface *openroad,
                                     bool isBootloader, bool isIncluded, bool fwdCan);
 
 signals:

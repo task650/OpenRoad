@@ -23,18 +23,18 @@
 
 #include <QMessageBox>
 
-DetectAllFocDialog::DetectAllFocDialog(VescInterface *openroad, QWidget *parent) :
+DetectAllFocDialog::DetectAllFocDialog(OpenroadInterface *openroad, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DetectAllFocDialog)
 {
     ui->setupUi(this);
 
-    mVesc = openroad;
+    mOpenroad = openroad;
     mRejectOk = true;
     mPulleyMotorOld = 1;
     mPulleyWheelOld = 1;
 
-    ui->dirSetup->setVesc(mVesc);
+    ui->dirSetup->setOpenroad(mOpenroad);
 
     setAttribute(Qt::WA_DeleteOnClose);
     setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
@@ -101,21 +101,21 @@ DetectAllFocDialog::DetectAllFocDialog(VescInterface *openroad, QWidget *parent)
     ui->motorList->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->motorList->setCurrentRow(0);
 
-    ui->simpleBatteryTab->addParamRow(mVesc->mcConfig(), "si_battery_type");
-    ui->simpleBatteryTab->addParamRow(mVesc->mcConfig(), "si_battery_cells");
-    ui->simpleBatteryTab->addParamRow(mVesc->mcConfig(), "si_battery_ah");
+    ui->simpleBatteryTab->addParamRow(mOpenroad->mcConfig(), "si_battery_type");
+    ui->simpleBatteryTab->addParamRow(mOpenroad->mcConfig(), "si_battery_cells");
+    ui->simpleBatteryTab->addParamRow(mOpenroad->mcConfig(), "si_battery_ah");
 
     QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(mVesc->mcConfig()->getEditor("si_wheel_diameter"));
+    layout->addWidget(mOpenroad->mcConfig()->getEditor("si_wheel_diameter"));
     ui->wheelDiameterBox->setLayout(layout);
 
     // Advanced tab
-    ui->paramTab->addParamRow(mVesc->mcConfig(), "si_motor_poles");
-    ui->paramTab->addParamRow(mVesc->mcConfig(), "si_gear_ratio");
-    ui->paramTab->addParamRow(mVesc->mcConfig(), "si_wheel_diameter");
-    ui->paramTab->addParamRow(mVesc->mcConfig(), "si_battery_type");
-    ui->paramTab->addParamRow(mVesc->mcConfig(), "si_battery_cells");
-    ui->paramTab->addParamRow(mVesc->mcConfig(), "si_battery_ah");
+    ui->paramTab->addParamRow(mOpenroad->mcConfig(), "si_motor_poles");
+    ui->paramTab->addParamRow(mOpenroad->mcConfig(), "si_gear_ratio");
+    ui->paramTab->addParamRow(mOpenroad->mcConfig(), "si_wheel_diameter");
+    ui->paramTab->addParamRow(mOpenroad->mcConfig(), "si_battery_type");
+    ui->paramTab->addParamRow(mOpenroad->mcConfig(), "si_battery_cells");
+    ui->paramTab->addParamRow(mOpenroad->mcConfig(), "si_battery_ah");
 
     connect(ui->pulleyMotorBox, SIGNAL(valueChanged(int)),
             this, SLOT(updateGearRatio()));
@@ -130,7 +130,7 @@ DetectAllFocDialog::~DetectAllFocDialog()
     delete ui;
 }
 
-void DetectAllFocDialog::showDialog(VescInterface *openroad, QWidget *parent)
+void DetectAllFocDialog::showDialog(OpenroadInterface *openroad, QWidget *parent)
 {
     DetectAllFocDialog *p = new DetectAllFocDialog(openroad, parent);
     openroad->mcConfig()->updateParamInt("si_battery_cells", 3);
@@ -146,15 +146,15 @@ void DetectAllFocDialog::reject()
 
 void DetectAllFocDialog::updateGearRatio()
 {
-    mVesc->mcConfig()->updateParamDouble("si_gear_ratio",
+    mOpenroad->mcConfig()->updateParamDouble("si_gear_ratio",
                                          (double)ui->pulleyWheelBox->value() /
                                          (double)ui->pulleyMotorBox->value());
 }
 
 void DetectAllFocDialog::on_runButton_clicked()
 {
-    if (!mVesc->isPortConnected()) {
-        mVesc->emitMessageDialog("Error",
+    if (!mOpenroad->isPortConnected()) {
+        mOpenroad->emitMessageDialog("Error",
                                  "The VESC is not connected. Please connect and try again.",
                                  false, false);
         return;
@@ -179,11 +179,11 @@ void DetectAllFocDialog::on_runButton_clicked()
 
     ui->progressBar->setRange(0, 0);
 
-    mVesc->commands()->setMcconf(false);
-    Utility::waitSignal(mVesc->commands(), SIGNAL(ackReceived(QString)), 2000);
-    auto canDevs = mVesc->scanCan();
+    mOpenroad->commands()->setMcconf(false);
+    Utility::waitSignal(mOpenroad->commands(), SIGNAL(ackReceived(QString)), 2000);
+    auto canDevs = mOpenroad->scanCan();
 
-    if (!Utility::setBatteryCutCan(mVesc, canDevs, 6.0, 6.0)) {
+    if (!Utility::setBatteryCutCan(mOpenroad, canDevs, 6.0, 6.0)) {
         ui->tabWidget->setEnabled(true);
         ui->runButton->setEnabled(true);
         ui->closeButton->setEnabled(true);
@@ -193,7 +193,7 @@ void DetectAllFocDialog::on_runButton_clicked()
         return;
     }
 
-    QString res = Utility::detectAllFoc(mVesc, true,
+    QString res = Utility::detectAllFoc(mOpenroad, true,
                                         ui->maxPowerLossBox->value(),
                                         ui->currentInMinBox->value(),
                                         ui->currentInMaxBox->value(),
@@ -201,7 +201,7 @@ void DetectAllFocDialog::on_runButton_clicked()
                                         ui->sensorlessErpmBox->value());
 
     if (res.startsWith("Success!")) {
-        Utility::setBatteryCutCanFromCurrentConfig(mVesc, canDevs);
+        Utility::setBatteryCutCanFromCurrentConfig(mOpenroad, canDevs);
     }
 
     ui->progressBar->setRange(0, 100);
@@ -221,7 +221,7 @@ void DetectAllFocDialog::on_runButton_clicked()
 
     if (res.startsWith("Success!")) {
         ui->simpleSetupBox->setCurrentIndex(3);
-        ui->dirSetup->scanVescs();
+        ui->dirSetup->scanOpenroads();
     }
 }
 
@@ -283,7 +283,7 @@ void DetectAllFocDialog::on_motorList_currentRowChanged(int currentRow)
     ui->maxPowerLossBox->setValue(md.maxLosses);
     ui->openloopErpmBox->setValue(md.openloopErpm);
     ui->sensorlessErpmBox->setValue(md.sensorlessErpm);
-    mVesc->mcConfig()->updateParamInt("si_motor_poles", md.poles);
+    mOpenroad->mcConfig()->updateParamInt("si_motor_poles", md.poles);
 }
 
 void DetectAllFocDialog::on_prevDirButton_clicked()

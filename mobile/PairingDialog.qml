@@ -34,15 +34,15 @@ Item {
 
     function loadUuids() {
         pairModel.clear()
-        var uuids = VescIf.getPairedUuids()
+        var uuids = OpenroadIf.getPairedUuids()
         for (var i = 0;i < uuids.length;i++) {
             pairModel.append({"uuid": uuids[i]})
         }
     }
 
     Dialog {
-        property ConfigParams mAppConf: VescIf.appConfig()
-        property Commands mCommands: VescIf.commands()
+        property ConfigParams mAppConf: OpenroadIf.appConfig()
+        property Commands mCommands: OpenroadIf.commands()
 
         id: dialog
         modal: true
@@ -145,8 +145,8 @@ Item {
                                     }
 
                                     onAccepted: {
-                                        VescIf.deletePairedUuid(uuid)
-                                        VescIf.storeSettings()
+                                        OpenroadIf.deletePairedUuid(uuid)
+                                        OpenroadIf.storeSettings()
                                     }
                                 }
                             }
@@ -173,11 +173,11 @@ Item {
                         MenuItem {
                             text: "Add current without pairing"
                             onTriggered: {
-                                if (VescIf.isPortConnected()) {
-                                    VescIf.addPairedUuid(VescIf.getConnectedUuid());
-                                    VescIf.storeSettings()
+                                if (OpenroadIf.isPortConnected()) {
+                                    OpenroadIf.addPairedUuid(OpenroadIf.getConnectedUuid());
+                                    OpenroadIf.storeSettings()
                                 } else {
-                                    VescIf.emitMessageDialog("Add UUID",
+                                    OpenroadIf.emitMessageDialog("Add UUID",
                                                              "You are not connected to the VESC. Connect in order to add it.",
                                                              false, false)
                                 }
@@ -194,16 +194,16 @@ Item {
                         MenuItem {
                             text: "Unpair connected"
                             onTriggered: {
-                                if (VescIf.isPortConnected()) {
+                                if (OpenroadIf.isPortConnected()) {
                                     if (mCommands.isLimitedMode()) {
-                                        VescIf.emitMessageDialog("Unpair VESC",
+                                        OpenroadIf.emitMessageDialog("Unpair VESC",
                                                                  "The fiwmare must be updated to unpair this VESC.",
                                                                  false, false)
                                     } else {
                                         unpairConnectedDialog.open()
                                     }
                                 } else {
-                                    VescIf.emitMessageDialog("Unpair VESC",
+                                    OpenroadIf.emitMessageDialog("Unpair VESC",
                                                              "You are not connected to the VESC. Connect in order to unpair it.",
                                                              false, false)
                                 }
@@ -217,16 +217,16 @@ Item {
                     text: "Pair VESC"
                     Layout.fillWidth: true
                     onClicked: {
-                        if (VescIf.isPortConnected()) {
+                        if (OpenroadIf.isPortConnected()) {
                             if (mCommands.isLimitedMode()) {
-                                VescIf.emitMessageDialog("Pair VESC",
+                                OpenroadIf.emitMessageDialog("Pair VESC",
                                                          "The fiwmare must be updated to pair this VESC.",
                                                          false, false)
                             } else {
                                 pairConnectedDialog.open()
                             }
                         } else {
-                            VescIf.emitMessageDialog("Pair VESC",
+                            OpenroadIf.emitMessageDialog("Pair VESC",
                                                      "You are not connected to the VESC. Connect in order to pair it.",
                                                      false, false)
                         }
@@ -267,15 +267,15 @@ Item {
         }
 
         onAccepted: {
-            VescIf.addPairedUuid(VescIf.getConnectedUuid());
-            VescIf.storeSettings()
+            OpenroadIf.addPairedUuid(OpenroadIf.getConnectedUuid());
+            OpenroadIf.storeSettings()
             mAppConf.updateParamBool("pairing_done", true, 0)
             mCommands.setAppConf()
             if (Utility.waitSignal(mCommands, "2ackReceived(QString)", 2000)) {
-                VescIf.emitMessageDialog("Pairing Successful!",
+                OpenroadIf.emitMessageDialog("Pairing Successful!",
                                          "Pairing is done! Please note the UUID if this VESC (or take a screenshot) in order " +
                                          "to add it to VESC Tool instances that are not paired in the future. The UUID is:\n" +
-                                         VescIf.getConnectedUuid(),
+                                         OpenroadIf.getConnectedUuid(),
                                          true, false)
             }
         }
@@ -303,8 +303,8 @@ Item {
         }
 
         onAccepted: {
-            VescIf.deletePairedUuid(VescIf.getConnectedUuid());
-            VescIf.storeSettings()
+            OpenroadIf.deletePairedUuid(OpenroadIf.getConnectedUuid());
+            OpenroadIf.storeSettings()
             mAppConf.updateParamBool("pairing_done", false, 0)
             mCommands.setAppConf()
         }
@@ -343,13 +343,13 @@ Item {
 
         onAccepted: {
             if (stringInput.text.length > 0) {
-                VescIf.addPairedUuid(stringInput.text)
+                OpenroadIf.addPairedUuid(stringInput.text)
             }
         }
     }
 
     Connections {
-        target: VescIf
+        target: OpenroadIf
 
         onPairingListUpdated: {
             loadUuids()

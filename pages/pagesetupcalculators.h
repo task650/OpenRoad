@@ -35,8 +35,8 @@ public:
     explicit PageSetupCalculators(QWidget *parent = 0);
     ~PageSetupCalculators();
 
-    VescInterface *openroad() const;
-    void setVesc(VescInterface *openroad);
+    OpenroadInterface *openroad() const;
+    void setOpenroad(OpenroadInterface *openroad);
 
 private slots:
     void on_addSetupButton_clicked();
@@ -44,7 +44,7 @@ private slots:
 
 private:
     Ui::PageSetupCalculators *ui;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
 
 };
 

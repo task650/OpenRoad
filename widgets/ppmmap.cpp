@@ -29,7 +29,7 @@ PpmMap::PpmMap(QWidget *parent) :
 {
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
-    mVesc = 0;
+    mOpenroad = 0;
     mResetDone = true;
 }
 
@@ -38,31 +38,31 @@ PpmMap::~PpmMap()
     delete ui;
 }
 
-VescInterface *PpmMap::openroad() const
+OpenroadInterface *PpmMap::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void PpmMap::setVesc(VescInterface *openroad)
+void PpmMap::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    if (mVesc) {
-        ConfigParam *p = mVesc->appConfig()->getParam("app_ppm_conf.ctrl_type");
+    if (mOpenroad) {
+        ConfigParam *p = mOpenroad->appConfig()->getParam("app_ppm_conf.ctrl_type");
         if (p) {
             ui->controlTypeBox->addItems(p->enumNames);
         }
 
-        connect(mVesc->commands(), SIGNAL(decodedPpmReceived(double,double)),
+        connect(mOpenroad->commands(), SIGNAL(decodedPpmReceived(double,double)),
                 this, SLOT(decodedPpmReceived(double,double)));
     }
 }
 
 void PpmMap::decodedPpmReceived(double value, double last_len)
 {
-    double min_now = mVesc->appConfig()->getParamDouble("app_ppm_conf.pulse_start");
-    double max_now = mVesc->appConfig()->getParamDouble("app_ppm_conf.pulse_end");
-    double center_now = mVesc->appConfig()->getParamDouble("app_ppm_conf.pulse_center");
+    double min_now = mOpenroad->appConfig()->getParamDouble("app_ppm_conf.pulse_start");
+    double max_now = mOpenroad->appConfig()->getParamDouble("app_ppm_conf.pulse_end");
+    double center_now = mOpenroad->appConfig()->getParamDouble("app_ppm_conf.pulse_center");
 
     if (ui->display->isDual()) {
         double p = 0.0;
@@ -79,8 +79,8 @@ void PpmMap::decodedPpmReceived(double value, double last_len)
                              arg(p, 0, 'f', 1));
 
         double p2 = value * 100.0;
-        ui->displayVesc->setValue(p2);
-        ui->displayVesc->setText(tr("%1 ms (%2 %)").
+        ui->displayOpenroad->setValue(p2);
+        ui->displayOpenroad->setText(tr("%1 ms (%2 %)").
                                  arg(last_len, 0, 'f', 4).
                                  arg(p2, 0, 'f', 1));
     } else {
@@ -92,8 +92,8 @@ void PpmMap::decodedPpmReceived(double value, double last_len)
                              arg(p, 0, 'f', 1));
 
         double p2 = (value + 1.0) * 50.0;
-        ui->displayVesc->setValue(p2);
-        ui->displayVesc->setText(tr("%1 ms (%2 %)").
+        ui->displayOpenroad->setValue(p2);
+        ui->displayOpenroad->setText(tr("%1 ms (%2 %)").
                              arg(last_len, 0, 'f', 4).
                              arg(p2, 0, 'f', 1));
     }
@@ -131,14 +131,14 @@ void PpmMap::on_controlTypeBox_currentIndexChanged(int index)
     case 4: // Duty Cycle
     case 6: // PID Speed Control
         ui->display->setDual(true);
-        ui->displayVesc->setDual(true);
+        ui->displayOpenroad->setDual(true);
         break;
 
     case 2: // Current No Reverse
     case 5: // Duty Cycle No Reverse
     case 7: // PID Speed Control No Reverse
         ui->display->setDual(false);
-        ui->displayVesc->setDual(false);
+        ui->displayOpenroad->setDual(false);
         break;
 
     default:
@@ -150,8 +150,8 @@ void PpmMap::on_controlTypeBox_currentIndexChanged(int index)
 
 void PpmMap::on_helpButton_clicked()
 {
-    if (mVesc) {
-        HelpDialog::showHelp(this, mVesc->infoConfig(), "app_ppm_mapping_help");
+    if (mOpenroad) {
+        HelpDialog::showHelp(this, mOpenroad->infoConfig(), "app_ppm_mapping_help");
     }
 }
 
@@ -164,14 +164,14 @@ void PpmMap::on_resetButton_clicked()
 
 void PpmMap::on_applyButton_clicked()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         if (ui->maxBox->value() > 1e-10) {
-            mVesc->appConfig()->updateParamDouble("app_ppm_conf.pulse_start", ui->minBox->value());
-            mVesc->appConfig()->updateParamDouble("app_ppm_conf.pulse_end", ui->maxBox->value());
-            mVesc->appConfig()->updateParamDouble("app_ppm_conf.pulse_center", ui->centerBox->value());
-            mVesc->emitStatusMessage(tr("Start, End and Center Pulselengths Applied"), true);
+            mOpenroad->appConfig()->updateParamDouble("app_ppm_conf.pulse_start", ui->minBox->value());
+            mOpenroad->appConfig()->updateParamDouble("app_ppm_conf.pulse_end", ui->maxBox->value());
+            mOpenroad->appConfig()->updateParamDouble("app_ppm_conf.pulse_center", ui->centerBox->value());
+            mOpenroad->emitStatusMessage(tr("Start, End and Center Pulselengths Applied"), true);
         } else {
-            mVesc->emitStatusMessage(tr("Applying Pulselengths Failed"), false);
+            mOpenroad->emitStatusMessage(tr("Applying Pulselengths Failed"), false);
             QMessageBox::warning(this,
                                  tr("Apply Pulselengths"),
                                  tr("Please activate RT app data and measure the pulselengths first."));

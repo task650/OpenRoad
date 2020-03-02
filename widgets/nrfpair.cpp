@@ -28,7 +28,7 @@ NrfPair::NrfPair(QWidget *parent) :
 {
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
-    mVesc = 0;
+    mOpenroad = 0;
     mPairCnt = 0.0;
     mRunning = false;
 
@@ -44,25 +44,25 @@ NrfPair::~NrfPair()
     delete ui;
 }
 
-VescInterface *NrfPair::openroad() const
+OpenroadInterface *NrfPair::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void NrfPair::setVesc(VescInterface *openroad)
+void NrfPair::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    if (mVesc) {
-        connect(mVesc->commands(), SIGNAL(nrfPairingRes(int)),
+    if (mOpenroad) {
+        connect(mOpenroad->commands(), SIGNAL(nrfPairingRes(int)),
                 this, SLOT(nrfPairingRes(int)));
     }
 }
 
 void NrfPair::startPairing()
 {
-    if (mVesc) {
-        mVesc->commands()->pairNrf((int)(ui->timeBox->value() * 1000.0));
+    if (mOpenroad) {
+        mOpenroad->commands()->pairNrf((int)(ui->timeBox->value() * 1000.0));
         mRunning = true;
     }
 }
@@ -84,7 +84,7 @@ void NrfPair::nrfPairingRes(int res)
         ui->startButton->setEnabled(true);
         mPairCnt = 0.0;
         ui->countLabel->setText(tr("%1").arg(mPairCnt, 0, 'f', 1));
-        mVesc->emitStatusMessage("Pairing NRF Sucessful", true);
+        mOpenroad->emitStatusMessage("Pairing NRF Sucessful", true);
         QMessageBox::information(this,
                                  tr("NRF Pairing"),
                                  tr("Pairing was successful."));
@@ -95,7 +95,7 @@ void NrfPair::nrfPairingRes(int res)
         ui->startButton->setEnabled(true);
         mPairCnt = 0.0;
         ui->countLabel->setText(tr("%1").arg(mPairCnt, 0, 'f', 1));
-        mVesc->emitStatusMessage("Pairing NRF Timed Out", false);
+        mOpenroad->emitStatusMessage("Pairing NRF Timed Out", false);
         mRunning = false;
 
         QMessageBox::StandardButton reply;
@@ -142,7 +142,7 @@ void NrfPair::on_startButton_clicked()
 
 void NrfPair::on_helpButton_clicked()
 {
-    if (mVesc) {
-        HelpDialog::showHelp(this, mVesc->infoConfig(), "help_nrf_pair");
+    if (mOpenroad) {
+        HelpDialog::showHelp(this, mOpenroad->infoConfig(), "help_nrf_pair");
     }
 }

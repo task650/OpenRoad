@@ -27,7 +27,7 @@ PageAppPpm::PageAppPpm(QWidget *parent) :
 {
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
-    mVesc = 0;
+    mOpenroad = 0;
 
     ui->throttlePlot->addGraph();
     ui->throttlePlot->graph()->setName("Throttle Curve");
@@ -42,23 +42,23 @@ PageAppPpm::~PageAppPpm()
     delete ui;
 }
 
-VescInterface *PageAppPpm::openroad() const
+OpenroadInterface *PageAppPpm::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void PageAppPpm::setVesc(VescInterface *openroad)
+void PageAppPpm::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    if (mVesc) {
+    if (mOpenroad) {
         reloadParams();
 
-        ui->ppmMap->setVesc(mVesc);
+        ui->ppmMap->setOpenroad(mOpenroad);
 
-        connect(mVesc->appConfig(), SIGNAL(paramChangedDouble(QObject*,QString,double)),
+        connect(mOpenroad->appConfig(), SIGNAL(paramChangedDouble(QObject*,QString,double)),
                 this, SLOT(paramChangedDouble(QObject*,QString,double)));
-        connect(mVesc->appConfig(), SIGNAL(paramChangedEnum(QObject*,QString,int)),
+        connect(mOpenroad->appConfig(), SIGNAL(paramChangedEnum(QObject*,QString,int)),
                 this, SLOT(paramChangedEnum(QObject*,QString,int)));
 
         paramChangedEnum(nullptr, "app_ppm_conf.throttle_exp_mode", 0);
@@ -67,14 +67,14 @@ void PageAppPpm::setVesc(VescInterface *openroad)
 
 void PageAppPpm::reloadParams()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         ui->generalTab->clearParams();
         ui->mappingTab->clearParams();
         ui->throttleCurveTab->clearParams();
 
-        ui->generalTab->addParamSubgroup(mVesc->appConfig(), "ppm", "general");
-        ui->mappingTab->addParamSubgroup(mVesc->appConfig(), "ppm", "mapping");
-        ui->throttleCurveTab->addParamSubgroup(mVesc->appConfig(), "ppm", "throttle curve");
+        ui->generalTab->addParamSubgroup(mOpenroad->appConfig(), "ppm", "general");
+        ui->mappingTab->addParamSubgroup(mOpenroad->appConfig(), "ppm", "mapping");
+        ui->throttleCurveTab->addParamSubgroup(mOpenroad->appConfig(), "ppm", "throttle curve");
     }
 }
 
@@ -84,9 +84,9 @@ void PageAppPpm::paramChangedDouble(QObject *src, QString name, double newParam)
     (void)newParam;
 
     if (name == "app_ppm_conf.throttle_exp" || name == "app_ppm_conf.throttle_exp_brake") {
-        int mode = mVesc->appConfig()->getParamEnum("app_ppm_conf.throttle_exp_mode");
-        float val_acc = mVesc->appConfig()->getParamDouble("app_ppm_conf.throttle_exp");
-        float val_brake = mVesc->appConfig()->getParamDouble("app_ppm_conf.throttle_exp_brake");
+        int mode = mOpenroad->appConfig()->getParamEnum("app_ppm_conf.throttle_exp_mode");
+        float val_acc = mOpenroad->appConfig()->getParamDouble("app_ppm_conf.throttle_exp");
+        float val_brake = mOpenroad->appConfig()->getParamDouble("app_ppm_conf.throttle_exp_brake");
 
         QVector<double> x;
         QVector<double> y;

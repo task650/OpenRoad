@@ -28,7 +28,7 @@ PageAppImu::PageAppImu(QWidget *parent) :
     ui(new Ui::PageAppImu)
 {
     ui->setupUi(this);
-    mVesc = nullptr;
+    mOpenroad = nullptr;
 
     mTimer = new QTimer(this);
     mTimer->start(20);
@@ -117,7 +117,7 @@ PageAppImu::PageAppImu(QWidget *parent) :
     ui->gyroPlot->xAxis->setLabel("Seconds (s)");
     ui->gyroPlot->yAxis->setLabel("Angular Velocity (Deg/s)");
 
-    m3dView = new Vesc3DView(this);
+    m3dView = new Openroad3DView(this);
     m3dView->setMinimumWidth(200);
     m3dView->setRollPitchYaw(20, 20, 0);
     m3dView->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::MinimumExpanding);
@@ -131,28 +131,28 @@ PageAppImu::~PageAppImu()
     delete ui;
 }
 
-VescInterface *PageAppImu::openroad() const
+OpenroadInterface *PageAppImu::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void PageAppImu::setVesc(VescInterface *openroad)
+void PageAppImu::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    if (mVesc) {
+    if (mOpenroad) {
         reloadParams();
 
-        connect(mVesc->commands(), SIGNAL(valuesImuReceived(IMU_VALUES,uint)),
+        connect(mOpenroad->commands(), SIGNAL(valuesImuReceived(IMU_VALUES,uint)),
                 this, SLOT(valuesReceived(IMU_VALUES,uint)));
     }
 }
 
 void PageAppImu::reloadParams()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         ui->tableWidget->clearParams();
-        ui->tableWidget->addParamSubgroup(mVesc->appConfig(), "imu", "general");
+        ui->tableWidget->addParamSubgroup(mOpenroad->appConfig(), "imu", "general");
     }
 }
 

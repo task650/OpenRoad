@@ -35,12 +35,12 @@ public:
     explicit PageDataAnalysis(QWidget *parent = 0);
     ~PageDataAnalysis();
 
-    VescInterface *openroad() const;
-    void setVesc(VescInterface *openroad);
+    OpenroadInterface *openroad() const;
+    void setOpenroad(OpenroadInterface *openroad);
 
 private:
     Ui::PageDataAnalysis *ui;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
 
 };
 

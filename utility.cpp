@@ -104,7 +104,7 @@ float Utility::throttle_curve(float val, float curve_acc, float curve_brake, int
     return ret;
 }
 
-bool Utility::autoconnectBlockingWithProgress(VescInterface *openroad, QWidget *parent)
+bool Utility::autoconnectBlockingWithProgress(OpenroadInterface *openroad, QWidget *parent)
 {
     if (!openroad) {
         return false;
@@ -126,7 +126,7 @@ bool Utility::autoconnectBlockingWithProgress(VescInterface *openroad, QWidget *
     return res;
 }
 
-void Utility::checkVersion(VescInterface *openroad)
+void Utility::checkVersion(OpenroadInterface *openroad)
 {
     QString version = QString::number(VT_VERSION);
     QUrl url("https://openroad-project.com/openroadtool-version.html");
@@ -293,7 +293,7 @@ void Utility::sleepWithEventLoop(int timeMs)
     QObject::disconnect(conn1);
 }
 
-QString Utility::detectAllFoc(VescInterface *openroad,
+QString Utility::detectAllFoc(OpenroadInterface *openroad,
                               bool detect_can, double max_power_loss, double min_current_in,
                               double max_current_in, double openloop_rpm, double sl_erpm)
 {
@@ -431,7 +431,7 @@ QString Utility::detectAllFoc(VescInterface *openroad,
     return res;
 }
 
-bool Utility::resetInputCan(VescInterface *openroad, QVector<int> canIds)
+bool Utility::resetInputCan(OpenroadInterface *openroad, QVector<int> canIds)
 {
     bool res = true;
 
@@ -542,7 +542,7 @@ bool Utility::resetInputCan(VescInterface *openroad, QVector<int> canIds)
     return res;
 }
 
-bool Utility::setBatteryCutCan(VescInterface *openroad, QVector<int> canIds,
+bool Utility::setBatteryCutCan(OpenroadInterface *openroad, QVector<int> canIds,
                                double cutStart, double cutEnd)
 {
     bool res = true;
@@ -642,7 +642,7 @@ bool Utility::setBatteryCutCan(VescInterface *openroad, QVector<int> canIds,
     return res;
 }
 
-bool Utility::setBatteryCutCanFromCurrentConfig(VescInterface *openroad, QVector<int> canIds)
+bool Utility::setBatteryCutCanFromCurrentConfig(OpenroadInterface *openroad, QVector<int> canIds)
 {
     ConfigParams *p = openroad->mcConfig();
 
@@ -667,7 +667,7 @@ bool Utility::setBatteryCutCanFromCurrentConfig(VescInterface *openroad, QVector
     return setBatteryCutCan(openroad, canIds, start, end);
 }
 
-bool Utility::setInvertDirection(VescInterface *openroad, int canId, bool inverted)
+bool Utility::setInvertDirection(OpenroadInterface *openroad, int canId, bool inverted)
 {
     bool res = true;
 
@@ -708,7 +708,7 @@ bool Utility::setInvertDirection(VescInterface *openroad, int canId, bool invert
     return res;
 }
 
-bool Utility::getInvertDirection(VescInterface *openroad, int canId)
+bool Utility::getInvertDirection(OpenroadInterface *openroad, int canId)
 {
     bool res = false;
 
@@ -741,7 +741,7 @@ bool Utility::getInvertDirection(VescInterface *openroad, int canId)
     return res;
 }
 
-QString Utility::testDirection(VescInterface *openroad, int canId, double duty, int ms)
+QString Utility::testDirection(OpenroadInterface *openroad, int canId, double duty, int ms)
 {
     bool canLastFwd = openroad->commands()->getSendCan();
     int canLastId = openroad->commands()->getCanSendId();
@@ -800,7 +800,7 @@ QString Utility::testDirection(VescInterface *openroad, int canId, double duty, 
  * Restore the VESC configuration to the default values.
  *
  * @param openroad
- * Pointer to a connected VescInterface instance.
+ * Pointer to a connected OpenroadInterface instance.
  *
  * @param can
  * Scan CAN-bus and restore all devices.
@@ -814,7 +814,7 @@ QString Utility::testDirection(VescInterface *openroad, int canId, double duty, 
  * @return
  * true for success, false otherwise.
  */
-bool Utility::restoreConfAll(VescInterface *openroad, bool can, bool mc, bool app)
+bool Utility::restoreConfAll(OpenroadInterface *openroad, bool can, bool mc, bool app)
 {
     bool res = true;
 
@@ -939,7 +939,7 @@ bool Utility::almostEqual(double A, double B, double eps)
     return fabs(A - B) <= eps * fmax(1.0f, fmax(fabs(A), fabs(B)));
 }
 
-bool Utility::createParamParserC(VescInterface *openroad, QString filename)
+bool Utility::createParamParserC(OpenroadInterface *openroad, QString filename)
 {
     if (filename.toLower().endsWith(".c") || filename.toLower().endsWith(".h")) {
         filename.chop(2);
@@ -1268,7 +1268,7 @@ uint32_t Utility::crc32c(uint8_t *data, uint32_t len)
     return ~crc;
 }
 
-bool Utility::checkFwCompatibility(VescInterface *openroad)
+bool Utility::checkFwCompatibility(OpenroadInterface *openroad)
 {
     bool res = false;
 
@@ -1445,7 +1445,7 @@ bool Utility::configCheckCompatibility(int fwMajor, int fwMinor)
     return false;
 }
 
-bool Utility::configLoad(VescInterface *openroad, int fwMajor, int fwMinor)
+bool Utility::configLoad(OpenroadInterface *openroad, int fwMajor, int fwMinor)
 {
     QDirIterator it("://res/config");
 
@@ -1508,7 +1508,7 @@ QPair<int, int> Utility::configLatestSupported()
     return res;
 }
 
-bool Utility::configLoadLatest(VescInterface *openroad)
+bool Utility::configLoadLatest(OpenroadInterface *openroad)
 {
     auto latestSupported = configLatestSupported();
 
@@ -1544,7 +1544,7 @@ QVector<QPair<int, int> > Utility::configSupportedFws()
     return res;
 }
 
-bool Utility::configLoadCompatible(VescInterface *openroad, QString &uuidRx)
+bool Utility::configLoadCompatible(OpenroadInterface *openroad, QString &uuidRx)
 {
     bool res = false;
 

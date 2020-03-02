@@ -26,7 +26,7 @@ PageMotor::PageMotor(QWidget *parent) :
 {
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
-    mVesc = nullptr;
+    mOpenroad = nullptr;
 }
 
 PageMotor::~PageMotor()
@@ -34,18 +34,18 @@ PageMotor::~PageMotor()
     delete ui;
 }
 
-VescInterface *PageMotor::openroad() const
+OpenroadInterface *PageMotor::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void PageMotor::setVesc(VescInterface *openroad)
+void PageMotor::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    if (mVesc) {
-        ui->dirSetup->setVesc(mVesc);
-        ui->batteryCalc->setVesc(mVesc);
+    if (mOpenroad) {
+        ui->dirSetup->setOpenroad(mOpenroad);
+        ui->batteryCalc->setOpenroad(mOpenroad);
 
         reloadParams();
     }
@@ -61,11 +61,11 @@ void PageMotor::reloadParams()
     ui->tempTab->clearParams();
     ui->advancedTab->clearParams();
 
-    ui->motorTab->addParamSubgroup(mVesc->mcConfig(), "general", "general");
-    ui->currentTab->addParamSubgroup(mVesc->mcConfig(), "general", "current");
-    ui->voltageTab->addParamSubgroup(mVesc->mcConfig(), "general", "voltage");
-    ui->rpmTab->addParamSubgroup(mVesc->mcConfig(), "general", "rpm");
-    ui->wattageTab->addParamSubgroup(mVesc->mcConfig(), "general", "wattage");
-    ui->tempTab->addParamSubgroup(mVesc->mcConfig(), "general", "temperature");
-    ui->advancedTab->addParamSubgroup(mVesc->mcConfig(), "general", "advanced");
+    ui->motorTab->addParamSubgroup(mOpenroad->mcConfig(), "general", "general");
+    ui->currentTab->addParamSubgroup(mOpenroad->mcConfig(), "general", "current");
+    ui->voltageTab->addParamSubgroup(mOpenroad->mcConfig(), "general", "voltage");
+    ui->rpmTab->addParamSubgroup(mOpenroad->mcConfig(), "general", "rpm");
+    ui->wattageTab->addParamSubgroup(mOpenroad->mcConfig(), "general", "wattage");
+    ui->tempTab->addParamSubgroup(mOpenroad->mcConfig(), "general", "temperature");
+    ui->advancedTab->addParamSubgroup(mOpenroad->mcConfig(), "general", "advanced");
 }

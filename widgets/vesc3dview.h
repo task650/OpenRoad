@@ -29,12 +29,12 @@
 QT_FORWARD_DECLARE_CLASS(QOpenGLShaderProgram)
 QT_FORWARD_DECLARE_CLASS(QOpenGLTexture)
 
-class Vesc3DView : public QOpenGLWidget, protected QOpenGLFunctions
+class Openroad3DView : public QOpenGLWidget, protected QOpenGLFunctions
 {
     Q_OBJECT
 public:
-    explicit Vesc3DView(QWidget *parent = nullptr);
-    ~Vesc3DView();
+    explicit Openroad3DView(QWidget *parent = nullptr);
+    ~Openroad3DView();
 
     QSize minimumSizeHint() const;
     QSize sizeHint() const;

@@ -26,7 +26,7 @@ PageAppNrf::PageAppNrf(QWidget *parent) :
 {
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
-    mVesc = nullptr;
+    mOpenroad = nullptr;
 }
 
 PageAppNrf::~PageAppNrf()
@@ -34,25 +34,25 @@ PageAppNrf::~PageAppNrf()
     delete ui;
 }
 
-VescInterface *PageAppNrf::openroad() const
+OpenroadInterface *PageAppNrf::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void PageAppNrf::setVesc(VescInterface *openroad)
+void PageAppNrf::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    if (mVesc) {
-        ui->nrfPair->setVesc(mVesc);
+    if (mOpenroad) {
+        ui->nrfPair->setOpenroad(mOpenroad);
         reloadParams();
     }
 }
 
 void PageAppNrf::reloadParams()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         ui->generalTab->clearParams();
-        ui->generalTab->addParamSubgroup(mVesc->appConfig(), "nrf", "general");
+        ui->generalTab->addParamSubgroup(mOpenroad->appConfig(), "nrf", "general");
     }
 }

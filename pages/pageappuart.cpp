@@ -26,7 +26,7 @@ PageAppUart::PageAppUart(QWidget *parent) :
 {
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
-    mVesc = nullptr;
+    mOpenroad = nullptr;
 }
 
 PageAppUart::~PageAppUart()
@@ -34,24 +34,24 @@ PageAppUart::~PageAppUart()
     delete ui;
 }
 
-VescInterface *PageAppUart::openroad() const
+OpenroadInterface *PageAppUart::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void PageAppUart::setVesc(VescInterface *openroad)
+void PageAppUart::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    if (mVesc) {
+    if (mOpenroad) {
         reloadParams();
     }
 }
 
 void PageAppUart::reloadParams()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         ui->generalTab->clearParams();
-        ui->generalTab->addParamSubgroup(mVesc->appConfig(), "uart", "general");
+        ui->generalTab->addParamSubgroup(mOpenroad->appConfig(), "uart", "general");
     }
 }

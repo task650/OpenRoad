@@ -27,7 +27,7 @@ PageCanAnalyzer::PageCanAnalyzer(QWidget *parent) :
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
     ui->msgTable->setColumnWidth(1, 120);
-    mVesc = nullptr;
+    mOpenroad = nullptr;
 }
 
 PageCanAnalyzer::~PageCanAnalyzer()
@@ -35,28 +35,28 @@ PageCanAnalyzer::~PageCanAnalyzer()
     delete ui;
 }
 
-VescInterface *PageCanAnalyzer::openroad() const
+OpenroadInterface *PageCanAnalyzer::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void PageCanAnalyzer::setVesc(VescInterface *openroad)
+void PageCanAnalyzer::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    if (mVesc) {
+    if (mOpenroad) {
         reloadParams();
-        connect(mVesc->commands(), SIGNAL(canFrameRx(QByteArray,quint32,bool)),
+        connect(mOpenroad->commands(), SIGNAL(canFrameRx(QByteArray,quint32,bool)),
                 this, SLOT(canFrameRx(QByteArray,quint32,bool)));
     }
 }
 
 void PageCanAnalyzer::reloadParams()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         ui->paramTable->clearParams();
-        ui->paramTable->addParamRow(mVesc->appConfig(), "can_mode");
-        ui->paramTable->addParamRow(mVesc->appConfig(), "can_baud_rate");
+        ui->paramTable->addParamRow(mOpenroad->appConfig(), "can_mode");
+        ui->paramTable->addParamRow(mOpenroad->appConfig(), "can_baud_rate");
     }
 }
 
@@ -82,7 +82,7 @@ void PageCanAnalyzer::canFrameRx(QByteArray data, quint32 id, bool isExtended)
 
 void PageCanAnalyzer::on_sendButton_clicked()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         VByteArray vb;
         QVector<int> bytes;
 
@@ -115,9 +115,9 @@ void PageCanAnalyzer::on_sendButton_clicked()
         }
 
         if (ok) {
-            mVesc->commands()->forwardCanFrame(vb, id, ui->sendExtBox->currentIndex() == 1);
+            mOpenroad->commands()->forwardCanFrame(vb, id, ui->sendExtBox->currentIndex() == 1);
         } else {
-            mVesc->emitMessageDialog("Send CAN",
+            mOpenroad->emitMessageDialog("Send CAN",
                                      "Unable to parse ID. ID must be a decimal number, or "
                                      "a hexadecimal number starting with 0x",
                                      false);

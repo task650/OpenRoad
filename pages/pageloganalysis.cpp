@@ -28,7 +28,7 @@ PageLogAnalysis::PageLogAnalysis(QWidget *parent) :
     ui(new Ui::PageLogAnalysis)
 {
     ui->setupUi(this);
-    mVesc = nullptr;
+    mOpenroad = nullptr;
 
     updateTileServers();
 
@@ -51,7 +51,7 @@ PageLogAnalysis::PageLogAnalysis(QWidget *parent) :
     ui->statTable->setColumnWidth(0, 140);
     ui->logTable->setColumnWidth(0, 250);
 
-    m3dView = new Vesc3DView(this);
+    m3dView = new Openroad3DView(this);
     m3dView->setMinimumWidth(200);
     m3dView->setRollPitchYaw(20, 20, 0);
     m3dView->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::MinimumExpanding);
@@ -260,19 +260,19 @@ PageLogAnalysis::~PageLogAnalysis()
     delete ui;
 }
 
-VescInterface *PageLogAnalysis::openroad() const
+OpenroadInterface *PageLogAnalysis::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void PageLogAnalysis::setVesc(VescInterface *openroad)
+void PageLogAnalysis::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 }
 
 void PageLogAnalysis::on_openCsvButton_clicked()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         QString fileName = QFileDialog::getOpenFileName(this,
                                                         tr("Load CSV File"), "",
                                                         tr("CSV files (*.csv)"));
@@ -282,7 +282,7 @@ void PageLogAnalysis::on_openCsvButton_clicked()
             set.setValue("pageloganalysis/lastdir",
                          QFileInfo(fileName).absolutePath());
 
-            if (mVesc->loadRtLogFile(fileName)) {
+            if (mOpenroad->loadRtLogFile(fileName)) {
                 on_openCurrentButton_clicked();
             }
 
@@ -293,8 +293,8 @@ void PageLogAnalysis::on_openCsvButton_clicked()
 
 void PageLogAnalysis::on_openCurrentButton_clicked()
 {
-    if (mVesc) {
-        mLogData = mVesc->getRtLogData();
+    if (mOpenroad) {
+        mLogData = mOpenroad->getRtLogData();
 
         double i_llh[3];
         for (auto d: mLogData) {
@@ -1204,11 +1204,11 @@ void PageLogAnalysis::on_logListOpenButton_clicked()
     if (items.size() > 0) {
         QString fileName = items.
                 first()->data(Qt::UserRole).toString();
-        if (mVesc->loadRtLogFile(fileName)) {
+        if (mOpenroad->loadRtLogFile(fileName)) {
             on_openCurrentButton_clicked();
         }
     } else {
-        mVesc->emitMessageDialog("Open Log", "No Log Selected", false);
+        mOpenroad->emitMessageDialog("Open Log", "No Log Selected", false);
     }
 }
 

@@ -35,8 +35,8 @@ public:
     explicit PpmMap(QWidget *parent = 0);
     ~PpmMap();
 
-    VescInterface *openroad() const;
-    void setVesc(VescInterface *openroad);
+    OpenroadInterface *openroad() const;
+    void setOpenroad(OpenroadInterface *openroad);
 
 private slots:
     void decodedPpmReceived(double value, double last_len);
@@ -48,7 +48,7 @@ private slots:
 
 private:
     Ui::PpmMap *ui;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     bool mResetDone;
 
 };

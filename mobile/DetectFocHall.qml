@@ -28,9 +28,9 @@ import Vedder.openroad.configparams 1.0
 Item {
     property var table: []
 
-    property Commands mCommands: VescIf.commands()
-    property ConfigParams mMcConf: VescIf.mcConfig()
-    property ConfigParams mInfoConf: VescIf.infoConfig()
+    property Commands mCommands: OpenroadIf.commands()
+    property ConfigParams mMcConf: OpenroadIf.mcConfig()
+    property ConfigParams mInfoConf: OpenroadIf.infoConfig()
 
     function openDialog() {
         dialog.open()
@@ -51,10 +51,10 @@ Item {
     }
 
     function testConnected() {
-        if (VescIf.isPortConnected()) {
+        if (OpenroadIf.isPortConnected()) {
             return true
         } else {
-            VescIf.emitMessageDialog(
+            OpenroadIf.emitMessageDialog(
                         "Connection Error",
                         "The VESC is not connected. Please connect it to run detection.",
                         false, false)
@@ -105,7 +105,7 @@ Item {
                         Layout.preferredWidth: 50
                         Layout.fillWidth: true
                         onClicked: {
-                            VescIf.emitMessageDialog(
+                            OpenroadIf.emitMessageDialog(
                                         mInfoConf.getLongName("help_foc_hall_detect"),
                                         mInfoConf.getDescription("help_foc_hall_detect"),
                                         true, true)
@@ -140,7 +140,7 @@ Item {
                     Layout.fillWidth: true
                     onClicked: {
                         if (table.length != 8) {
-                            VescIf.emitMessageDialog("Apply Error",
+                            OpenroadIf.emitMessageDialog("Apply Error",
                                                      "Hall table is empty.",
                                                      false, false)
                             return
@@ -150,7 +150,7 @@ Item {
                             mMcConf.updateParamInt("foc_hall_table__" + i, table[i])
                         }
 
-                        VescIf.emitStatusMessage("Hall Sensor Parameters Applied", true)
+                        OpenroadIf.emitStatusMessage("Hall Sensor Parameters Applied", true)
 
                         dialog.close()
                     }
@@ -193,8 +193,8 @@ Item {
 
         onFocHallTableReceived: {
             if (res !== 0) {
-                VescIf.emitStatusMessage("Bad FOC Hall Detection Result Received", false)
-                VescIf.emitMessageDialog("Bad FOC Hall Detection Result Received",
+                OpenroadIf.emitStatusMessage("Bad FOC Hall Detection Result Received", false)
+                OpenroadIf.emitMessageDialog("Bad FOC Hall Detection Result Received",
                                          "Could not detect hall sensors. Make sure that everything " +
                                          "is connected properly.",
                                          false, false)

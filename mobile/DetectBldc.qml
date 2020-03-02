@@ -32,9 +32,9 @@ Item {
     property int hallRes: -4
     property bool resultReceived: false
 
-    property Commands mCommands: VescIf.commands()
-    property ConfigParams mMcConf: VescIf.mcConfig()
-    property ConfigParams mInfoConf: VescIf.infoConfig()
+    property Commands mCommands: OpenroadIf.commands()
+    property ConfigParams mMcConf: OpenroadIf.mcConfig()
+    property ConfigParams mInfoConf: OpenroadIf.infoConfig()
 
     function openDialog() {
         dialog.open()
@@ -80,10 +80,10 @@ Item {
     }
 
     function testConnected() {
-        if (VescIf.isPortConnected()) {
+        if (OpenroadIf.isPortConnected()) {
             return true
         } else {
-            VescIf.emitMessageDialog(
+            OpenroadIf.emitMessageDialog(
                         "Connection Error",
                         "The VESC is not connected. Please connect it to run detection.",
                         false, false)
@@ -157,7 +157,7 @@ Item {
                         Layout.fillWidth: true
                         Layout.preferredWidth: 50
                         onClicked: {
-                            VescIf.emitMessageDialog(
+                            OpenroadIf.emitMessageDialog(
                                         mInfoConf.getLongName("help_bldc_detect"),
                                         mInfoConf.getDescription("help_bldc_detect"),
                                         true, true)
@@ -191,7 +191,7 @@ Item {
                     Layout.fillWidth: true
                     onClicked: {
                         if (!resultReceived) {
-                            VescIf.emitMessageDialog("Apply Detection Result",
+                            OpenroadIf.emitMessageDialog("Apply Detection Result",
                                                      "Detection result not received. Make sure to run the detection first.",
                                                      false, false)
                             return
@@ -247,12 +247,12 @@ Item {
 
         onBldcDetectReceived: {
             if (param.cycle_int_limit < 0.01 && param.bemf_coupling_k < 0.01) {
-                VescIf.emitStatusMessage("Bad Detection Result Received", false)
-                VescIf.emitMessageDialog("BLDC Detection",
+                OpenroadIf.emitStatusMessage("Bad Detection Result Received", false)
+                OpenroadIf.emitMessageDialog("BLDC Detection",
                                          "Bad Detection Result Received",
                                          false, false)
             } else {
-                VescIf.emitStatusMessage("Detection Result Received", true)
+                OpenroadIf.emitStatusMessage("Detection Result Received", true)
                 intLim = param.cycle_int_limit
                 coupling = param.bemf_coupling_k
                 hallTable = param.hall_table

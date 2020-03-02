@@ -177,7 +177,7 @@ Item {
                     flat: true
                     text: "Help"
                     onClicked: {
-                        VescIf.emitMessageDialog(
+                        OpenroadIf.emitMessageDialog(
                                     params.getLongName(paramName),
                                     params.getDescription(paramName),
                                     true, true)

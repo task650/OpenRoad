@@ -36,10 +36,10 @@ Item {
     property alias powerMin: powerMinBox.realValue
     signal closed(bool ok)
 
-    property ConfigParams mMcConf: VescIf.mcConfig()
+    property ConfigParams mMcConf: OpenroadIf.mcConfig()
 
     function getMcConfTemp() {
-        var conf = VescIf.createMcconfTemp()
+        var conf = OpenroadIf.createMcconfTemp()
         conf.current_max_scale = current
         conf.current_min_scale = currentBrake
         conf.erpm_or_speed_max = speedKmh / 3.6
@@ -85,10 +85,10 @@ Item {
     }
 
     function testConnected() {
-        if (VescIf.isPortConnected()) {
+        if (OpenroadIf.isPortConnected()) {
             return true
         } else {
-            VescIf.emitMessageDialog(
+            OpenroadIf.emitMessageDialog(
                         "Connection Error",
                         "The VESC is not connected. Please connect it to run detection.",
                         false, false)
@@ -109,7 +109,7 @@ Item {
     }
 
     function updateSpeedBoxes() {
-        var useImperial = VescIf.useImperialUnits()
+        var useImperial = OpenroadIf.useImperialUnits()
         var impFact = useImperial ? 0.621371192 : 1.0
         var speedUnit = useImperial ? " mph" : " km/h"
 
@@ -126,7 +126,7 @@ Item {
     }
 
     Connections {
-        target: VescIf
+        target: OpenroadIf
 
         onUseImperialUnitsChanged: {
             updateSpeedBoxes()
@@ -203,7 +203,7 @@ Item {
                         Layout.fillWidth: true
 
                         onRealValueChanged: {
-                            speedKmh = realValue / (VescIf.useImperialUnits() ? 0.621371192 : 1.0)
+                            speedKmh = realValue / (OpenroadIf.useImperialUnits() ? 0.621371192 : 1.0)
                         }
                     }
 
@@ -216,7 +216,7 @@ Item {
                         Layout.bottomMargin: 20
 
                         onRealValueChanged: {
-                            speedKmhRev = realValue / (VescIf.useImperialUnits() ? 0.621371192 : 1.0)
+                            speedKmhRev = realValue / (OpenroadIf.useImperialUnits() ? 0.621371192 : 1.0)
                         }
                     }
 

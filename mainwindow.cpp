@@ -96,7 +96,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     mVersion = QString::number(VT_VERSION, 'f', 2);
-    mVesc = new VescInterface(this);
+    mOpenroad = new OpenroadInterface(this);
     mStatusInfoTime = 0;
     mStatusLabel = new QLabel(this);
     ui->statusBar->addPermanentWidget(mStatusLabel);
@@ -106,17 +106,17 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(mTimer, SIGNAL(timeout()),
             this, SLOT(timerSlot()));
-    connect(mVesc, SIGNAL(statusMessage(QString,bool)),
+    connect(mOpenroad, SIGNAL(statusMessage(QString,bool)),
             this, SLOT(showStatusInfo(QString,bool)));
-    connect(mVesc, SIGNAL(messageDialog(QString,QString,bool,bool)),
+    connect(mOpenroad, SIGNAL(messageDialog(QString,QString,bool,bool)),
             this, SLOT(showMessageDialog(QString,QString,bool,bool)));
-    connect(mVesc, SIGNAL(serialPortNotWritable(QString)),
+    connect(mOpenroad, SIGNAL(serialPortNotWritable(QString)),
             this, SLOT(serialPortNotWritable(QString)));
-    connect(mVesc->commands(), SIGNAL(valuesReceived(MC_VALUES,unsigned int)),
+    connect(mOpenroad->commands(), SIGNAL(valuesReceived(MC_VALUES,unsigned int)),
             this, SLOT(valuesReceived(MC_VALUES,unsigned int)));
-    connect(mVesc->commands(), SIGNAL(mcConfigCheckResult(QStringList)),
+    connect(mOpenroad->commands(), SIGNAL(mcConfigCheckResult(QStringList)),
             this, SLOT(mcConfigCheckResult(QStringList)));
-    connect(mVesc->mcConfig(), SIGNAL(paramChangedDouble(QObject*,QString,double)),
+    connect(mOpenroad->mcConfig(), SIGNAL(paramChangedDouble(QObject*,QString,double)),
             this, SLOT(paramChangedDouble(QObject*,QString,double)));
     connect(ui->actionAboutQt, SIGNAL(triggered(bool)),
             qApp, SLOT(aboutQt()));
@@ -129,8 +129,8 @@ MainWindow::MainWindow(QWidget *parent) :
     // Remove the menu with the option to hide the toolbar
     ui->mainToolBar->setContextMenuPolicy(Qt::PreventContextMenu);
 
-    mVesc->fwConfig()->loadParamsXml("://res/config/fw.xml");
-    Utility::configLoadLatest(mVesc);
+    mOpenroad->fwConfig()->loadParamsXml("://res/config/fw.xml");
+    Utility::configLoadLatest(mOpenroad);
 
     QMenu *fwMenu = new QMenu(this);
     fwMenu->setTitle("Load Firmware Configs");
@@ -139,7 +139,7 @@ MainWindow::MainWindow(QWidget *parent) :
         QAction *action = new QAction(fwMenu);
         action->setText(QString("%1.%2").arg(fw.first).arg(fw.second, 2, 10, QChar('0')));
         connect(action, &QAction::triggered, [this,fw]() {
-            Utility::configLoad(mVesc, fw.first, fw.second);
+            Utility::configLoad(mOpenroad, fw.first, fw.second);
         });
         fwMenu->addAction(action);
     }
@@ -151,17 +151,17 @@ MainWindow::MainWindow(QWidget *parent) :
         backupMenu->clear();
         backupMenu->setTitle("Load Configuration Backups for UUID");
         backupMenu->setIcon(QIcon("://res/icons/Open Folder-96.png"));
-        for (auto uuid: mVesc->confListBackups()) {
+        for (auto uuid: mOpenroad->confListBackups()) {
             QAction *action = new QAction(backupMenu);
             action->setIcon(QIcon("://res/icons/Electronics-96.png"));
             QString txt = uuid;
-            QString name = mVesc->confBackupName(uuid);
+            QString name = mOpenroad->confBackupName(uuid);
             if (!name.isEmpty()) {
                 txt += " (" + name + ")";
             }
             action->setText(txt);
             connect(action, &QAction::triggered, [this,uuid]() {
-                mVesc->confLoadBackup(uuid);
+                mOpenroad->confLoadBackup(uuid);
             });
             backupMenu->addAction(action);
         }
@@ -169,21 +169,21 @@ MainWindow::MainWindow(QWidget *parent) :
     };
 
     reloadBackupMenu();
-    connect(mVesc, &VescInterface::configurationBackupsChanged, reloadBackupMenu);
+    connect(mOpenroad, &OpenroadInterface::configurationBackupsChanged, reloadBackupMenu);
 
     reloadPages();
 
     mMcConfRead = false;
     mAppConfRead = false;
 
-    connect(mVesc->mcConfig(), &ConfigParams::updated, [this]() {
+    connect(mOpenroad->mcConfig(), &ConfigParams::updated, [this]() {
         mMcConfRead = true;
     });
-    connect(mVesc->appConfig(), &ConfigParams::updated, [this]() {
+    connect(mOpenroad->appConfig(), &ConfigParams::updated, [this]() {
         mAppConfRead = true;
     });
 
-    connect(mVesc, &VescInterface::configurationChanged, [this]() {
+    connect(mOpenroad, &OpenroadInterface::configurationChanged, [this]() {
         qDebug() << "Reloading user interface due to configuration change.";
 
         mMcConfRead = false;
@@ -253,7 +253,7 @@ bool MainWindow::eventFilter(QObject *object, QEvent *e)
 {
     (void)object;
 
-    if (!mVesc->isPortConnected() || !ui->actionKeyboardControl->isChecked()) {
+    if (!mOpenroad->isPortConnected() || !ui->actionKeyboardControl->isChecked()) {
         return false;
     }
 
@@ -280,20 +280,20 @@ bool MainWindow::eventFilter(QObject *object, QEvent *e)
         switch(keyEvent->key()) {
         case Qt::Key_Up:
             if (isPress) {
-                mVesc->commands()->setCurrent(ui->currentBox->value());
+                mOpenroad->commands()->setCurrent(ui->currentBox->value());
                 ui->actionSendAlive->setChecked(true);
             } else {
-                mVesc->commands()->setCurrent(0.0);
+                mOpenroad->commands()->setCurrent(0.0);
                 ui->actionSendAlive->setChecked(false);
             }
             break;
 
         case Qt::Key_Down:
             if (isPress) {
-                mVesc->commands()->setCurrent(-ui->currentBox->value());
+                mOpenroad->commands()->setCurrent(-ui->currentBox->value());
                 ui->actionSendAlive->setChecked(true);
             } else {
-                mVesc->commands()->setCurrent(0.0);
+                mOpenroad->commands()->setCurrent(0.0);
                 ui->actionSendAlive->setChecked(false);
             }
             break;
@@ -316,10 +316,10 @@ bool MainWindow::eventFilter(QObject *object, QEvent *e)
 
         case Qt::Key_PageDown:
             if (isPress) {
-                mVesc->commands()->setCurrentBrake(-ui->currentBox->value());
+                mOpenroad->commands()->setCurrentBrake(-ui->currentBox->value());
                 ui->actionSendAlive->setChecked(true);
             } else {
-                mVesc->commands()->setCurrent(0.0);
+                mOpenroad->commands()->setCurrent(0.0);
                 ui->actionSendAlive->setChecked(false);
             }
             break;
@@ -343,9 +343,9 @@ void MainWindow::timerSlot()
             mStatusLabel->setStyleSheet(qApp->styleSheet());
         }
     } else {
-        QString str = mVesc->getConnectedPortName();
+        QString str = mOpenroad->getConnectedPortName();
         if (str != mStatusLabel->text()) {
-            mStatusLabel->setText(mVesc->getConnectedPortName());
+            mStatusLabel->setText(mOpenroad->getConnectedPortName());
             static QString statusLast = "";
             if (str != statusLast) {
                 mPageDebugPrint->printConsole("Status: " + str + "<br>");
@@ -355,26 +355,26 @@ void MainWindow::timerSlot()
     }
 
     // CAN fwd
-    if (ui->actionCanFwd->isChecked() != mVesc->commands()->getSendCan()) {
-        ui->actionCanFwd->setChecked(mVesc->commands()->getSendCan());
+    if (ui->actionCanFwd->isChecked() != mOpenroad->commands()->getSendCan()) {
+        ui->actionCanFwd->setChecked(mOpenroad->commands()->getSendCan());
     }
 
     // RT data
     if (ui->actionRtData->isChecked()) {
-        mVesc->commands()->getValues();
+        mOpenroad->commands()->getValues();
     }
 
     // APP RT data
     if (ui->actionRtDataApp->isChecked()) {
-        mVesc->commands()->getDecodedAdc();
-        mVesc->commands()->getDecodedChuk();
-        mVesc->commands()->getDecodedPpm();
-        mVesc->commands()->getDecodedBalance();
+        mOpenroad->commands()->getDecodedAdc();
+        mOpenroad->commands()->getDecodedChuk();
+        mOpenroad->commands()->getDecodedPpm();
+        mOpenroad->commands()->getDecodedBalance();
     }
 
     // IMU Data
     if (ui->actionIMU->isChecked()) {
-        mVesc->commands()->getImuData(0xFFFF);
+        mOpenroad->commands()->getImuData(0xFFFF);
     }
 
     // Send alive command once every 10 iterations
@@ -383,31 +383,31 @@ void MainWindow::timerSlot()
         alive_cnt++;
         if (alive_cnt >= 10) {
             alive_cnt = 0;
-            mVesc->commands()->sendAlive();
+            mOpenroad->commands()->sendAlive();
         }
     }
 
     // Read configurations if they haven't been read since starting VESC Tool
-    if (mVesc->isPortConnected()) {
+    if (mOpenroad->isPortConnected()) {
         static int conf_cnt = 0;
         conf_cnt++;
         if (conf_cnt >= 20) {
             conf_cnt = 0;
 
-            if (!mVesc->deserializeFailedSinceConnected()) {
+            if (!mOpenroad->deserializeFailedSinceConnected()) {
                 if (!mMcConfRead) {
-                    mVesc->commands()->getMcconf();
+                    mOpenroad->commands()->getMcconf();
                 }
 
                 if (!mAppConfRead) {
-                    mVesc->commands()->getAppConf();
+                    mOpenroad->commands()->getAppConf();
                 }
             }
         }
     }
 
     // Disable all data streaming when uploading firmware
-    if (mVesc->getFwUploadProgress() > 0.1) {
+    if (mOpenroad->getFwUploadProgress() > 0.1) {
         ui->actionSendAlive->setChecked(false);
         ui->actionRtData->setChecked(false);
         ui->actionRtDataApp->setChecked(false);
@@ -453,7 +453,7 @@ void MainWindow::timerSlot()
 
     if (keyPower != lastKeyPower) {
         lastKeyPower = keyPower;
-        mVesc->commands()->setDutyCycle(keyPower);
+        mOpenroad->commands()->setDutyCycle(keyPower);
         ui->actionSendAlive->setChecked(true);
     }
 
@@ -473,7 +473,7 @@ void MainWindow::timerSlot()
         }
 
         if (!mSettings.value("intro_done").toBool()) {
-            StartupWizard w(mVesc, this);
+            StartupWizard w(mOpenroad, this);
             w.exec();
         }
 
@@ -487,7 +487,7 @@ void MainWindow::timerSlot()
 
         has_run_start_checks = true;
         checkUdev();
-        Utility::checkVersion(mVesc);
+        Utility::checkVersion(mOpenroad);
     }
 }
 
@@ -601,7 +601,7 @@ void MainWindow::mcConfigCheckResult(QStringList paramsNotSet)
         ParamDialog::showParams(tr("Parameters truncated"),
                                 tr("The following parameters were truncated because they were set outside "
                                    "of their allowed limits."),
-                                mVesc->mcConfig(),
+                                mOpenroad->mcConfig(),
                                 paramsNotSet,
                                 this);
     }
@@ -609,60 +609,60 @@ void MainWindow::mcConfigCheckResult(QStringList paramsNotSet)
 
 void MainWindow::on_actionReconnect_triggered()
 {
-    mVesc->reconnectLastPort();
+    mOpenroad->reconnectLastPort();
 }
 
 void MainWindow::on_actionDisconnect_triggered()
 {
-    mVesc->disconnectPort();
+    mOpenroad->disconnectPort();
 }
 
 void MainWindow::on_actionReboot_triggered()
 {
-    mVesc->commands()->reboot();
+    mOpenroad->commands()->reboot();
 }
 
 void MainWindow::on_stopButton_clicked()
 {
-    mVesc->commands()->setCurrent(0);
+    mOpenroad->commands()->setCurrent(0);
     mPageExperiments->stop();
     ui->actionSendAlive->setChecked(false);
 }
 
 void MainWindow::on_fullBrakeButton_clicked()
 {
-    mVesc->commands()->setDutyCycle(0);
+    mOpenroad->commands()->setDutyCycle(0);
     ui->actionSendAlive->setChecked(true);
 }
 
 void MainWindow::on_actionReadMcconf_triggered()
 {
-    mVesc->commands()->getMcconf();
+    mOpenroad->commands()->getMcconf();
 }
 
 void MainWindow::on_actionReadMcconfDefault_triggered()
 {
-    mVesc->commands()->getMcconfDefault();
+    mOpenroad->commands()->getMcconfDefault();
 }
 
 void MainWindow::on_actionWriteMcconf_triggered()
 {
-    mVesc->commands()->setMcconf();
+    mOpenroad->commands()->setMcconf();
 }
 
 void MainWindow::on_actionReadAppconf_triggered()
 {
-    mVesc->commands()->getAppConf();
+    mOpenroad->commands()->getAppConf();
 }
 
 void MainWindow::on_actionReadAppconfDefault_triggered()
 {
-    mVesc->commands()->getAppConfDefault();
+    mOpenroad->commands()->getAppConfDefault();
 }
 
 void MainWindow::on_actionWriteAppconf_triggered()
 {
-    mVesc->commands()->setAppConf();
+    mOpenroad->commands()->setAppConf();
 }
 
 void MainWindow::on_actionSaveMotorConfXml_triggered()
@@ -681,14 +681,14 @@ void MainWindow::on_actionSaveMotorConfXml_triggered()
         path += ".xml";
     }
 
-    bool res = mVesc->mcConfig()->saveXml(path, "MCConfiguration");
+    bool res = mOpenroad->mcConfig()->saveXml(path, "MCConfiguration");
 
     if (res) {
         showStatusInfo("Saved motor configuration", true);
     } else {
         showMessageDialog(tr("Save motor configuration"),
                           tr("Could not save motor configuration:<BR>"
-                             "%1").arg(mVesc->mcConfig()->xmlStatus()),
+                             "%1").arg(mOpenroad->mcConfig()->xmlStatus()),
                           false, false);
     }
 }
@@ -705,14 +705,14 @@ void MainWindow::on_actionLoadMotorConfXml_triggered()
         return;
     }
 
-    bool res = mVesc->mcConfig()->loadXml(path, "MCConfiguration");
+    bool res = mOpenroad->mcConfig()->loadXml(path, "MCConfiguration");
 
     if (res) {
         showStatusInfo("Loaded motor configuration", true);
     } else {
         showMessageDialog(tr("Load motor configuration"),
                           tr("Could not load motor configuration:<BR>"
-                             "%1").arg(mVesc->mcConfig()->xmlStatus()),
+                             "%1").arg(mOpenroad->mcConfig()->xmlStatus()),
                           false, false);
     }
 }
@@ -733,14 +733,14 @@ void MainWindow::on_actionSaveAppconfXml_triggered()
         path += ".xml";
     }
 
-    bool res = mVesc->appConfig()->saveXml(path, "APPConfiguration");
+    bool res = mOpenroad->appConfig()->saveXml(path, "APPConfiguration");
 
     if (res) {
         showStatusInfo("Saved app configuration", true);
     } else {
         showMessageDialog(tr("Save app configuration"),
                           tr("Could not save app configuration:<BR>"
-                             "%1").arg(mVesc->appConfig()->xmlStatus()),
+                             "%1").arg(mOpenroad->appConfig()->xmlStatus()),
                           false, false);
     }
 }
@@ -757,14 +757,14 @@ void MainWindow::on_actionLoadAppconfXml_triggered()
         return;
     }
 
-    bool res = mVesc->appConfig()->loadXml(path, "APPConfiguration");
+    bool res = mOpenroad->appConfig()->loadXml(path, "APPConfiguration");
 
     if (res) {
         showStatusInfo("Loaded app configuration", true);
     } else {
         showMessageDialog(tr("Load app configuration"),
                           tr("Could not load app configuration:<BR>"
-                             "%1").arg(mVesc->appConfig()->xmlStatus()),
+                             "%1").arg(mOpenroad->appConfig()->xmlStatus()),
                           false, false);
     }
 }
@@ -790,37 +790,37 @@ void MainWindow::on_actionLibrariesUsed_triggered()
 
 void MainWindow::on_dutyButton_clicked()
 {
-    mVesc->commands()->setDutyCycle(ui->dutyBox->value());
+    mOpenroad->commands()->setDutyCycle(ui->dutyBox->value());
     ui->actionSendAlive->setChecked(true);
 }
 
 void MainWindow::on_currentButton_clicked()
 {
-    mVesc->commands()->setCurrent(ui->currentBox->value());
+    mOpenroad->commands()->setCurrent(ui->currentBox->value());
     ui->actionSendAlive->setChecked(true);
 }
 
 void MainWindow::on_speedButton_clicked()
 {
-    mVesc->commands()->setRpm(int(ui->speedBox->value()));
+    mOpenroad->commands()->setRpm(int(ui->speedBox->value()));
     ui->actionSendAlive->setChecked(true);
 }
 
 void MainWindow::on_posButton_clicked()
 {
-    mVesc->commands()->setPos(ui->posBox->value());
+    mOpenroad->commands()->setPos(ui->posBox->value());
     ui->actionSendAlive->setChecked(true);
 }
 
 void MainWindow::on_brakeCurrentButton_clicked()
 {
-    mVesc->commands()->setCurrentBrake(ui->brakeCurrentBox->value());
+    mOpenroad->commands()->setCurrentBrake(ui->brakeCurrentBox->value());
     ui->actionSendAlive->setChecked(true);
 }
 
 void MainWindow::on_handbrakeButton_clicked()
 {
-    mVesc->commands()->setHandbrake(ui->handbrakeBox->value());
+    mOpenroad->commands()->setHandbrake(ui->handbrakeBox->value());
     ui->actionSendAlive->setChecked(true);
 }
 
@@ -839,9 +839,9 @@ void MainWindow::saveParamFileDialog(QString conf, bool wrapIfdef)
     ConfigParams *params = nullptr;
 
     if (conf.toLower() == "mcconf") {
-        params = mVesc->mcConfig();
+        params = mOpenroad->mcConfig();
     } else if (conf.toLower() == "appconf") {
-        params = mVesc->appConfig();
+        params = mOpenroad->appConfig();
     } else {
         qWarning() << "Invalid conf" << conf;
         return;
@@ -901,7 +901,7 @@ void MainWindow::reloadPages()
     }
 
     mPageWelcome = new PageWelcome(this);
-    mPageWelcome->setVesc(mVesc);
+    mPageWelcome->setOpenroad(mOpenroad);
     ui->pageWidget->addWidget(mPageWelcome);
     addPageItem(tr("Welcome & Wizards"), "://res/icons/Home-96.png", "", true);
     connect(ui->actionAutoSetupFOC, SIGNAL(triggered(bool)),
@@ -912,158 +912,158 @@ void MainWindow::reloadPages()
             mPageWelcome, SLOT(startSetupWizardApp()));
 
     mPageConnection = new PageConnection(this);
-    mPageConnection->setVesc(mVesc);
+    mPageConnection->setOpenroad(mOpenroad);
     ui->pageWidget->addWidget(mPageConnection);
     addPageItem(tr("Connection"), "://res/icons/Connected-96.png", "", true);
 
     mPageFirmware = new PageFirmware(this);
-    mPageFirmware->setVesc(mVesc);
+    mPageFirmware->setOpenroad(mOpenroad);
     ui->pageWidget->addWidget(mPageFirmware);
     addPageItem(tr("Firmware"), "://res/icons/Electronics-96.png", "", true);
 
     mPageMotorSettings = new PageMotorSettings(this);
-    mPageMotorSettings->setVesc(mVesc);
+    mPageMotorSettings->setOpenroad(mOpenroad);
     ui->pageWidget->addWidget(mPageMotorSettings);
     addPageItem(tr("Motor Settings"), "://res/icons/motor.png", "", true);
 
     mPageMotor = new PageMotor(this);
-    mPageMotor->setVesc(mVesc);
+    mPageMotor->setOpenroad(mOpenroad);
     ui->pageWidget->addWidget(mPageMotor);
     addPageItem(tr("General"), "://res/icons/Horizontal Settings Mixer-96.png",
                 "://res/icons/mcconf.png", false, true);
 
     mPageBldc = new PageBldc(this);
-    mPageBldc->setVesc(mVesc);
+    mPageBldc->setOpenroad(mOpenroad);
     ui->pageWidget->addWidget(mPageBldc);
     addPageItem(tr("BLDC"), "://res/icons/bldc.png",
                 "://res/icons/mcconf.png", false, true);
 
     mPageDc = new PageDc(this);
-    mPageDc->setVesc(mVesc);
+    mPageDc->setOpenroad(mOpenroad);
     ui->pageWidget->addWidget(mPageDc);
     addPageItem(tr("DC"), "://res/icons/Car Battery-96.png",
                 "://res/icons/mcconf.png", false, true);
 
     mPageFoc = new PageFoc(this);
-    mPageFoc->setVesc(mVesc);
+    mPageFoc->setOpenroad(mOpenroad);
     ui->pageWidget->addWidget(mPageFoc);
     addPageItem(tr("FOC"), "://res/icons/3ph_sine.png",
                 "://res/icons/mcconf.png", false, true);
 
     mPageGpd = new PageGPD(this);
-    mPageGpd->setVesc(mVesc);
+    mPageGpd->setOpenroad(mOpenroad);
     ui->pageWidget->addWidget(mPageGpd);
     addPageItem(tr("GPDrive"), "://res/icons/3ph_sine.png",
                 "://res/icons/mcconf.png", false, true);
 
     mPageControllers = new PageControllers(this);
-    mPageControllers->setVesc(mVesc);
+    mPageControllers->setOpenroad(mOpenroad);
     ui->pageWidget->addWidget(mPageControllers);
     addPageItem(tr("PID Controllers"), "://res/icons/Speed-96.png",
                 "://res/icons/mcconf.png", false, true);
 
     mPageMotorInfo = new PageMotorInfo(this);
-    mPageMotorInfo->setVesc(mVesc);
+    mPageMotorInfo->setOpenroad(mOpenroad);
     ui->pageWidget->addWidget(mPageMotorInfo);
     addPageItem(tr("Additional Info"), "://res/icons/About-96.png",
                 "://res/icons/mcconf.png", false, true);
 
     mPageExperiments = new PageExperiments(this);
-    mPageExperiments->setVesc(mVesc);
+    mPageExperiments->setOpenroad(mOpenroad);
     ui->pageWidget->addWidget(mPageExperiments);
     addPageItem(tr("Experiments"), "://res/icons/Calculator-96.png",
                 "://res/icons/mcconf.png", false, true);
 
     mPageAppSettings = new PageAppSettings(this);
-    mPageAppSettings->setVesc(mVesc);
+    mPageAppSettings->setOpenroad(mOpenroad);
     ui->pageWidget->addWidget(mPageAppSettings);
     addPageItem(tr("App Settings"), "://res/icons/Outgoing Data-96.png", "", true);
 
     mPageAppGeneral = new PageAppGeneral(this);
-    mPageAppGeneral->setVesc(mVesc);
+    mPageAppGeneral->setOpenroad(mOpenroad);
     ui->pageWidget->addWidget(mPageAppGeneral);
     addPageItem(tr("General"), "://res/icons/Horizontal Settings Mixer-96.png",
                 "://res/icons/appconf.png", false, true);
 
     mPageAppPpm = new PageAppPpm(this);
-    mPageAppPpm->setVesc(mVesc);
+    mPageAppPpm->setOpenroad(mOpenroad);
     ui->pageWidget->addWidget(mPageAppPpm);
     addPageItem(tr("PPM"), "://res/icons/Controller-96.png",
                 "://res/icons/appconf.png", false, true);
 
     mPageAppAdc = new PageAppAdc(this);
-    mPageAppAdc->setVesc(mVesc);
+    mPageAppAdc->setOpenroad(mOpenroad);
     ui->pageWidget->addWidget(mPageAppAdc);
     addPageItem(tr("ADC"), "://res/icons/Potentiometer-96.png",
                 "://res/icons/appconf.png", false, true);
 
     mPageAppUart = new PageAppUart(this);
-    mPageAppUart->setVesc(mVesc);
+    mPageAppUart->setOpenroad(mOpenroad);
     ui->pageWidget->addWidget(mPageAppUart);
     addPageItem(tr("UART"), "://res/icons/Rs 232 Male-96.png",
                 "://res/icons/appconf.png", false, true);
 
     mPageAppNunchuk = new PageAppNunchuk(this);
-    mPageAppNunchuk->setVesc(mVesc);
+    mPageAppNunchuk->setOpenroad(mOpenroad);
     ui->pageWidget->addWidget(mPageAppNunchuk);
     addPageItem(tr("VESC Remote"), "://res/icons/icons8-fantasy-96.png",
                 "://res/icons/appconf.png", false, true);
 
     mPageAppNrf = new PageAppNrf(this);
-    mPageAppNrf->setVesc(mVesc);
+    mPageAppNrf->setOpenroad(mOpenroad);
     ui->pageWidget->addWidget(mPageAppNrf);
     addPageItem(tr("Nrf"), "://res/icons/Online-96.png",
                 "://res/icons/appconf.png", false, true);
 
     mPageAppBalance = new PageAppBalance(this);
-    mPageAppBalance->setVesc(mVesc);
+    mPageAppBalance->setOpenroad(mOpenroad);
     ui->pageWidget->addWidget(mPageAppBalance);
     addPageItem(tr("Balance"), "://res/icons/EUC-96.png",
                 "://res/icons/appconf.png", false, true);
 
     mPageAppImu = new PageAppImu(this);
-    mPageAppImu->setVesc(mVesc);
+    mPageAppImu->setOpenroad(mOpenroad);
     ui->pageWidget->addWidget(mPageAppImu);
     addPageItem(tr("IMU"), "://res/icons/Gyroscope-96.png",
                 "://res/icons/appconf.png", false, true);
 
     mPageDataAnalysis = new PageDataAnalysis(this);
-    mPageDataAnalysis->setVesc(mVesc);
+    mPageDataAnalysis->setOpenroad(mOpenroad);
     ui->pageWidget->addWidget(mPageDataAnalysis);
     addPageItem(tr("Data Analysis"), "://res/icons/Line Chart-96.png", "", true);
 
     mPageRtData = new PageRtData(this);
-    mPageRtData->setVesc(mVesc);
+    mPageRtData->setOpenroad(mOpenroad);
     ui->pageWidget->addWidget(mPageRtData);
     addPageItem(tr("Realtime Data"), "://res/icons/rt_off.png", "", false, true);
 
     mPageSampledData = new PageSampledData(this);
-    mPageSampledData->setVesc(mVesc);
+    mPageSampledData->setOpenroad(mOpenroad);
     ui->pageWidget->addWidget(mPageSampledData);
     addPageItem(tr("Sampled Data"), "://res/icons/Gyroscope-96.png", "", false, true);
 
     mPageImu = new PageImu(this);
-    mPageImu->setVesc(mVesc);
+    mPageImu->setOpenroad(mOpenroad);
     ui->pageWidget->addWidget(mPageImu);
     addPageItem(tr("IMU Data"), "://res/icons/Line Chart-96.png", "", false, true);
 
     mPageLogAnalysis = new PageLogAnalysis(this);
-    mPageLogAnalysis->setVesc(mVesc);
+    mPageLogAnalysis->setOpenroad(mOpenroad);
     ui->pageWidget->addWidget(mPageLogAnalysis);
     addPageItem(tr("Log Analysis"), "://res/icons/Waypoint Map-96.png", "", false, true);
 
     mPageTerminal = new PageTerminal(this);
-    mPageTerminal->setVesc(mVesc);
+    mPageTerminal->setOpenroad(mOpenroad);
     ui->pageWidget->addWidget(mPageTerminal);
     addPageItem(tr("VESC Terminal"), "://res/icons/Console-96.png", "", true);
 
     mPageSwdProg = new PageSwdProg(this);
-    mPageSwdProg->setVesc(mVesc);
+    mPageSwdProg->setOpenroad(mOpenroad);
     ui->pageWidget->addWidget(mPageSwdProg);
     addPageItem(tr("SWD Prog"), "://res/icons/Electronics-96.png", "", true);
 
     mPageCanAnalyzer = new PageCanAnalyzer(this);
-    mPageCanAnalyzer->setVesc(mVesc);
+    mPageCanAnalyzer->setOpenroad(mOpenroad);
     ui->pageWidget->addWidget(mPageCanAnalyzer);
     addPageItem(tr("CAN Analyzer"), "://res/icons/can_off.png", "", true);
 
@@ -1232,7 +1232,7 @@ void MainWindow::on_actionParameterEditorMcconf_triggered()
 {
     ParameterEditor *p = new ParameterEditor(this);
     p->setAttribute(Qt::WA_DeleteOnClose);
-    p->setParams(mVesc->mcConfig());
+    p->setParams(mOpenroad->mcConfig());
     p->show();
 }
 
@@ -1240,7 +1240,7 @@ void MainWindow::on_actionParameterEditorAppconf_triggered()
 {
     ParameterEditor *p = new ParameterEditor(this);
     p->setAttribute(Qt::WA_DeleteOnClose);
-    p->setParams(mVesc->appConfig());
+    p->setParams(mOpenroad->appConfig());
     p->show();
 }
 
@@ -1248,7 +1248,7 @@ void MainWindow::on_actionParameterEditorInfo_triggered()
 {
     ParameterEditor *p = new ParameterEditor(this);
     p->setAttribute(Qt::WA_DeleteOnClose);
-    p->setParams(mVesc->infoConfig());
+    p->setParams(mOpenroad->infoConfig());
     p->show();
 }
 
@@ -1274,13 +1274,13 @@ void MainWindow::on_actionSaveAppConfigurationHeaderWrap_triggered()
 
 void MainWindow::on_actionTerminalPrintFaults_triggered()
 {
-    mVesc->commands()->sendTerminalCmd("faults");
+    mOpenroad->commands()->sendTerminalCmd("faults");
     showPage("VESC Terminal");
 }
 
 void MainWindow::on_actionTerminalShowHelp_triggered()
 {
-    mVesc->commands()->sendTerminalCmd("help");
+    mOpenroad->commands()->sendTerminalCmd("help");
     showPage("VESC Terminal");
 }
 
@@ -1292,35 +1292,35 @@ void MainWindow::on_actionTerminalClear_triggered()
 
 void MainWindow::on_actionTerminalPrintThreads_triggered()
 {
-    mVesc->commands()->sendTerminalCmd("threads");
+    mOpenroad->commands()->sendTerminalCmd("threads");
     showPage("VESC Terminal");
 }
 
 void MainWindow::on_actionTerminalDRV8301ResetLatchedFaults_triggered()
 {
-    mVesc->commands()->sendTerminalCmd("drv8301_reset_faults");
+    mOpenroad->commands()->sendTerminalCmd("drv8301_reset_faults");
 }
 
 void MainWindow::on_actionCanFwd_toggled(bool arg1)
 {
-    if (arg1 && mVesc->commands()->getCanSendId() < 0) {
+    if (arg1 && mOpenroad->commands()->getCanSendId() < 0) {
         ui->actionCanFwd->setChecked(false);
-        mVesc->emitMessageDialog("CAN Forward",
+        mOpenroad->emitMessageDialog("CAN Forward",
                                  "No CAN device is selected. Go to the connection page and select one.",
                                  false, false);
     } else {
-        mVesc->commands()->setSendCan(arg1);
+        mOpenroad->commands()->setSendCan(arg1);
     }
 }
 
 void MainWindow::on_actionSafetyInformation_triggered()
 {
-    HelpDialog::showHelp(this, mVesc->infoConfig(), "wizard_startup_usage");
+    HelpDialog::showHelp(this, mOpenroad->infoConfig(), "wizard_startup_usage");
 }
 
 void MainWindow::on_actionWarrantyStatement_triggered()
 {
-    HelpDialog::showHelp(this, mVesc->infoConfig(), "wizard_startup_warranty");
+    HelpDialog::showHelp(this, mOpenroad->infoConfig(), "wizard_startup_warranty");
 }
 
 void MainWindow::on_actionVESCToolChangelog_triggered()
@@ -1340,7 +1340,7 @@ void MainWindow::on_actionVESCProjectForums_triggered()
 
 void MainWindow::on_actionLicense_triggered()
 {
-    HelpDialog::showHelp(this, mVesc->infoConfig(), "gpl_text");
+    HelpDialog::showHelp(this, mOpenroad->infoConfig(), "gpl_text");
 }
 
 void MainWindow::on_posBox_editingFinished()
@@ -1366,7 +1366,7 @@ void MainWindow::on_actionExportConfigurationParser_triggered()
         return;
     }
 
-    Utility::createParamParserC(mVesc, path);
+    Utility::createParamParserC(mOpenroad, path);
 }
 
 void MainWindow::on_actionBackupConfiguration_triggered()
@@ -1376,13 +1376,13 @@ void MainWindow::on_actionBackupConfiguration_triggered()
                                          "Name (can be blank):", QLineEdit::Normal,
                                          "", &ok);
     if (ok) {
-        mVesc->confStoreBackup(false, name);
+        mOpenroad->confStoreBackup(false, name);
     }
 }
 
 void MainWindow::on_actionRestoreConfiguration_triggered()
 {
-    mVesc->confRestoreBackup(false);
+    mOpenroad->confRestoreBackup(false);
 }
 
 void MainWindow::on_actionClearConfigurationBackups_triggered()
@@ -1395,7 +1395,7 @@ void MainWindow::on_actionClearConfigurationBackups_triggered()
                                  QMessageBox::Yes | QMessageBox::Cancel);
 
     if (reply == QMessageBox::Yes) {
-        mVesc->confClearBackups();
+        mOpenroad->confClearBackups();
     }
 }
 
@@ -1403,7 +1403,7 @@ void MainWindow::on_actionParameterEditorFW_triggered()
 {
     ParameterEditor *p = new ParameterEditor(this);
     p->setAttribute(Qt::WA_DeleteOnClose);
-    p->setParams(mVesc->fwConfig());
+    p->setParams(mOpenroad->fwConfig());
     p->show();
 }
 
@@ -1417,7 +1417,7 @@ void MainWindow::on_actionBackupConfigurationsCAN_triggered()
         QProgressDialog dialog("Backing up configurations...", QString(), 0, 0, this);
         dialog.setWindowModality(Qt::WindowModal);
         dialog.show();
-        mVesc->confStoreBackup(true, name);
+        mOpenroad->confStoreBackup(true, name);
     }
 }
 
@@ -1426,5 +1426,5 @@ void MainWindow::on_actionRestoreConfigurationsCAN_triggered()
     QProgressDialog dialog("Restoring configurations...", QString(), 0, 0, this);
     dialog.setWindowModality(Qt::WindowModal);
     dialog.show();
-    mVesc->confRestoreBackup(true);
+    mOpenroad->confRestoreBackup(true);
 }

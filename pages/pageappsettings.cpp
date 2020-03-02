@@ -27,7 +27,7 @@ PageAppSettings::PageAppSettings(QWidget *parent) :
 {
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
-    mVesc = nullptr;
+    mOpenroad = nullptr;
 }
 
 PageAppSettings::~PageAppSettings()
@@ -35,24 +35,24 @@ PageAppSettings::~PageAppSettings()
     delete ui;
 }
 
-VescInterface *PageAppSettings::openroad() const
+OpenroadInterface *PageAppSettings::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void PageAppSettings::setVesc(VescInterface *openroad)
+void PageAppSettings::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    if (mVesc) {
+    if (mOpenroad) {
         reloadParams();
     }
 }
 
 void PageAppSettings::reloadParams()
 {
-    if (mVesc) {
-        ConfigParam *p = mVesc->infoConfig()->getParam("app_setting_description");
+    if (mOpenroad) {
+        ConfigParam *p = mOpenroad->infoConfig()->getParam("app_setting_description");
         if (p != nullptr) {
             ui->textEdit->setHtml(p->description);
         } else {
@@ -63,8 +63,8 @@ void PageAppSettings::reloadParams()
 
 void PageAppSettings::on_appWizardButton_clicked()
 {
-    if (mVesc) {
-        SetupWizardApp w(mVesc, this);
+    if (mOpenroad) {
+        SetupWizardApp w(mOpenroad, this);
         w.exec();
     }
 }

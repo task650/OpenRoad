@@ -27,8 +27,8 @@ import Vedder.openroad.configparams 1.0
 
 Item {
     property alias name: nameText.text
-    property ConfigParams mMcConf: VescIf.mcConfig()
-    property Commands mCommands: VescIf.commands()
+    property ConfigParams mMcConf: OpenroadIf.mcConfig()
+    property Commands mCommands: OpenroadIf.commands()
     property int index: 0
     signal editRequested(int index)
     signal deleteRequested(int index)
@@ -39,7 +39,7 @@ Item {
     function setFromMcConfTemp(cfg) {
         name = cfg.name
 
-        var useImperial = VescIf.useImperialUnits()
+        var useImperial = OpenroadIf.useImperialUnits()
         var impFact = useImperial ? 0.621371192 : 1.0
         var speedUnit = useImperial ? "mph\n" : "km/h\n"
 
@@ -57,7 +57,7 @@ Item {
     }
 
     function checkActive() {
-        if (VescIf.isProfileInUse(index)) {
+        if (OpenroadIf.isProfileInUse(index)) {
             rect.border.color = "#81D4FA"
             rect.border.width = 3
         } else {
@@ -120,8 +120,8 @@ Item {
                     flat: true
                     text: "UP"
                     onClicked: {
-                        VescIf.moveProfileUp(index)
-                        VescIf.storeSettings()
+                        OpenroadIf.moveProfileUp(index)
+                        OpenroadIf.storeSettings()
                     }
                 }
 
@@ -132,9 +132,9 @@ Item {
                     flat: true
                     text: "Use until reboot"
                     onClicked: {
-                        mCommands.setMcconfTemp(VescIf.getProfile(index),
+                        mCommands.setMcconfTemp(OpenroadIf.getProfile(index),
                                                 true, false, true, false, true)
-                        VescIf.updateMcconfFromProfile(VescIf.getProfile(index))
+                        OpenroadIf.updateMcconfFromProfile(OpenroadIf.getProfile(index))
                     }
                 }
 
@@ -152,8 +152,8 @@ Item {
                     flat: true
                     text: "DOWN"
                     onClicked: {
-                        VescIf.moveProfileDown(index)
-                        VescIf.storeSettings()
+                        OpenroadIf.moveProfileDown(index)
+                        OpenroadIf.storeSettings()
                     }
                 }
 
@@ -190,9 +190,9 @@ Item {
                         }
 
                         onAccepted: {
-                            mCommands.setMcconfTemp(VescIf.getProfile(index),
+                            mCommands.setMcconfTemp(OpenroadIf.getProfile(index),
                                                     true, true, true, false, true)
-                            VescIf.updateMcconfFromProfile(VescIf.getProfile(index))
+                            OpenroadIf.updateMcconfFromProfile(OpenroadIf.getProfile(index))
                         }
                     }
                 }
@@ -218,10 +218,10 @@ Item {
     }
 
     Connections {
-        target: VescIf
+        target: OpenroadIf
 
         onUseImperialUnitsChanged: {
-            setFromMcConfTemp(VescIf.getProfile(index))
+            setFromMcConfTemp(OpenroadIf.getProfile(index))
         }
     }
 }

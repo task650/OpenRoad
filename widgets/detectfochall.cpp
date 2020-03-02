@@ -28,7 +28,7 @@ DetectFocHall::DetectFocHall(QWidget *parent) :
 {
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
-    mVesc = 0;
+    mOpenroad = 0;
 }
 
 DetectFocHall::~DetectFocHall()
@@ -38,14 +38,14 @@ DetectFocHall::~DetectFocHall()
 
 void DetectFocHall::on_helpButton_clicked()
 {
-    if (mVesc) {
-        HelpDialog::showHelp(this, mVesc->infoConfig(), "help_foc_hall_detect");
+    if (mOpenroad) {
+        HelpDialog::showHelp(this, mOpenroad->infoConfig(), "help_foc_hall_detect");
     }
 }
 
 void DetectFocHall::on_startButton_clicked()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         QMessageBox::StandardButton reply;
         reply = QMessageBox::warning(this,
                                      tr("Detect FOC Hall Sensor Parameters"),
@@ -54,37 +54,37 @@ void DetectFocHall::on_startButton_clicked()
                                      QMessageBox::Ok | QMessageBox::Cancel);
 
         if (reply == QMessageBox::Ok) {
-            mVesc->commands()->measureHallFoc(ui->currentBox->value());
+            mOpenroad->commands()->measureHallFoc(ui->currentBox->value());
         }
     }
 }
 
 void DetectFocHall::on_applyButton_clicked()
 {
-    if (mVesc) {
-        mVesc->mcConfig()->updateParamInt("foc_hall_table__0", ui->hall0Box->value());
-        mVesc->mcConfig()->updateParamInt("foc_hall_table__1", ui->hall1Box->value());
-        mVesc->mcConfig()->updateParamInt("foc_hall_table__2", ui->hall2Box->value());
-        mVesc->mcConfig()->updateParamInt("foc_hall_table__3", ui->hall3Box->value());
-        mVesc->mcConfig()->updateParamInt("foc_hall_table__4", ui->hall4Box->value());
-        mVesc->mcConfig()->updateParamInt("foc_hall_table__5", ui->hall5Box->value());
-        mVesc->mcConfig()->updateParamInt("foc_hall_table__6", ui->hall6Box->value());
-        mVesc->mcConfig()->updateParamInt("foc_hall_table__7", ui->hall7Box->value());
-        mVesc->emitStatusMessage(tr("Hall Sensor Parameters Applied"), true);
+    if (mOpenroad) {
+        mOpenroad->mcConfig()->updateParamInt("foc_hall_table__0", ui->hall0Box->value());
+        mOpenroad->mcConfig()->updateParamInt("foc_hall_table__1", ui->hall1Box->value());
+        mOpenroad->mcConfig()->updateParamInt("foc_hall_table__2", ui->hall2Box->value());
+        mOpenroad->mcConfig()->updateParamInt("foc_hall_table__3", ui->hall3Box->value());
+        mOpenroad->mcConfig()->updateParamInt("foc_hall_table__4", ui->hall4Box->value());
+        mOpenroad->mcConfig()->updateParamInt("foc_hall_table__5", ui->hall5Box->value());
+        mOpenroad->mcConfig()->updateParamInt("foc_hall_table__6", ui->hall6Box->value());
+        mOpenroad->mcConfig()->updateParamInt("foc_hall_table__7", ui->hall7Box->value());
+        mOpenroad->emitStatusMessage(tr("Hall Sensor Parameters Applied"), true);
     }
 }
 
-VescInterface *DetectFocHall::openroad() const
+OpenroadInterface *DetectFocHall::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void DetectFocHall::setVesc(VescInterface *openroad)
+void DetectFocHall::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    if (mVesc) {
-        connect(mVesc->commands(), SIGNAL(focHallTableReceived(QVector<int>,int)),
+    if (mOpenroad) {
+        connect(mOpenroad->commands(), SIGNAL(focHallTableReceived(QVector<int>,int)),
                 this, SLOT(focHallTableReceived(QVector<int>,int)));
     }
 }
@@ -92,9 +92,9 @@ void DetectFocHall::setVesc(VescInterface *openroad)
 void DetectFocHall::focHallTableReceived(QVector<int> hall_table, int res)
 {
     if (res != 0) {
-        mVesc->emitStatusMessage(tr("Bad FOC Hall Detection Result Received"), false);
+        mOpenroad->emitStatusMessage(tr("Bad FOC Hall Detection Result Received"), false);
     } else {
-        mVesc->emitStatusMessage(tr("FOC Hall Result Received"), true);
+        mOpenroad->emitStatusMessage(tr("FOC Hall Result Received"), true);
         ui->hall0Box->setValue(hall_table.at(0));
         ui->hall1Box->setValue(hall_table.at(1));
         ui->hall2Box->setValue(hall_table.at(2));

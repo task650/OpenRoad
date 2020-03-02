@@ -35,8 +35,8 @@ public:
     explicit AdcMap(QWidget *parent = 0);
     ~AdcMap();
 
-    VescInterface *openroad() const;
-    void setVesc(VescInterface *openroad);
+    OpenroadInterface *openroad() const;
+    void setOpenroad(OpenroadInterface *openroad);
 
 private slots:
     void decodedAdcReceived(double value, double voltage, double value2, double voltage2);
@@ -48,7 +48,7 @@ private slots:
 
 private:
     Ui::AdcMap *ui;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     bool mResetDone;
 
 };

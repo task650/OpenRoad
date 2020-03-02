@@ -35,13 +35,13 @@ public:
     explicit PageFoc(QWidget *parent = nullptr);
     ~PageFoc();
 
-    VescInterface *openroad() const;
-    void setVesc(VescInterface *openroad);
+    OpenroadInterface *openroad() const;
+    void setOpenroad(OpenroadInterface *openroad);
     void reloadParams();
 
 private:
     Ui::PageFoc *ui;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
 
 };
 

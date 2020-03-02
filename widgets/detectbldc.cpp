@@ -29,7 +29,7 @@ DetectBldc::DetectBldc(QWidget *parent) :
 {
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
-    mVesc = 0;
+    mOpenroad = 0;
     mResultReceived = false;
     mRunning = false;
 }
@@ -41,7 +41,7 @@ DetectBldc::~DetectBldc()
 
 void DetectBldc::on_runButton_clicked()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         QMessageBox::StandardButton reply;
         reply = QMessageBox::warning(this,
                                      tr("Detect BLDC Parameters"),
@@ -50,7 +50,7 @@ void DetectBldc::on_runButton_clicked()
                                      QMessageBox::Ok | QMessageBox::Cancel);
 
         if (reply == QMessageBox::Ok) {
-            mVesc->commands()->detectMotorParam(ui->currentBox->value(),
+            mOpenroad->commands()->detectMotorParam(ui->currentBox->value(),
                                                 ui->erpmBox->value(),
                                                 ui->dutyBox->value());
 
@@ -61,23 +61,23 @@ void DetectBldc::on_runButton_clicked()
 
 void DetectBldc::on_applyButton_clicked()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         if (mResultReceived) {
-            mVesc->mcConfig()->updateParamDouble("sl_bemf_coupling_k", mResult.bemf_coupling_k);
-            mVesc->mcConfig()->updateParamDouble("sl_cycle_int_limit", mResult.cycle_int_limit);
+            mOpenroad->mcConfig()->updateParamDouble("sl_bemf_coupling_k", mResult.bemf_coupling_k);
+            mOpenroad->mcConfig()->updateParamDouble("sl_cycle_int_limit", mResult.cycle_int_limit);
 
             if (mResult.hall_res == 0) {
-                mVesc->mcConfig()->updateParamInt("hall_table__0", mResult.hall_table.at(0));
-                mVesc->mcConfig()->updateParamInt("hall_table__1", mResult.hall_table.at(1));
-                mVesc->mcConfig()->updateParamInt("hall_table__2", mResult.hall_table.at(2));
-                mVesc->mcConfig()->updateParamInt("hall_table__3", mResult.hall_table.at(3));
-                mVesc->mcConfig()->updateParamInt("hall_table__4", mResult.hall_table.at(4));
-                mVesc->mcConfig()->updateParamInt("hall_table__5", mResult.hall_table.at(5));
-                mVesc->mcConfig()->updateParamInt("hall_table__6", mResult.hall_table.at(6));
-                mVesc->mcConfig()->updateParamInt("hall_table__7", mResult.hall_table.at(7));
+                mOpenroad->mcConfig()->updateParamInt("hall_table__0", mResult.hall_table.at(0));
+                mOpenroad->mcConfig()->updateParamInt("hall_table__1", mResult.hall_table.at(1));
+                mOpenroad->mcConfig()->updateParamInt("hall_table__2", mResult.hall_table.at(2));
+                mOpenroad->mcConfig()->updateParamInt("hall_table__3", mResult.hall_table.at(3));
+                mOpenroad->mcConfig()->updateParamInt("hall_table__4", mResult.hall_table.at(4));
+                mOpenroad->mcConfig()->updateParamInt("hall_table__5", mResult.hall_table.at(5));
+                mOpenroad->mcConfig()->updateParamInt("hall_table__6", mResult.hall_table.at(6));
+                mOpenroad->mcConfig()->updateParamInt("hall_table__7", mResult.hall_table.at(7));
             }
 
-            mVesc->emitStatusMessage(tr("Detection Result Applied"), true);
+            mOpenroad->emitStatusMessage(tr("Detection Result Applied"), true);
         } else {
             QMessageBox::warning(this,
                                  tr("Apply Detection Result"),
@@ -88,22 +88,22 @@ void DetectBldc::on_applyButton_clicked()
 
 void DetectBldc::on_helpButton_clicked()
 {
-    if (mVesc) {
-        HelpDialog::showHelp(this, mVesc->infoConfig(), "help_bldc_detect", false);
+    if (mOpenroad) {
+        HelpDialog::showHelp(this, mOpenroad->infoConfig(), "help_bldc_detect", false);
     }
 }
 
-VescInterface *DetectBldc::openroad() const
+OpenroadInterface *DetectBldc::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void DetectBldc::setVesc(VescInterface *openroad)
+void DetectBldc::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    if (mVesc) {
-        connect(mVesc->commands(), SIGNAL(bldcDetectReceived(bldc_detect)),
+    if (mOpenroad) {
+        connect(mOpenroad->commands(), SIGNAL(bldcDetectReceived(bldc_detect)),
                 this, SLOT(bldcDetectReceived(bldc_detect)));
     }
 }
@@ -123,10 +123,10 @@ void DetectBldc::bldcDetectReceived(bldc_detect param)
     mRunning = false;
 
     if (param.cycle_int_limit < 0.01 && param.bemf_coupling_k < 0.01) {
-        mVesc->emitStatusMessage(tr("Bad Detection Result Received"), false);
+        mOpenroad->emitStatusMessage(tr("Bad Detection Result Received"), false);
         ui->resultBrowser->setText(tr("Detection failed."));
     } else {
-        mVesc->emitStatusMessage(tr("Detection Result Received"), true);
+        mOpenroad->emitStatusMessage(tr("Detection Result Received"), true);
 
         mResult = param;
         mResultReceived = true;

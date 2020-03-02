@@ -41,7 +41,7 @@ public:
         Page_Conclusion
     };
 
-    explicit StartupWizard(VescInterface *openroad, QWidget *parent = 0);
+    explicit StartupWizard(OpenroadInterface *openroad, QWidget *parent = 0);
 
 private slots:
     void idChanged(int id);
@@ -55,7 +55,7 @@ class StartupIntroPage : public QWizardPage
     Q_OBJECT
 
 public:
-    StartupIntroPage(VescInterface *openroad, QWidget *parent = 0);
+    StartupIntroPage(OpenroadInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
 
 private:
@@ -67,7 +67,7 @@ class StartupUsagePage : public QWizardPage
     Q_OBJECT
 
 public:
-    StartupUsagePage(VescInterface *openroad, QWidget *parent = 0);
+    StartupUsagePage(OpenroadInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
 
 private slots:
@@ -85,7 +85,7 @@ class StartupWarrantyPage : public QWizardPage
     Q_OBJECT
 
 public:
-    StartupWarrantyPage(VescInterface *openroad, QWidget *parent = 0);
+    StartupWarrantyPage(OpenroadInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
 
 private slots:
@@ -103,7 +103,7 @@ class StartupConclusionPage : public QWizardPage
     Q_OBJECT
 
 public:
-    StartupConclusionPage(VescInterface *openroad, QWidget *parent = 0);
+    StartupConclusionPage(OpenroadInterface *openroad, QWidget *parent = 0);
     int nextId() const Q_DECL_OVERRIDE;
     bool validatePage() Q_DECL_OVERRIDE;
 

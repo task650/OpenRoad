@@ -27,8 +27,8 @@ import Vedder.openroad.configparams 1.0
 
 Item {
     id: rtData
-    property Commands mCommands: VescIf.commands()
-    property ConfigParams mMcConf: VescIf.mcConfig()
+    property Commands mCommands: OpenroadIf.commands()
+    property ConfigParams mMcConf: OpenroadIf.mcConfig()
     property bool isHorizontal: rtData.width > rtData.height
     property int gaugeSize: Math.min(width / 2 - 10,
                                      (height - valMetrics.height * 10) /
@@ -122,7 +122,7 @@ Item {
             Text {
                 id: valText
                 color: "white"
-                text: VescIf.getConnectedPortName()
+                text: OpenroadIf.getConnectedPortName()
                 font.family: "DejaVu Sans Mono"
                 verticalAlignment: Text.AlignVCenter
                 anchors.fill: parent

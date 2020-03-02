@@ -35,8 +35,8 @@ public:
     explicit PageAppAdc(QWidget *parent = nullptr);
     ~PageAppAdc();
 
-    VescInterface *openroad() const;
-    void setVesc(VescInterface *openroad);
+    OpenroadInterface *openroad() const;
+    void setOpenroad(OpenroadInterface *openroad);
     void reloadParams();
 
 private slots:
@@ -45,7 +45,7 @@ private slots:
 
 private:
     Ui::PageAppAdc *ui;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
 
 };
 

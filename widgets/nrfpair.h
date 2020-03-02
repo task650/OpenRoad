@@ -36,8 +36,8 @@ public:
     explicit NrfPair(QWidget *parent = 0);
     ~NrfPair();
 
-    VescInterface *openroad() const;
-    void setVesc(VescInterface *openroad);
+    OpenroadInterface *openroad() const;
+    void setOpenroad(OpenroadInterface *openroad);
     void startPairing();
 
 private slots:
@@ -49,7 +49,7 @@ private slots:
 
 private:
     Ui::NrfPair *ui;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     double mPairCnt;
     QTimer *mTimer;
     bool mRunning;

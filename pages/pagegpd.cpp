@@ -32,16 +32,16 @@ PageGPD::~PageGPD()
     delete ui;
 }
 
-VescInterface *PageGPD::openroad() const
+OpenroadInterface *PageGPD::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void PageGPD::setVesc(VescInterface *openroad)
+void PageGPD::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    if (mVesc) {
+    if (mOpenroad) {
         reloadParams();
     }
 }
@@ -49,5 +49,5 @@ void PageGPD::setVesc(VescInterface *openroad)
 void PageGPD::reloadParams()
 {
     ui->paramTab->clearParams();
-    ui->paramTab->addParamSubgroup(mVesc->mcConfig(), "gpd", "general");
+    ui->paramTab->addParamSubgroup(mOpenroad->mcConfig(), "gpd", "general");
 }

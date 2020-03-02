@@ -25,15 +25,15 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 	
-	mVesc = new VescInterface(this);
-    mVesc->fwConfig()->loadParamsXml("://res/config/fw.xml");
-    Utility::configLoadLatest(mVesc);
+	mOpenroad = new OpenroadInterface(this);
+    mOpenroad->fwConfig()->loadParamsXml("://res/config/fw.xml");
+    Utility::configLoadLatest(mOpenroad);
 
     mTimer = new QTimer(this);
     mTimer->start(20);
 
     connect(mTimer, SIGNAL(timeout()), this, SLOT(timerSlot()));
-    connect(mVesc->commands(), SIGNAL(valuesReceived(MC_VALUES,unsigned int)),
+    connect(mOpenroad->commands(), SIGNAL(valuesReceived(MC_VALUES,unsigned int)),
             this, SLOT(valuesReceived(MC_VALUES,unsigned int)));
 }
 
@@ -44,12 +44,12 @@ MainWindow::~MainWindow()
 
 void MainWindow::timerSlot()
 {
-    if (ui->statusLabel->text() != mVesc->getConnectedPortName()) {
-        ui->statusLabel->setText(mVesc->getConnectedPortName());
+    if (ui->statusLabel->text() != mOpenroad->getConnectedPortName()) {
+        ui->statusLabel->setText(mOpenroad->getConnectedPortName());
     }
 
-    if (mVesc->isPortConnected()) {
-        mVesc->commands()->getValues();
+    if (mOpenroad->isPortConnected()) {
+        mOpenroad->commands()->getValues();
     }
 }
 
@@ -67,10 +67,10 @@ void MainWindow::valuesReceived(MC_VALUES values, unsigned int mask)
 
 void MainWindow::on_connectButton_clicked()
 {
-    mVesc->autoconnect();
+    mOpenroad->autoconnect();
 }
 
 void MainWindow::on_disconnectButton_clicked()
 {
-    mVesc->disconnectPort();
+    mOpenroad->disconnectPort();
 }

@@ -25,7 +25,7 @@ QObject *openroadinterface_singletontype_provider(QQmlEngine *engine, QJSEngine 
     (void)engine;
     (void)scriptEngine;
 
-    VescInterface *openroad = new VescInterface();
+    OpenroadInterface *openroad = new OpenroadInterface();
 	openroad->fwConfig()->loadParamsXml("://res/config/fw.xml");
     Utility::configLoadLatest(openroad);
 
@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
     
-    qmlRegisterSingletonType<VescInterface>("Vedder.openroad.openroadinterface", 1, 0, "VescIf", openroadinterface_singletontype_provider);
+    qmlRegisterSingletonType<OpenroadInterface>("Vedder.openroad.openroadinterface", 1, 0, "OpenroadIf", openroadinterface_singletontype_provider);
     qmlRegisterSingletonType<Utility>("Vedder.openroad.utility", 1, 0, "Utility", utility_singletontype_provider);
 #ifdef HAS_BLUETOOTH
     qmlRegisterType<BleUart>("Vedder.openroad.bleuart", 1, 0, "BleUart");

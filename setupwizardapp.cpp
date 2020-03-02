@@ -23,12 +23,12 @@
 #include <QProgressDialog>
 #include "utility.h"
 
-SetupWizardApp::SetupWizardApp(VescInterface *openroad, QWidget *parent)
+SetupWizardApp::SetupWizardApp(OpenroadInterface *openroad, QWidget *parent)
     : QWizard(parent)
 {
-    mVesc = openroad;
-    mCanLastFwd = mVesc->commands()->getSendCan();
-    mCanLastId = mVesc->commands()->getCanSendId();
+    mOpenroad = openroad;
+    mCanLastFwd = mOpenroad->commands()->getSendCan();
+    mCanLastId = mOpenroad->commands()->getCanSendId();
 
     setPage(Page_Intro, new AppIntroPage(openroad));
     setPage(Page_Connection, new AppConnectionPage(openroad));
@@ -75,14 +75,14 @@ void SetupWizardApp::idChanged(int id)
 
 void SetupWizardApp::ended()
 {
-    mVesc->commands()->setSendCan(mCanLastFwd, mCanLastId);
-    mVesc->commands()->getAppConf();
+    mOpenroad->commands()->setSendCan(mCanLastFwd, mCanLastId);
+    mOpenroad->commands()->getAppConf();
 }
 
-AppIntroPage::AppIntroPage(VescInterface *openroad, QWidget *parent)
+AppIntroPage::AppIntroPage(OpenroadInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
     setTitle(tr("VESC® Input Setup Wizard"));
 
     mLabel = new QLabel(tr("This wizard will help you choose what type of input to use "
@@ -100,11 +100,11 @@ AppIntroPage::AppIntroPage(VescInterface *openroad, QWidget *parent)
 
 int AppIntroPage::nextId() const
 {
-    if (mVesc->isPortConnected()) {
-        if (mVesc->commands()->isLimitedMode() || !mResetInputOk) {
+    if (mOpenroad->isPortConnected()) {
+        if (mOpenroad->commands()->isLimitedMode() || !mResetInputOk) {
             return SetupWizardApp::Page_Firmware;
         } else {
-            if (mVesc->getCanDevsLast().size() == 0) {
+            if (mOpenroad->getCanDevsLast().size() == 0) {
                 return SetupWizardApp::Page_General;
             } else {
                 return SetupWizardApp::Page_Multi;
@@ -119,7 +119,7 @@ bool AppIntroPage::validatePage()
 {
     bool res = false;
 
-    if (!mVesc->isPortConnected()) {
+    if (!mOpenroad->isPortConnected()) {
         QMessageBox::StandardButton reply;
         reply = QMessageBox::information(this,
                                          tr("Connection"),
@@ -131,11 +131,11 @@ bool AppIntroPage::validatePage()
                                          QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
 
         if (reply == QMessageBox::Yes) {
-            Utility::autoconnectBlockingWithProgress(mVesc, this);
+            Utility::autoconnectBlockingWithProgress(mOpenroad, this);
             res = true;
         }
     } else {
-        mVesc->commands()->getAppConf();
+        mOpenroad->commands()->getAppConf();
 
         QProgressDialog dialog("Scanning CAN-Bus...", QString(), 0, 0, this);
         dialog.setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
@@ -144,18 +144,18 @@ bool AppIntroPage::validatePage()
         dialog.show();
 
         setEnabled(false);
-        auto devs = mVesc->scanCan();
-        mResetInputOk = Utility::resetInputCan(mVesc, devs);
+        auto devs = mOpenroad->scanCan();
+        mResetInputOk = Utility::resetInputCan(mOpenroad, devs);
         setEnabled(true);
     }
 
     return !res;
 }
 
-AppConnectionPage::AppConnectionPage(VescInterface *openroad, QWidget *parent)
+AppConnectionPage::AppConnectionPage(OpenroadInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
     setTitle(tr("Connect VESC"));
     setSubTitle(tr("The VESC has to be connected in order to use this "
@@ -163,9 +163,9 @@ AppConnectionPage::AppConnectionPage(VescInterface *openroad, QWidget *parent)
                    "interfaces."));
 
     mPageConnection = new PageConnection;
-    mPageConnection->setVesc(mVesc);
+    mPageConnection->setOpenroad(mOpenroad);
 
-    connect(mVesc, SIGNAL(fwRxChanged(bool,bool)),
+    connect(mOpenroad, SIGNAL(fwRxChanged(bool,bool)),
             this, SIGNAL(completeChanged()));
 
     QVBoxLayout *layout = new QVBoxLayout;
@@ -175,7 +175,7 @@ AppConnectionPage::AppConnectionPage(VescInterface *openroad, QWidget *parent)
 
 int AppConnectionPage::nextId() const
 {
-    if (mVesc->commands()->isLimitedMode()) {
+    if (mOpenroad->commands()->isLimitedMode()) {
         return SetupWizardApp::Page_Firmware;
     } else {
         return SetupWizardApp::Page_Multi;
@@ -184,13 +184,13 @@ int AppConnectionPage::nextId() const
 
 bool AppConnectionPage::isComplete() const
 {
-    return mVesc->fwRx();
+    return mOpenroad->fwRx();
 }
 
-AppFirmwarePage::AppFirmwarePage(VescInterface *openroad, QWidget *parent)
+AppFirmwarePage::AppFirmwarePage(OpenroadInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
     setTitle(tr("Update Firmware"));
     setSubTitle(tr("You need to update the firmware on the VESC in order "
@@ -212,10 +212,10 @@ int AppFirmwarePage::nextId() const
     return -1;
 }
 
-AppMultiPage::AppMultiPage(VescInterface *openroad, QWidget *parent)
+AppMultiPage::AppMultiPage(OpenroadInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
     setTitle(tr("Multiple VESCs"));
     setSubTitle(tr("Found multiple VESCs on the CAN-bus, choose "
@@ -241,12 +241,12 @@ void AppMultiPage::initializePage()
 
     QListWidgetItem *item = new QListWidgetItem;
     item->setText(tr("This VESC (ID: %1)").
-                  arg(mVesc->appConfig()->getParamInt("controller_id")));
+                  arg(mOpenroad->appConfig()->getParamInt("controller_id")));
     item->setIcon(QIcon("://res/icons/Connected-96.png"));
     item->setData(Qt::UserRole, -1);
     mCanFwdList->addItem(item);
 
-    for (int dev: mVesc->getCanDevsLast()) {
+    for (int dev: mOpenroad->getCanDevsLast()) {
         item = new QListWidgetItem;
         item->setText(tr("VESC with ID: %1").arg(dev));
         item->setIcon(QIcon("://res/icons/can_off.png"));
@@ -265,13 +265,13 @@ int AppMultiPage::nextId() const
 bool AppMultiPage::validatePage()
 {
     if (field("CanFwd").toInt() >= 0) {
-        mVesc->commands()->setSendCan(true, field("CanFwd").toInt());
+        mOpenroad->commands()->setSendCan(true, field("CanFwd").toInt());
     } else {
-        mVesc->commands()->setSendCan(false);
+        mOpenroad->commands()->setSendCan(false);
     }
 
-    mVesc->commands()->getAppConf();
-    Utility::waitSignal(mVesc->appConfig(), SIGNAL(updated()), 2000);
+    mOpenroad->commands()->getAppConf();
+    Utility::waitSignal(mOpenroad->appConfig(), SIGNAL(updated()), 2000);
 
     return true;
 }
@@ -291,10 +291,10 @@ int AppMultiPage::getCanFwd()
     return canFwd;
 }
 
-AppGeneralPage::AppGeneralPage(VescInterface *openroad, QWidget *parent)
+AppGeneralPage::AppGeneralPage(OpenroadInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
     setTitle(tr("Choose App"));
     setSubTitle(tr("Choose what type of input you want to control this VESC with."));
@@ -376,21 +376,21 @@ int AppGeneralPage::getInputType()
     return input;
 }
 
-AppNunchukPage::AppNunchukPage(VescInterface *openroad, QWidget *parent)
+AppNunchukPage::AppNunchukPage(OpenroadInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
     setTitle(tr("Nunchuk Configuration"));
 
     mParamTab = new ParamTable;
     mNrfPair = new NrfPair;
     mTimer = new QTimer(this);
-    mWriteButton = new QPushButton(tr(" | Write Configuration To Vesc"));
+    mWriteButton = new QPushButton(tr(" | Write Configuration To Openroad"));
     mWriteButton->setIcon(QIcon("://res/icons/app_down.png"));
     mWriteButton->setIconSize(QSize(24, 24));
 
-    mNrfPair->setVesc(mVesc);
+    mNrfPair->setOpenroad(mOpenroad);
 
     mDisplay = new DisplayPercentage;
     mDisplay->setMinimumHeight(30);
@@ -403,11 +403,11 @@ AppNunchukPage::AppNunchukPage(VescInterface *openroad, QWidget *parent)
     layout->addWidget(mNrfPair);
     setLayout(layout);
 
-    connect(mVesc->commands(), SIGNAL(decodedChukReceived(double)),
+    connect(mOpenroad->commands(), SIGNAL(decodedChukReceived(double)),
             this, SLOT(decodedChukReceived(double)));
     connect(mTimer, SIGNAL(timeout()), this, SLOT(timerSlot()));
     connect(mWriteButton, SIGNAL(clicked(bool)),
-            mVesc->commands(), SLOT(setAppConf()));
+            mOpenroad->commands(), SLOT(setAppConf()));
 }
 
 int AppNunchukPage::nextId() const
@@ -417,7 +417,7 @@ int AppNunchukPage::nextId() const
 
 bool AppNunchukPage::validatePage()
 {
-    mVesc->commands()->setAppConf();
+    mOpenroad->commands()->setAppConf();
     return true;
 }
 
@@ -425,39 +425,39 @@ void AppNunchukPage::initializePage()
 {
     mParamTab->setRowCount(0);
 
-    mParamTab->addParamRow(mVesc->appConfig(), "app_chuk_conf.ctrl_type");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_chuk_conf.ramp_time_pos");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_chuk_conf.ramp_time_neg");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_chuk_conf.stick_erpm_per_s_in_cc");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_chuk_conf.hyst");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_chuk_conf.use_smart_rev");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_chuk_conf.smart_rev_max_duty");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_chuk_conf.smart_rev_ramp_time");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_chuk_conf.ctrl_type");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_chuk_conf.ramp_time_pos");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_chuk_conf.ramp_time_neg");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_chuk_conf.stick_erpm_per_s_in_cc");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_chuk_conf.hyst");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_chuk_conf.use_smart_rev");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_chuk_conf.smart_rev_max_duty");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_chuk_conf.smart_rev_ramp_time");
 
     mParamTab->addRowSeparator(tr("Multiple VESCs over CAN-bus"));
-    mParamTab->addParamRow(mVesc->appConfig(), "app_chuk_conf.tc");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_chuk_conf.tc_max_diff");
-    mVesc->appConfig()->updateParamBool("app_chuk_conf.multi_esc", true);
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_chuk_conf.tc");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_chuk_conf.tc_max_diff");
+    mOpenroad->appConfig()->updateParamBool("app_chuk_conf.multi_esc", true);
 
     if (field("Input").toInt() == SetupWizardApp::Input_Nunchuk) {
         setSubTitle(tr("Configure your nyko kama nunchuk."));
         mNrfPair->setVisible(false);        
-        mVesc->appConfig()->updateParamEnum("app_to_use", 6);
-        mVesc->commands()->setAppConf();
-        Utility::waitSignal(mVesc->commands(), SIGNAL(ackReceived(QString)), 2000);
+        mOpenroad->appConfig()->updateParamEnum("app_to_use", 6);
+        mOpenroad->commands()->setAppConf();
+        Utility::waitSignal(mOpenroad->commands(), SIGNAL(ackReceived(QString)), 2000);
         // TODO: Figure out why setting the conf twice is required...
-        mVesc->commands()->setAppConf();
-        Utility::waitSignal(mVesc->commands(), SIGNAL(ackReceived(QString)), 2000);
+        mOpenroad->commands()->setAppConf();
+        Utility::waitSignal(mOpenroad->commands(), SIGNAL(ackReceived(QString)), 2000);
     } else {
         setSubTitle(tr("Pair and configure your NRF nunchuk."));
         mNrfPair->setVisible(true);
-//        mVesc->appConfig()->updateParamEnum("app_to_use", 7);
-        mVesc->appConfig()->updateParamEnum("app_to_use", 3); // Assume permanent NRF or NRF51 on UART
-        mVesc->commands()->setAppConf();
-        Utility::waitSignal(mVesc->commands(), SIGNAL(ackReceived(QString)), 2000);
+//        mOpenroad->appConfig()->updateParamEnum("app_to_use", 7);
+        mOpenroad->appConfig()->updateParamEnum("app_to_use", 3); // Assume permanent NRF or NRF51 on UART
+        mOpenroad->commands()->setAppConf();
+        Utility::waitSignal(mOpenroad->commands(), SIGNAL(ackReceived(QString)), 2000);
         // TODO: Figure out why setting the conf twice is required...
-        mVesc->commands()->setAppConf();
-        Utility::waitSignal(mVesc->commands(), SIGNAL(ackReceived(QString)), 2000);
+        mOpenroad->commands()->setAppConf();
+        Utility::waitSignal(mOpenroad->commands(), SIGNAL(ackReceived(QString)), 2000);
 
         QMessageBox::information(this,
                                  tr("NRF Pairing"),
@@ -489,13 +489,13 @@ void AppNunchukPage::decodedChukReceived(double value)
 
 void AppNunchukPage::timerSlot()
 {
-    mVesc->commands()->getDecodedChuk();
+    mOpenroad->commands()->getDecodedChuk();
 }
 
-AppPpmMapPage::AppPpmMapPage(VescInterface *openroad, QWidget *parent)
+AppPpmMapPage::AppPpmMapPage(OpenroadInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
     setTitle(tr("PPM Mapping"));
     setSubTitle(tr("Map your PPM receiver."));
@@ -504,7 +504,7 @@ AppPpmMapPage::AppPpmMapPage(VescInterface *openroad, QWidget *parent)
     mPpmMap = new PpmMap;
     mTimer = new QTimer(this);
 
-    mPpmMap->setVesc(mVesc);
+    mPpmMap->setOpenroad(mOpenroad);
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(mParamTab);
@@ -512,7 +512,7 @@ AppPpmMapPage::AppPpmMapPage(VescInterface *openroad, QWidget *parent)
     setLayout(layout);
 
     connect(mTimer, SIGNAL(timeout()), this, SLOT(timerSlot()));
-    connect(mVesc->appConfig(), SIGNAL(paramChangedDouble(QObject*,QString,double)),
+    connect(mOpenroad->appConfig(), SIGNAL(paramChangedDouble(QObject*,QString,double)),
             this, SLOT(paramChangedDouble(QObject*,QString,double)));
 }
 
@@ -523,7 +523,7 @@ int AppPpmMapPage::nextId() const
 
 bool AppPpmMapPage::validatePage()
 {
-    mVesc->commands()->setAppConf();
+    mOpenroad->commands()->setAppConf();
     return true;
 }
 
@@ -531,18 +531,18 @@ void AppPpmMapPage::initializePage()
 {
     mParamTab->setRowCount(0);
 
-    mParamTab->addParamRow(mVesc->appConfig(), "app_ppm_conf.pulse_start");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_ppm_conf.pulse_end");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_ppm_conf.pulse_center");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_ppm_conf.hyst");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_ppm_conf.pulse_start");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_ppm_conf.pulse_end");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_ppm_conf.pulse_center");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_ppm_conf.hyst");
 
-    mVesc->appConfig()->updateParamEnum("app_ppm_conf.ctrl_type", 0);
-    mVesc->appConfig()->updateParamEnum("app_to_use", 4);
-    mVesc->commands()->setAppConf();
-    Utility::waitSignal(mVesc->commands(), SIGNAL(ackReceived(QString)), 2000);
+    mOpenroad->appConfig()->updateParamEnum("app_ppm_conf.ctrl_type", 0);
+    mOpenroad->appConfig()->updateParamEnum("app_to_use", 4);
+    mOpenroad->commands()->setAppConf();
+    Utility::waitSignal(mOpenroad->commands(), SIGNAL(ackReceived(QString)), 2000);
     // TODO: Figure out why setting the conf twice is required...
-    mVesc->commands()->setAppConf();
-    Utility::waitSignal(mVesc->commands(), SIGNAL(ackReceived(QString)), 2000);
+    mOpenroad->commands()->setAppConf();
+    Utility::waitSignal(mOpenroad->commands(), SIGNAL(ackReceived(QString)), 2000);
     mTimer->start(40);
 }
 
@@ -555,25 +555,25 @@ void AppPpmMapPage::paramChangedDouble(QObject *src, QString name, double newPar
             name == "app_ppm_conf.pulse_end" ||
             name == "app_ppm_conf.pulse_center" ||
             name == "app_ppm_conf.hyst") {
-        mVesc->commands()->setAppConf();
+        mOpenroad->commands()->setAppConf();
     }
 }
 
 void AppPpmMapPage::timerSlot()
 {
-    mVesc->commands()->getDecodedPpm();
+    mOpenroad->commands()->getDecodedPpm();
 }
 
-AppPpmPage::AppPpmPage(VescInterface *openroad, QWidget *parent)
+AppPpmPage::AppPpmPage(OpenroadInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
     setTitle(tr("PPM Configuration"));
     setSubTitle(tr("Configure your PPM receiver."));
 
     mParamTab = new ParamTable;
-    mWriteButton = new QPushButton(tr(" | Write Configuration To Vesc"));
+    mWriteButton = new QPushButton(tr(" | Write Configuration To Openroad"));
     mWriteButton->setIcon(QIcon("://res/icons/app_down.png"));
     mWriteButton->setIconSize(QSize(24, 24));
 
@@ -583,7 +583,7 @@ AppPpmPage::AppPpmPage(VescInterface *openroad, QWidget *parent)
     setLayout(layout);
 
     connect(mWriteButton, SIGNAL(clicked(bool)),
-            mVesc->commands(), SLOT(setAppConf()));
+            mOpenroad->commands(), SLOT(setAppConf()));
 }
 
 int AppPpmPage::nextId() const
@@ -593,7 +593,7 @@ int AppPpmPage::nextId() const
 
 bool AppPpmPage::validatePage()
 {
-    mVesc->commands()->setAppConf();
+    mOpenroad->commands()->setAppConf();
     return true;
 }
 
@@ -602,29 +602,29 @@ void AppPpmPage::initializePage()
     mParamTab->setRowCount(0);
 
     mParamTab->addRowSeparator(tr("General"));
-    mParamTab->addParamRow(mVesc->appConfig(), "app_ppm_conf.ctrl_type");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_ppm_conf.median_filter");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_ppm_conf.safe_start");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_ppm_conf.ramp_time_pos");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_ppm_conf.ramp_time_neg");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_ppm_conf.pid_max_erpm");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_ppm_conf.max_erpm_for_dir");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_ppm_conf.smart_rev_max_duty");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_ppm_conf.smart_rev_ramp_time");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_ppm_conf.ctrl_type");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_ppm_conf.median_filter");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_ppm_conf.safe_start");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_ppm_conf.ramp_time_pos");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_ppm_conf.ramp_time_neg");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_ppm_conf.pid_max_erpm");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_ppm_conf.max_erpm_for_dir");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_ppm_conf.smart_rev_max_duty");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_ppm_conf.smart_rev_ramp_time");
 
     mParamTab->addRowSeparator(tr("Multiple VESCs over CAN-bus"));
-    mParamTab->addParamRow(mVesc->appConfig(), "app_ppm_conf.tc");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_ppm_conf.tc_max_diff");
-    mVesc->appConfig()->updateParamBool("app_ppm_conf.multi_esc", true);
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_ppm_conf.tc");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_ppm_conf.tc_max_diff");
+    mOpenroad->appConfig()->updateParamBool("app_ppm_conf.multi_esc", true);
 
-    mVesc->appConfig()->updateParamEnum("app_ppm_conf.ctrl_type", 3);
-    mVesc->commands()->setAppConf();
+    mOpenroad->appConfig()->updateParamEnum("app_ppm_conf.ctrl_type", 3);
+    mOpenroad->commands()->setAppConf();
 }
 
-AppAdcMapPage::AppAdcMapPage(VescInterface *openroad, QWidget *parent)
+AppAdcMapPage::AppAdcMapPage(OpenroadInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
     setTitle(tr("ADC Mapping"));
     setSubTitle(tr("Map your analog throttle."));
@@ -633,7 +633,7 @@ AppAdcMapPage::AppAdcMapPage(VescInterface *openroad, QWidget *parent)
     mAdcMap = new AdcMap;
     mTimer = new QTimer(this);
 
-    mAdcMap->setVesc(mVesc);
+    mAdcMap->setOpenroad(mOpenroad);
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(mParamTab);
@@ -641,9 +641,9 @@ AppAdcMapPage::AppAdcMapPage(VescInterface *openroad, QWidget *parent)
     setLayout(layout);
 
     connect(mTimer, SIGNAL(timeout()), this, SLOT(timerSlot()));
-    connect(mVesc->appConfig(), SIGNAL(paramChangedDouble(QObject*,QString,double)),
+    connect(mOpenroad->appConfig(), SIGNAL(paramChangedDouble(QObject*,QString,double)),
             this, SLOT(paramChangedDouble(QObject*,QString,double)));
-    connect(mVesc->appConfig(), SIGNAL(paramChangedBool(QObject*,QString,bool)),
+    connect(mOpenroad->appConfig(), SIGNAL(paramChangedBool(QObject*,QString,bool)),
             this, SLOT(paramChangedBool(QObject*,QString,bool)));
 }
 
@@ -654,7 +654,7 @@ int AppAdcMapPage::nextId() const
 
 bool AppAdcMapPage::validatePage()
 {
-    mVesc->commands()->setAppConf();
+    mOpenroad->commands()->setAppConf();
     return true;
 }
 
@@ -662,22 +662,22 @@ void AppAdcMapPage::initializePage()
 {
     mParamTab->setRowCount(0);
 
-    mParamTab->addParamRow(mVesc->appConfig(), "app_adc_conf.voltage_start");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_adc_conf.voltage_end");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_adc_conf.voltage_center");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_adc_conf.voltage_inverted");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_adc_conf.voltage2_start");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_adc_conf.voltage2_end");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_adc_conf.voltage2_inverted");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_adc_conf.hyst");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_adc_conf.voltage_start");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_adc_conf.voltage_end");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_adc_conf.voltage_center");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_adc_conf.voltage_inverted");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_adc_conf.voltage2_start");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_adc_conf.voltage2_end");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_adc_conf.voltage2_inverted");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_adc_conf.hyst");
 
-    mVesc->appConfig()->updateParamEnum("app_to_use", 5);
-    mVesc->appConfig()->updateParamEnum("app_adc_conf.ctrl_type", 0);
-    mVesc->commands()->setAppConf();
-    Utility::waitSignal(mVesc->commands(), SIGNAL(ackReceived(QString)), 2000);
+    mOpenroad->appConfig()->updateParamEnum("app_to_use", 5);
+    mOpenroad->appConfig()->updateParamEnum("app_adc_conf.ctrl_type", 0);
+    mOpenroad->commands()->setAppConf();
+    Utility::waitSignal(mOpenroad->commands(), SIGNAL(ackReceived(QString)), 2000);
     // TODO: Figure out why setting the conf twice is required...
-    mVesc->commands()->setAppConf();
-    Utility::waitSignal(mVesc->commands(), SIGNAL(ackReceived(QString)), 2000);
+    mOpenroad->commands()->setAppConf();
+    Utility::waitSignal(mOpenroad->commands(), SIGNAL(ackReceived(QString)), 2000);
     mTimer->start(40);
 }
 
@@ -692,7 +692,7 @@ void AppAdcMapPage::paramChangedDouble(QObject *src, QString name, double newPar
             name == "app_adc_conf.voltage2_start" ||
             name == "app_adc_conf.voltage2_end" ||
             name == "app_adc_conf.hyst") {
-        mVesc->commands()->setAppConf();
+        mOpenroad->commands()->setAppConf();
     }
 }
 
@@ -703,25 +703,25 @@ void AppAdcMapPage::paramChangedBool(QObject *src, QString name, bool newParam)
 
     if (name == "app_adc_conf.voltage_inverted" ||
             name == "app_adc_conf.voltage2_inverted") {
-        mVesc->commands()->setAppConf();
+        mOpenroad->commands()->setAppConf();
     }
 }
 
 void AppAdcMapPage::timerSlot()
 {
-    mVesc->commands()->getDecodedAdc();
+    mOpenroad->commands()->getDecodedAdc();
 }
 
-AppAdcPage::AppAdcPage(VescInterface *openroad, QWidget *parent)
+AppAdcPage::AppAdcPage(OpenroadInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
     setTitle(tr("ADC Configuration"));
     setSubTitle(tr("Configure your analog throttle."));
 
     mParamTab = new ParamTable;
-    mWriteButton = new QPushButton(tr(" | Write Configuration To Vesc"));
+    mWriteButton = new QPushButton(tr(" | Write Configuration To Openroad"));
     mWriteButton->setIcon(QIcon("://res/icons/app_down.png"));
     mWriteButton->setIconSize(QSize(24, 24));
 
@@ -731,7 +731,7 @@ AppAdcPage::AppAdcPage(VescInterface *openroad, QWidget *parent)
     setLayout(layout);
 
     connect(mWriteButton, SIGNAL(clicked(bool)),
-            mVesc->commands(), SLOT(setAppConf()));
+            mOpenroad->commands(), SLOT(setAppConf()));
 }
 
 int AppAdcPage::nextId() const
@@ -741,7 +741,7 @@ int AppAdcPage::nextId() const
 
 bool AppAdcPage::validatePage()
 {
-    mVesc->commands()->setAppConf();
+    mOpenroad->commands()->setAppConf();
     return true;
 }
 
@@ -750,27 +750,27 @@ void AppAdcPage::initializePage()
     mParamTab->setRowCount(0);
 
     mParamTab->addRowSeparator(tr("General"));
-    mParamTab->addParamRow(mVesc->appConfig(), "app_adc_conf.ctrl_type");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_adc_conf.use_filter");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_adc_conf.safe_start");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_adc_conf.cc_button_inverted");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_adc_conf.rev_button_inverted");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_adc_conf.ramp_time_pos");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_adc_conf.ramp_time_neg");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_adc_conf.ctrl_type");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_adc_conf.use_filter");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_adc_conf.safe_start");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_adc_conf.cc_button_inverted");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_adc_conf.rev_button_inverted");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_adc_conf.ramp_time_pos");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_adc_conf.ramp_time_neg");
 
     mParamTab->addRowSeparator(tr("Multiple VESCs over CAN-bus"));
-    mParamTab->addParamRow(mVesc->appConfig(), "app_adc_conf.tc");
-    mParamTab->addParamRow(mVesc->appConfig(), "app_adc_conf.tc_max_diff");
-    mVesc->appConfig()->updateParamBool("app_adc_conf.multi_esc", true);
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_adc_conf.tc");
+    mParamTab->addParamRow(mOpenroad->appConfig(), "app_adc_conf.tc_max_diff");
+    mOpenroad->appConfig()->updateParamBool("app_adc_conf.multi_esc", true);
 
-    mVesc->appConfig()->updateParamEnum("app_adc_conf.ctrl_type", 1);
-    mVesc->commands()->setAppConf();
+    mOpenroad->appConfig()->updateParamEnum("app_adc_conf.ctrl_type", 1);
+    mOpenroad->commands()->setAppConf();
 }
 
-AppConclusionPage::AppConclusionPage(VescInterface *openroad, QWidget *parent)
+AppConclusionPage::AppConclusionPage(OpenroadInterface *openroad, QWidget *parent)
     : QWizardPage(parent)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
     setTitle(tr("Conclusion"));
 
     mLabel = new QLabel;

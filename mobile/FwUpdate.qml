@@ -28,8 +28,8 @@ import Vedder.openroad.fwhelper 1.0
 import Vedder.openroad.utility 1.0
 
 Item {
-    property Commands mCommands: VescIf.commands()
-    property ConfigParams mInfoConf: VescIf.infoConfig()
+    property Commands mCommands: OpenroadIf.commands()
+    property ConfigParams mInfoConf: OpenroadIf.infoConfig()
 
     FwHelper {
         id: fwHelper
@@ -183,7 +183,7 @@ Item {
                             Layout.fillWidth: true
 
                             onClicked: {
-                                VescIf.emitMessageDialog(
+                                OpenroadIf.emitMessageDialog(
                                             "Firmware Changelog",
                                             Utility.fwChangeLog(),
                                             true)
@@ -259,7 +259,7 @@ Item {
                                     filePicker.enabled = true
                                     filePicker.visible = true
                                 } else {
-                                    VescIf.emitMessageDialog(
+                                    OpenroadIf.emitMessageDialog(
                                                 "File Permissions",
                                                 "Unable to request file system permission.",
                                                 false, false)
@@ -423,7 +423,7 @@ Item {
                         enabled: false
 
                         onClicked: {
-                            VescIf.fwUploadCancel()
+                            OpenroadIf.fwUploadCancel()
                         }
                     }
                 }
@@ -465,11 +465,11 @@ Item {
 
         onAccepted: {
             if (swipeView.currentIndex == 0) {
-                fwHelper.uploadFirmware(fwItems.get(fwBox.currentIndex).value, VescIf, false, false, fwdCan)
+                fwHelper.uploadFirmware(fwItems.get(fwBox.currentIndex).value, OpenroadIf, false, false, fwdCan)
             } else if (swipeView.currentIndex == 1) {
-                fwHelper.uploadFirmware(customFwText.text, VescIf, false, true, fwdCan)
+                fwHelper.uploadFirmware(customFwText.text, OpenroadIf, false, true, fwdCan)
             } else if (swipeView.currentIndex == 2) {
-                fwHelper.uploadFirmware(blItems.get(blBox.currentIndex).value, VescIf, true, false, fwdCan)
+                fwHelper.uploadFirmware(blItems.get(blBox.currentIndex).value, OpenroadIf, true, false, fwdCan)
             }
         }
     }
@@ -507,8 +507,8 @@ Item {
     }
 
     function uploadFw(fwdCan) {
-        if (!VescIf.isPortConnected()) {
-            VescIf.emitMessageDialog(
+        if (!OpenroadIf.isPortConnected()) {
+            OpenroadIf.emitMessageDialog(
                         "Connection Error",
                         "The VESC is not connected. Please open a connection.",
                         false)
@@ -533,7 +533,7 @@ Item {
 
         if (swipeView.currentIndex == 0) {
             if (fwItems.rowCount() === 0) {
-                VescIf.emitMessageDialog(
+                OpenroadIf.emitMessageDialog(
                             "Upload Error",
                             "This version of VESC Tool does not include any firmware " +
                             "for your hardware version. You can either " +
@@ -546,7 +546,7 @@ Item {
             if (hwItems.rowCount() === 1) {
                 uploadDialog.title = "Warning"
 
-                if (VescIf.getFwSupportsConfiguration()) {
+                if (OpenroadIf.getFwSupportsConfiguration()) {
                     msg += "\n\n" +
                             "Uploading new firmware will clear all settings on your VESC. You can make " +
                             "a backup of the settings from the connection page and restore them after the " +
@@ -580,14 +580,14 @@ Item {
                         "chosen the correct hardware version?"
                 uploadDialog.open()
             } else {
-                VescIf.emitMessageDialog(
+                OpenroadIf.emitMessageDialog(
                             "Error",
                             "Please select a file",
                             false, false)
             }
         } else if (swipeView.currentIndex == 2) {
             if (blItems.rowCount() === 0) {
-                VescIf.emitMessageDialog(
+                OpenroadIf.emitMessageDialog(
                             "Upload Error",
                             "This version of VESC Tool does not include any bootloader " +
                             "for your hardware version.",
@@ -617,9 +617,9 @@ Item {
 
         onTriggered: {
             uploadAllButton.enabled = mCommands.getLimitedSupportsFwdAllCan() &&
-                    !mCommands.getSendCan() && VescIf.getFwUploadProgress() < 0
+                    !mCommands.getSendCan() && OpenroadIf.getFwUploadProgress() < 0
 
-            if (!VescIf.isPortConnected()) {
+            if (!OpenroadIf.isPortConnected()) {
                 versionText.text =
                         "FW   : \n" +
                         "HW   : \n" +
@@ -629,7 +629,7 @@ Item {
     }
 
     Connections {
-        target: VescIf
+        target: OpenroadIf
 
         onFwUploadStatus: {
             if (isOngoing) {

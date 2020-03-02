@@ -35,8 +35,8 @@ public:
     explicit PageTerminal(QWidget *parent = 0);
     ~PageTerminal();
 
-    VescInterface *openroad() const;
-    void setVesc(VescInterface *openroad);
+    OpenroadInterface *openroad() const;
+    void setOpenroad(OpenroadInterface *openroad);
 
 public slots:
     void clearTerminal();
@@ -51,7 +51,7 @@ protected:
     virtual void showEvent(QShowEvent *event);
 private:
     Ui::PageTerminal *ui;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
 
 };
 

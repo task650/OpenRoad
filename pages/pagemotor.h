@@ -36,13 +36,13 @@ public:
     explicit PageMotor(QWidget *parent = nullptr);
     ~PageMotor();
 
-    VescInterface *openroad() const;
-    void setVesc(VescInterface *openroad);
+    OpenroadInterface *openroad() const;
+    void setOpenroad(OpenroadInterface *openroad);
     void reloadParams();
 
 private:
     Ui::PageMotor *ui;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
 
 };
 

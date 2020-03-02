@@ -35,8 +35,8 @@ public:
     explicit DetectFocEncoder(QWidget *parent = 0);
     ~DetectFocEncoder();
 
-    VescInterface *openroad() const;
-    void setVesc(VescInterface *openroad);
+    OpenroadInterface *openroad() const;
+    void setOpenroad(OpenroadInterface *openroad);
 
 private slots:
     void encoderParamReceived(double offset, double ratio, bool inverted);
@@ -47,7 +47,7 @@ private slots:
 
 private:
     Ui::DetectFocEncoder *ui;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
 
 };
 

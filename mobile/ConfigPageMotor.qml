@@ -26,7 +26,7 @@ import Vedder.openroad.commands 1.0
 import Vedder.openroad.configparams 1.0
 
 Item {
-    property Commands mCommands: VescIf.commands()
+    property Commands mCommands: OpenroadIf.commands()
     property bool isHorizontal: width > height
 
     ParamEditors {
@@ -93,7 +93,7 @@ Item {
     function updateEditors() {
         destroyEditors()
 
-        var params = VescIf.mcConfig().getParamsFromSubgroup(pageBox.currentText, tabBox.currentText)
+        var params = OpenroadIf.mcConfig().getParamsFromSubgroup(pageBox.currentText, tabBox.currentText)
 
         for (var i = 0;i < params.length;i++) {
             if (params[i].startsWith("::sep::")) {
@@ -117,11 +117,11 @@ Item {
                 id: pageBox
                 Layout.fillWidth: true
 
-                model: VescIf.mcConfig().getParamGroups()
+                model: OpenroadIf.mcConfig().getParamGroups()
 
                 onCurrentTextChanged: {
                     var tabTextOld = tabBox.currentText
-                    var subgroups = VescIf.mcConfig().getParamSubgroups(currentText)
+                    var subgroups = OpenroadIf.mcConfig().getParamSubgroups(currentText)
 
                     tabBox.model = subgroups
                     tabBox.visible = subgroups.length > 1
@@ -243,18 +243,18 @@ Item {
                     notUpdated += mMcConf.getLongName(paramsNotSet[i]) + "\n"
                 }
 
-                VescIf.emitMessageDialog("Parameters truncated", notUpdated, false, false)
+                OpenroadIf.emitMessageDialog("Parameters truncated", notUpdated, false, false)
             }
         }
     }
 
     Connections {
-        target: VescIf
+        target: OpenroadIf
         onConfigurationChanged: {
-            pageBox.model = VescIf.mcConfig().getParamGroups()
+            pageBox.model = OpenroadIf.mcConfig().getParamGroups()
 
             var tabTextOld = tabBox.currentText
-            var subgroups = VescIf.mcConfig().getParamSubgroups(pageBox.currentText)
+            var subgroups = OpenroadIf.mcConfig().getParamSubgroups(pageBox.currentText)
 
             tabBox.model = subgroups
             tabBox.visible = subgroups.length > 1

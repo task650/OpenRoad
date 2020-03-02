@@ -37,8 +37,8 @@ public:
     explicit PageAppBalance(QWidget *parent = nullptr);
     ~PageAppBalance();
 
-    VescInterface *openroad() const;
-    void setVesc(VescInterface *openroad);
+    OpenroadInterface *openroad() const;
+    void setOpenroad(OpenroadInterface *openroad);
     void reloadParams();
 
 private slots:
@@ -47,7 +47,7 @@ private slots:
 
 private:
     Ui::PageAppBalance *ui;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
 
     QTimer *mTimer;
 

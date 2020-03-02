@@ -35,8 +35,8 @@ public:
     explicit DetectFocHall(QWidget *parent = 0);
     ~DetectFocHall();
 
-    VescInterface *openroad() const;
-    void setVesc(VescInterface *openroad);
+    OpenroadInterface *openroad() const;
+    void setOpenroad(OpenroadInterface *openroad);
 
 private slots:
     void focHallTableReceived(QVector<int> hall_table, int res);
@@ -47,7 +47,7 @@ private slots:
 
 private:
     Ui::DetectFocHall *ui;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
 
 };
 

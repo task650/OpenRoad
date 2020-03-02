@@ -33,7 +33,7 @@ DirSetup::DirSetup(QWidget *parent) :
     ui(new Ui::DirSetup)
 {
     ui->setupUi(this);
-    mVesc = 0;
+    mOpenroad = 0;
 }
 
 DirSetup::~DirSetup()
@@ -41,26 +41,26 @@ DirSetup::~DirSetup()
     delete ui;
 }
 
-VescInterface *DirSetup::openroad() const
+OpenroadInterface *DirSetup::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void DirSetup::setVesc(VescInterface *openroad)
+void DirSetup::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 }
 
-void DirSetup::scanVescs()
+void DirSetup::scanOpenroads()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         auto *wOld = ui->openroadArea->widget();
         if (wOld) {
             wOld->deleteLater();
         }
 
-        if (!mVesc->isPortConnected()) {
-            mVesc->emitMessageDialog("Direction Setup",
+        if (!mOpenroad->isPortConnected()) {
+            mOpenroad->emitMessageDialog("Direction Setup",
                                      "You are not connected to the VESC. Connect in order to run direction setup.",
                                      false, false);
             return;
@@ -82,7 +82,7 @@ void DirSetup::scanVescs()
             nameLabel->setText(name);
             l->addWidget(nameLabel);
             auto *invBox = new QCheckBox;
-            invBox->setChecked(Utility::getInvertDirection(mVesc, dev));
+            invBox->setChecked(Utility::getInvertDirection(mOpenroad, dev));
             invBox->setText("Inverted");
             l->addStretch();
             l->addWidget(invBox);
@@ -101,7 +101,7 @@ void DirSetup::scanVescs()
             connect(fwdBt, &QPushButton::clicked, [this,dev]() {
                 setEnabled(false);
                 ui->progressBar->setRange(0, 0);
-                Utility::testDirection(mVesc, dev, 0.1, 2000);
+                Utility::testDirection(mOpenroad, dev, 0.1, 2000);
                 ui->progressBar->setRange(0, 100);
                 ui->progressBar->setValue(100);
                 setEnabled(true);
@@ -110,7 +110,7 @@ void DirSetup::scanVescs()
             connect(revBt, &QPushButton::clicked, [this,dev]() {
                 setEnabled(false);
                 ui->progressBar->setRange(0, 0);
-                Utility::testDirection(mVesc, dev, -0.1, 2000);
+                Utility::testDirection(mOpenroad, dev, -0.1, 2000);
                 ui->progressBar->setRange(0, 100);
                 ui->progressBar->setValue(100);
                 setEnabled(true);
@@ -119,7 +119,7 @@ void DirSetup::scanVescs()
             connect(invBox, &QCheckBox::toggled, [this,dev](bool checked) {
                 setEnabled(false);
                 ui->progressBar->setRange(0, 0);
-                Utility::setInvertDirection(mVesc, dev, checked);
+                Utility::setInvertDirection(mOpenroad, dev, checked);
                 ui->progressBar->setRange(0, 100);
                 ui->progressBar->setValue(100);
                 setEnabled(true);
@@ -135,7 +135,7 @@ void DirSetup::scanVescs()
         l->setSpacing(4);
         l->addWidget(addViewer(QString("Local VESC"), -1));
 
-        auto canDevs = mVesc->scanCan();
+        auto canDevs = mOpenroad->scanCan();
         for (auto d: canDevs) {
             l->addWidget(addViewer(QString("CAN VESC\nID: %1").arg(d), d));
         }
@@ -153,5 +153,5 @@ void DirSetup::scanVescs()
 
 void DirSetup::on_refreshButton_clicked()
 {
-    scanVescs();
+    scanOpenroads();
 }

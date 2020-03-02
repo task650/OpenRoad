@@ -28,8 +28,8 @@ import Vedder.openroad.configparams 1.0
 import Vedder.openroad.utility 1.0
 
 Item {
-    property ConfigParams mAppConf: VescIf.appConfig()
-    property Commands mCommands: VescIf.commands()
+    property ConfigParams mAppConf: OpenroadIf.appConfig()
+    property Commands mCommands: OpenroadIf.commands()
     property bool mSendCanAtStart: false
     property int mCanIdAtStart: 0
 
@@ -53,7 +53,7 @@ Item {
                                   "isCan": false})
             dialog.open()
             disableDialog()
-            var canDevs = VescIf.scanCan()
+            var canDevs = OpenroadIf.scanCan()
 
             for (var i = 0;i < canDevs.length;i++) {
                 canIdModel.append({"name": "VESC on CAN-bus",
@@ -476,7 +476,7 @@ Item {
                                                  canIdList.currentItem.modelData.canId)
 
                             disableDialog()
-                            var res = Utility.resetInputCan(VescIf, VescIf.getCanDevsLast())
+                            var res = Utility.resetInputCan(OpenroadIf, OpenroadIf.getCanDevsLast())
                             enableDialog()
 
                             if (!res) {

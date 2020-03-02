@@ -28,7 +28,7 @@ AdcMap::AdcMap(QWidget *parent) :
 {
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
-    mVesc = 0;
+    mOpenroad = 0;
     mResetDone = true;
     on_controlTypeBox_currentIndexChanged(ui->controlTypeBox->currentIndex());
 }
@@ -38,22 +38,22 @@ AdcMap::~AdcMap()
     delete ui;
 }
 
-VescInterface *AdcMap::openroad() const
+OpenroadInterface *AdcMap::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void AdcMap::setVesc(VescInterface *openroad)
+void AdcMap::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    if (mVesc) {
-        ConfigParam *p = mVesc->appConfig()->getParam("app_adc_conf.ctrl_type");
+    if (mOpenroad) {
+        ConfigParam *p = mOpenroad->appConfig()->getParam("app_adc_conf.ctrl_type");
         if (p) {
             ui->controlTypeBox->addItems(p->enumNames);
         }
 
-        connect(mVesc->commands(), SIGNAL(decodedAdcReceived(double,double,double,double)),
+        connect(mOpenroad->commands(), SIGNAL(decodedAdcReceived(double,double,double,double)),
                 this, SLOT(decodedAdcReceived(double,double,double,double)));
     }
 }
@@ -156,8 +156,8 @@ void AdcMap::on_controlTypeBox_currentIndexChanged(int index)
 
 void AdcMap::on_helpButton_clicked()
 {
-    if (mVesc) {
-        HelpDialog::showHelp(this, mVesc->infoConfig(), "app_adc_mapping_help");
+    if (mOpenroad) {
+        HelpDialog::showHelp(this, mOpenroad->infoConfig(), "app_adc_mapping_help");
     }
 }
 
@@ -172,16 +172,16 @@ void AdcMap::on_resetButton_clicked()
 
 void AdcMap::on_applyButton_clicked()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         if (ui->maxCh1Box->value() > 1e-10) {
-            mVesc->appConfig()->updateParamDouble("app_adc_conf.voltage_start", ui->minCh1Box->value());
-            mVesc->appConfig()->updateParamDouble("app_adc_conf.voltage_end", ui->maxCh1Box->value());
-            mVesc->appConfig()->updateParamDouble("app_adc_conf.voltage_center", ui->centerCh1Box->value());
-            mVesc->appConfig()->updateParamDouble("app_adc_conf.voltage2_start", ui->minCh2Box->value());
-            mVesc->appConfig()->updateParamDouble("app_adc_conf.voltage2_end", ui->maxCh2Box->value());
-            mVesc->emitStatusMessage(tr("Start, End and Center ADC Voltages Applied"), true);
+            mOpenroad->appConfig()->updateParamDouble("app_adc_conf.voltage_start", ui->minCh1Box->value());
+            mOpenroad->appConfig()->updateParamDouble("app_adc_conf.voltage_end", ui->maxCh1Box->value());
+            mOpenroad->appConfig()->updateParamDouble("app_adc_conf.voltage_center", ui->centerCh1Box->value());
+            mOpenroad->appConfig()->updateParamDouble("app_adc_conf.voltage2_start", ui->minCh2Box->value());
+            mOpenroad->appConfig()->updateParamDouble("app_adc_conf.voltage2_end", ui->maxCh2Box->value());
+            mOpenroad->emitStatusMessage(tr("Start, End and Center ADC Voltages Applied"), true);
         } else {
-            mVesc->emitStatusMessage(tr("Applying Pulselengths Failed"), false);
+            mOpenroad->emitStatusMessage(tr("Applying Pulselengths Failed"), false);
             QMessageBox::warning(this,
                                  tr("Apply Voltages"),
                                  tr("Please activate RT app data and measure the ADC voltages first."));

@@ -38,8 +38,8 @@ public:
     explicit PageLogAnalysis(QWidget *parent = nullptr);
     ~PageLogAnalysis();
 
-    VescInterface *openroad() const;
-    void setVesc(VescInterface *openroad);
+    OpenroadInterface *openroad() const;
+    void setOpenroad(OpenroadInterface *openroad);
 
 private slots:
     void on_openCsvButton_clicked();
@@ -57,10 +57,10 @@ private slots:
 
 private:
     Ui::PageLogAnalysis *ui;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     QCPCurve *mVerticalLine;
     int mVerticalLineMsLast;
-    Vesc3DView *m3dView;
+    Openroad3DView *m3dView;
     QCheckBox *mUseYawBox;
     QVector<LOG_DATA> mLogData;
     QVector<LOG_DATA> mLogDataTruncated;

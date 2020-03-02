@@ -35,7 +35,7 @@ public:
     bool eventFilter(QObject *object, QEvent *e);
     void setVisible(bool visible);
 
-    static VescInterface *openroad();
+    static OpenroadInterface *openroad();
 
 signals:
 
@@ -44,7 +44,7 @@ public slots:
 private:
     QQmlApplicationEngine *mEngine;
 
-    static VescInterface *mVesc;
+    static OpenroadInterface *mOpenroad;
     static QObject *openroadinterface_singletontype_provider(QQmlEngine *engine, QJSEngine *scriptEngine);
     static QObject *utility_singletontype_provider(QQmlEngine *engine, QJSEngine *scriptEngine);
 

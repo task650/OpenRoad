@@ -26,7 +26,7 @@ PageBldc::PageBldc(QWidget *parent) :
 {
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
-    mVesc = nullptr;
+    mOpenroad = nullptr;
 }
 
 PageBldc::~PageBldc()
@@ -34,32 +34,32 @@ PageBldc::~PageBldc()
     delete ui;
 }
 
-VescInterface *PageBldc::openroad() const
+OpenroadInterface *PageBldc::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void PageBldc::setVesc(VescInterface *openroad)
+void PageBldc::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    if (mVesc) {
-        ui->detectBldc->setVesc(mVesc);
+    if (mOpenroad) {
+        ui->detectBldc->setOpenroad(mOpenroad);
         reloadParams();
     }
 }
 
 void PageBldc::reloadParams()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         ui->generalTab->clearParams();
         ui->sensorlessTab->clearParams();
         ui->sensorTab->clearParams();
         ui->advancedTab->clearParams();
 
-        ui->generalTab->addParamSubgroup(mVesc->mcConfig(), "bldc", "general");
-        ui->sensorlessTab->addParamSubgroup(mVesc->mcConfig(), "bldc", "sensorless");
-        ui->sensorTab->addParamSubgroup(mVesc->mcConfig(), "bldc", "sensors");
-        ui->advancedTab->addParamSubgroup(mVesc->mcConfig(), "bldc", "advanced");
+        ui->generalTab->addParamSubgroup(mOpenroad->mcConfig(), "bldc", "general");
+        ui->sensorlessTab->addParamSubgroup(mOpenroad->mcConfig(), "bldc", "sensorless");
+        ui->sensorTab->addParamSubgroup(mOpenroad->mcConfig(), "bldc", "sensors");
+        ui->advancedTab->addParamSubgroup(mOpenroad->mcConfig(), "bldc", "advanced");
     }
 }

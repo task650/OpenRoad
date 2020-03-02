@@ -28,7 +28,7 @@ DetectFoc::DetectFoc(QWidget *parent) :
 {
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
-    mVesc = nullptr;
+    mOpenroad = nullptr;
     mLastCalcOk = false;
     mAllValuesOk = false;
     mLastOkValuesApplied = false;
@@ -43,8 +43,8 @@ DetectFoc::~DetectFoc()
 
 void DetectFoc::on_rlButton_clicked()
 {
-    if (mVesc) {
-        if (!mVesc->isPortConnected()) {
+    if (mOpenroad) {
+        if (!mOpenroad->isPortConnected()) {
             QMessageBox::critical(this,
                                   tr("Connection Error"),
                                   tr("The VESC is not connected. Please connect it."));
@@ -57,15 +57,15 @@ void DetectFoc::on_rlButton_clicked()
                                  "not rotate. These noises are completely normal, so don't unplug "
                                  "anything unless you see smoke."));
 
-        mVesc->commands()->measureRL();
+        mOpenroad->commands()->measureRL();
         mRunning = true;
     }
 }
 
 void DetectFoc::on_lambdaButton_clicked()
 {
-    if (mVesc) {
-        if (!mVesc->isPortConnected()) {
+    if (mOpenroad) {
+        if (!mOpenroad->isPortConnected()) {
             QMessageBox::critical(this,
                                   tr("Connection Error"),
                                   tr("The VESC is not connected. Please connect it."));
@@ -88,7 +88,7 @@ void DetectFoc::on_lambdaButton_clicked()
                                      QMessageBox::Ok | QMessageBox::Cancel);
 
         if (reply == QMessageBox::Ok) {
-            mVesc->commands()->measureLinkageOpenloop(ui->currentBox->value(),
+            mOpenroad->commands()->measureLinkageOpenloop(ui->currentBox->value(),
                                                       ui->erpmBox->value(),
                                                       ui->dutyBox->value(),
                                                       ui->resistanceBox->value() / 1e3);
@@ -100,29 +100,29 @@ void DetectFoc::on_lambdaButton_clicked()
 
 void DetectFoc::on_helpButton_clicked()
 {
-    if (mVesc) {
-        HelpDialog::showHelp(this, mVesc->infoConfig(), "help_foc_detect", false);
+    if (mOpenroad) {
+        HelpDialog::showHelp(this, mOpenroad->infoConfig(), "help_foc_detect", false);
     }
 }
 
-VescInterface *DetectFoc::openroad() const
+OpenroadInterface *DetectFoc::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void DetectFoc::setVesc(VescInterface *openroad)
+void DetectFoc::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    if (mVesc) {
-        connect(mVesc->commands(), SIGNAL(motorRLReceived(double,double)),
+    if (mOpenroad) {
+        connect(mOpenroad->commands(), SIGNAL(motorRLReceived(double,double)),
                 this, SLOT(motorRLReceived(double,double)));
-        connect(mVesc->commands(), SIGNAL(motorLinkageReceived(double)),
+        connect(mOpenroad->commands(), SIGNAL(motorLinkageReceived(double)),
                 this, SLOT(motorLinkageReceived(double)));
-        connect(mVesc->mcConfig(), SIGNAL(paramChangedDouble(QObject*,QString,double)),
+        connect(mOpenroad->mcConfig(), SIGNAL(paramChangedDouble(QObject*,QString,double)),
                 this, SLOT(paramChangedDouble(QObject*,QString,double)));
 
-        ui->currentBox->setValue(mVesc->mcConfig()->getParamDouble("l_current_max") / 3.0);
+        ui->currentBox->setValue(mOpenroad->mcConfig()->getParamDouble("l_current_max") / 3.0);
     }
 }
 
@@ -135,12 +135,12 @@ void DetectFoc::motorRLReceived(double r, double l)
     mRunning = false;
 
     if (r < 1e-9 && l < 1e-9) {
-        mVesc->emitStatusMessage(tr("Bad FOC Detection Result Received"), false);
+        mOpenroad->emitStatusMessage(tr("Bad FOC Detection Result Received"), false);
         QMessageBox::critical(this,
                               tr("Bad Detection Result"),
                               tr("Could not measure the motor resistance and inductance."));
     } else {
-        mVesc->emitStatusMessage(tr("FOC Detection Result Received"), true);
+        mOpenroad->emitStatusMessage(tr("FOC Detection Result Received"), true);
         ui->resistanceBox->setValue(r * 1e3);
         ui->inductanceBox->setValue(l);
         ui->kpBox->setValue(0.0);
@@ -168,13 +168,13 @@ void DetectFoc::motorLinkageReceived(double flux_linkage)
     mRunning = false;
 
     if (flux_linkage < 1e-9) {
-        mVesc->emitStatusMessage(tr("Bad FOC Detection Result Received"), false);
+        mOpenroad->emitStatusMessage(tr("Bad FOC Detection Result Received"), false);
         QMessageBox::critical(this,
                               tr("Bad Detection Result"),
                               tr("Could not measure the flux linkage properly. Adjust the start parameters "
                                  "according to the help text and try again."));
     } else {
-        mVesc->emitStatusMessage(tr("FOC Detection Result Received"), true);
+        mOpenroad->emitStatusMessage(tr("FOC Detection Result Received"), true);
         ui->lambdaBox->setValue(flux_linkage * 1e3);
         ui->obsGainBox->setValue(0.0);
         on_calcGainButton_clicked();
@@ -195,7 +195,7 @@ void DetectFoc::paramChangedDouble(QObject *src, QString name, double newParam)
 
 void DetectFoc::on_applyAllButton_clicked()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         double r = ui->resistanceBox->value() / 1e3;
         double l = ui->inductanceBox->value();
         double lambda = ui->lambdaBox->value() / 1e3;
@@ -221,23 +221,23 @@ void DetectFoc::on_applyAllButton_clicked()
             return;
         }
 
-        mVesc->mcConfig()->updateParamDouble("foc_motor_r", r);
-        mVesc->mcConfig()->updateParamDouble("foc_motor_l", l / 1e6);
-        mVesc->mcConfig()->updateParamDouble("foc_motor_flux_linkage", lambda);
+        mOpenroad->mcConfig()->updateParamDouble("foc_motor_r", r);
+        mOpenroad->mcConfig()->updateParamDouble("foc_motor_l", l / 1e6);
+        mOpenroad->mcConfig()->updateParamDouble("foc_motor_flux_linkage", lambda);
 
-        mVesc->emitStatusMessage(tr("R, L and \u03BB Applied"), true);
+        mOpenroad->emitStatusMessage(tr("R, L and \u03BB Applied"), true);
 
         on_calcKpKiButton_clicked();
         on_calcGainButton_clicked();
 
         if (mLastCalcOk) {
-            mVesc->mcConfig()->updateParamDouble("foc_current_kp", ui->kpBox->value());
-            mVesc->mcConfig()->updateParamDouble("foc_current_ki", ui->kiBox->value());
-            mVesc->mcConfig()->updateParamDouble("foc_observer_gain", ui->obsGainBox->value() * 1e6);
-            mVesc->emitStatusMessage(tr("KP, KI and Observer Gain Applied"), true);
+            mOpenroad->mcConfig()->updateParamDouble("foc_current_kp", ui->kpBox->value());
+            mOpenroad->mcConfig()->updateParamDouble("foc_current_ki", ui->kiBox->value());
+            mOpenroad->mcConfig()->updateParamDouble("foc_observer_gain", ui->obsGainBox->value() * 1e6);
+            mOpenroad->emitStatusMessage(tr("KP, KI and Observer Gain Applied"), true);
             mLastOkValuesApplied = true;
         } else {
-            mVesc->emitStatusMessage(tr("Apply Parameters Failed"), false);
+            mOpenroad->emitStatusMessage(tr("Apply Parameters Failed"), false);
         }
     }
 }
@@ -354,18 +354,18 @@ void DetectFoc::on_calcApplyLocalButton_clicked()
 
     if (reply == QMessageBox::Yes) {
         double tc = ui->tcBox->value();
-        double l = mVesc->mcConfig()->getParamDouble("foc_motor_l");
-        double r = mVesc->mcConfig()->getParamDouble("foc_motor_r");
-        double lambda = mVesc->mcConfig()->getParamDouble("foc_motor_flux_linkage");
+        double l = mOpenroad->mcConfig()->getParamDouble("foc_motor_l");
+        double r = mOpenroad->mcConfig()->getParamDouble("foc_motor_r");
+        double lambda = mOpenroad->mcConfig()->getParamDouble("foc_motor_flux_linkage");
 
         double bw = 1.0 / (tc * 1e-6);
         double kp = l * bw;
         double ki = r * bw;
         double gain = (0.00001 / r) / (lambda * lambda);
 
-        mVesc->mcConfig()->updateParamDouble("foc_current_kp", kp);
-        mVesc->mcConfig()->updateParamDouble("foc_current_ki", ki);
-        mVesc->mcConfig()->updateParamDouble("foc_observer_gain", gain * 1e6);
-        mVesc->emitStatusMessage(tr("KP, KI and Observer Gain Applied"), true);
+        mOpenroad->mcConfig()->updateParamDouble("foc_current_kp", kp);
+        mOpenroad->mcConfig()->updateParamDouble("foc_current_ki", ki);
+        mOpenroad->mcConfig()->updateParamDouble("foc_observer_gain", gain * 1e6);
+        mOpenroad->emitStatusMessage(tr("KP, KI and Observer Gain Applied"), true);
     }
 }

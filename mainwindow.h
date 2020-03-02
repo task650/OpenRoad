@@ -141,7 +141,7 @@ private:
 
     QSettings mSettings;
     QString mVersion;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     QTimer *mTimer;
     QLabel *mStatusLabel;
     int mStatusInfoTime;

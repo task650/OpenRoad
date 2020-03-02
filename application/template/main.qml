@@ -30,7 +30,7 @@ ApplicationWindow {
     height: 480
     title: qsTr("My Application")
     
-    property Commands mCommands: VescIf.commands()
+    property Commands mCommands: OpenroadIf.commands()
 
     SwipeView {
         id: swipeView
@@ -47,7 +47,7 @@ ApplicationWindow {
                     text: "Connect"
 
                     onClicked: {
-                        VescIf.autoconnect()
+                        OpenroadIf.autoconnect()
                     }
                 }
 
@@ -56,13 +56,13 @@ ApplicationWindow {
                     text: "Disconnect"
 
                     onClicked: {
-                        VescIf.disconnectPort()
+                        OpenroadIf.disconnectPort()
                     }
                 }
 
                 Text {
                     id: connText
-                    text: VescIf.getConnectedPortName()
+                    text: OpenroadIf.getConnectedPortName()
                     Layout.fillWidth: true
                 }
 
@@ -78,7 +78,7 @@ ApplicationWindow {
             
                 Text {
                     id: valText
-                    text: VescIf.getConnectedPortName()
+                    text: OpenroadIf.getConnectedPortName()
                     verticalAlignment: Text.AlignVCenter
                     font.family: "DejaVu Sans Mono"
                     Layout.fillWidth: true
@@ -107,9 +107,9 @@ ApplicationWindow {
         repeat: true
 
         onTriggered: {
-            connText.text = VescIf.getConnectedPortName()
+            connText.text = OpenroadIf.getConnectedPortName()
 
-            if (VescIf.isPortConnected() && tabBar.currentIndex == 1) {
+            if (OpenroadIf.isPortConnected() && tabBar.currentIndex == 1) {
                 // Sample RT data when the RT page is selected
                 mCommands.getValues()
             }

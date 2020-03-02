@@ -28,8 +28,8 @@ import Vedder.openroad.configparams 1.0
 import Vedder.openroad.utility 1.0
 
 Item {
-    property ConfigParams mMcConf: VescIf.mcConfig()
-    property Commands mCommands: VescIf.commands()
+    property ConfigParams mMcConf: OpenroadIf.mcConfig()
+    property Commands mCommands: OpenroadIf.commands()
 
     function openDialog() {
         // Set few battery cells by default to avoid confusion
@@ -550,10 +550,10 @@ Item {
                         }
                     } else if (stackLayout.currentIndex == 2) {
                         if (stackLayout.currentIndex == (stackLayout.count - 2)) {
-                            if (VescIf.isPortConnected()) {
+                            if (OpenroadIf.isPortConnected()) {
                                 detectDialog.open()
                             } else {
-                                VescIf.emitMessageDialog("Detect Motors",
+                                OpenroadIf.emitMessageDialog("Detect Motors",
                                                          "Not connected to the VESC. Please connect in order to run detection.",
                                                          false, false)
                             }
@@ -593,7 +593,7 @@ Item {
 
         onAccepted: {
             disableDialog()
-            Utility.restoreConfAll(VescIf, true, true, true)
+            Utility.restoreConfAll(OpenroadIf, true, true, true)
             enableDialog()
         }
     }
@@ -687,13 +687,13 @@ Item {
 
             mCommands.setMcconf(false)
             Utility.waitSignal(mCommands, "2ackReceived(QString)", 2000)
-            var canDevs = VescIf.scanCan();
-            if (!Utility.setBatteryCutCan(VescIf, canDevs, 6.0, 6.0)) {
+            var canDevs = OpenroadIf.scanCan();
+            if (!Utility.setBatteryCutCan(OpenroadIf, canDevs, 6.0, 6.0)) {
                 enableDialog()
                 return
             }
 
-            var res  = Utility.detectAllFoc(VescIf, true,
+            var res  = Utility.detectAllFoc(OpenroadIf, true,
                                             maxPowerLossBox.realValue,
                                             currentInMinBox.realValue,
                                             currentInMaxBox.realValue,
@@ -703,7 +703,7 @@ Item {
             var resDetect = false
             if (res.startsWith("Success!")) {
                 resDetect = true
-                Utility.setBatteryCutCanFromCurrentConfig(VescIf, canDevs);
+                Utility.setBatteryCutCanFromCurrentConfig(OpenroadIf, canDevs);
             }
 
             enableDialog()

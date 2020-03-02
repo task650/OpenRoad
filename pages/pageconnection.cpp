@@ -32,7 +32,7 @@ PageConnection::PageConnection(QWidget *parent) :
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
 
-    mVesc = nullptr;
+    mOpenroad = nullptr;
     mTimer = new QTimer(this);
 
     connect(mTimer, SIGNAL(timeout()),
@@ -46,25 +46,25 @@ PageConnection::~PageConnection()
     delete ui;
 }
 
-VescInterface *PageConnection::openroad() const
+OpenroadInterface *PageConnection::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void PageConnection::setVesc(VescInterface *openroad)
+void PageConnection::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    ui->tcpServerEdit->setText(mVesc->getLastTcpServer());
-    ui->tcpPortBox->setValue(mVesc->getLastTcpPort());
+    ui->tcpServerEdit->setText(mOpenroad->getLastTcpServer());
+    ui->tcpPortBox->setValue(mOpenroad->getLastTcpPort());
 
 #ifdef HAS_BLUETOOTH
-    connect(mVesc->bleDevice(), SIGNAL(scanDone(QVariantMap,bool)),
+    connect(mOpenroad->bleDevice(), SIGNAL(scanDone(QVariantMap,bool)),
             this, SLOT(bleScanDone(QVariantMap,bool)));
 
-    QString lastBleAddr = mVesc->getLastBleAddr();
+    QString lastBleAddr = mOpenroad->getLastBleAddr();
     if (lastBleAddr != "") {
-        QString setName = mVesc->getBleName(lastBleAddr);
+        QString setName = mOpenroad->getBleName(lastBleAddr);
 
         QString name;
         if (!setName.isEmpty()) {
@@ -80,14 +80,14 @@ void PageConnection::setVesc(VescInterface *openroad)
 #endif
 
 #ifdef HAS_SERIALPORT
-    ui->serialBaudBox->setValue(mVesc->getLastSerialBaud());
+    ui->serialBaudBox->setValue(mOpenroad->getLastSerialBaud());
 #endif
 
 #ifdef HAS_CANBUS
-    ui->CANbusBitrateBox->setValue(mVesc->getLastCANbusBitrate());
+    ui->CANbusBitrateBox->setValue(mOpenroad->getLastCANbusBitrate());
 
     ui->CANbusInterfaceBox->clear();
-    QList<QString> interfaces = mVesc->listCANbusInterfaces();
+    QList<QString> interfaces = mOpenroad->listCANbusInterfaces();
 
     for(int i = 0;i < interfaces.size();i++) {
         ui->CANbusInterfaceBox->addItem(interfaces.at(i), interfaces.at(i));
@@ -96,13 +96,13 @@ void PageConnection::setVesc(VescInterface *openroad)
     ui->CANbusInterfaceBox->setCurrentIndex(0);
 #endif
 
-    connect(mVesc->commands(), SIGNAL(pingCanRx(QVector<int>,bool)),
+    connect(mOpenroad->commands(), SIGNAL(pingCanRx(QVector<int>,bool)),
             this, SLOT(pingCanRx(QVector<int>,bool)));
-    connect(mVesc, SIGNAL(CANbusNewNode(int)),
+    connect(mOpenroad, SIGNAL(CANbusNewNode(int)),
             this, SLOT(CANbusNewNode(int)));
-    connect(mVesc, SIGNAL(CANbusInterfaceListUpdated()),
+    connect(mOpenroad, SIGNAL(CANbusInterfaceListUpdated()),
             this, SLOT(CANbusInterfaceListUpdated()));
-    connect(mVesc, SIGNAL(pairingListUpdated()),
+    connect(mOpenroad, SIGNAL(pairingListUpdated()),
             this, SLOT(pairingListUpdated()));
 
     pairingListUpdated();
@@ -111,20 +111,20 @@ void PageConnection::setVesc(VescInterface *openroad)
 
 void PageConnection::timerSlot()
 {
-    if (mVesc) {
-        QString str = mVesc->getConnectedPortName();
+    if (mOpenroad) {
+        QString str = mOpenroad->getConnectedPortName();
         if (str != ui->statusLabel->text()) {
-            ui->statusLabel->setText(mVesc->getConnectedPortName());
+            ui->statusLabel->setText(mOpenroad->getConnectedPortName());
         }
 
         // CAN fwd
-        if (ui->canFwdButton->isChecked() != mVesc->commands()->getSendCan()) {
-            ui->canFwdButton->setChecked(mVesc->commands()->getSendCan());
+        if (ui->canFwdButton->isChecked() != mOpenroad->commands()->getSendCan()) {
+            ui->canFwdButton->setChecked(mOpenroad->commands()->getSendCan());
         }
 
         if (ui->canFwdBox->count() > 0) {
             int canVal = ui->canFwdBox->currentData().toInt();
-            if (canVal != mVesc->commands()->getCanSendId()) {
+            if (canVal != mOpenroad->commands()->getCanSendId()) {
                 for (int i = 0;i < ui->canFwdBox->count();i++) {
                     if (ui->canFwdBox->itemData(i).toInt() == canVal) {
                         ui->canFwdBox->setCurrentIndex(i);
@@ -137,13 +137,13 @@ void PageConnection::timerSlot()
 
     QString ipTxt = "Server IPs\n";
     QString clientTxt = "Connected Clients\n";
-    if (mVesc->tcpServerIsRunning()) {
+    if (mOpenroad->tcpServerIsRunning()) {
         for (auto adr: Utility::getNetworkAddresses()) {
             ipTxt += adr.toString() + "\n";
         }
 
-        if (mVesc->tcpServerIsClientConnected()) {
-            clientTxt += mVesc->tcpServerClientIp();
+        if (mOpenroad->tcpServerIsClientConnected()) {
+            clientTxt += mOpenroad->tcpServerClientIp();
         }
     } else {
         ui->tcpServerPortBox->setEnabled(true);
@@ -169,7 +169,7 @@ void PageConnection::bleScanDone(QVariantMap devs, bool done)
     for (auto d: devs.keys()) {
         QString devName = devs.value(d).toString();
         QString addr = d;
-        QString setName = mVesc->getBleName(addr);
+        QString setName = mOpenroad->getBleName(addr);
 
         if (!setName.isEmpty()) {
             QString name;
@@ -220,7 +220,7 @@ void PageConnection::CANbusNewNode(int node)
 void PageConnection::CANbusInterfaceListUpdated()
 {
     ui->CANbusInterfaceBox->clear();
-    QList<QString> interfaces = mVesc->listCANbusInterfaces();
+    QList<QString> interfaces = mOpenroad->listCANbusInterfaces();
 
     for(int i = 0; i<interfaces.size(); i++) {
         ui->CANbusInterfaceBox->addItem(interfaces.at(i), interfaces.at(i));
@@ -233,7 +233,7 @@ void PageConnection::pairingListUpdated()
 {
     ui->pairedListWidget->clear();
 
-    for (QString uuid: mVesc->getPairedUuids()) {
+    for (QString uuid: mOpenroad->getPairedUuids()) {
         QListWidgetItem *item = new QListWidgetItem;
         item->setText("UUID: " + uuid);
         item->setIcon(QIcon("://res/icon.png"));
@@ -248,9 +248,9 @@ void PageConnection::pairingListUpdated()
 
 void PageConnection::on_serialRefreshButton_clicked()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         ui->serialPortBox->clear();
-        QList<VSerialInfo_t> ports = mVesc->listSerialPorts();
+        QList<VSerialInfo_t> ports = mOpenroad->listSerialPorts();
         foreach(const VSerialInfo_t &port, ports) {
             ui->serialPortBox->addItem(port.name, port.systemPath);
         }
@@ -260,78 +260,78 @@ void PageConnection::on_serialRefreshButton_clicked()
 
 void PageConnection::on_serialDisconnectButton_clicked()
 {
-    if (mVesc) {
-        mVesc->disconnectPort();
+    if (mOpenroad) {
+        mOpenroad->disconnectPort();
     }
 }
 
 void PageConnection::on_serialConnectButton_clicked()
 {
-    if (mVesc) {
-        mVesc->connectSerial(ui->serialPortBox->currentData().toString(),
+    if (mOpenroad) {
+        mOpenroad->connectSerial(ui->serialPortBox->currentData().toString(),
                              ui->serialBaudBox->value());
     }
 }
 
 void PageConnection::on_CANbusScanButton_clicked()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         ui->CANbusScanButton->setEnabled(false);
-        mVesc->connectCANbus("socketcan", ui->CANbusInterfaceBox->currentData().toString(),
+        mOpenroad->connectCANbus("socketcan", ui->CANbusInterfaceBox->currentData().toString(),
                              ui->CANbusBitrateBox->value());
 
         ui->CANbusTargetIdBox->clear();
-        mVesc->scanCANbus();
+        mOpenroad->scanCANbus();
         ui->CANbusScanButton->setEnabled(true);
     }
 }
 
 void PageConnection::on_CANbusDisconnectButton_clicked()
 {
-    if (mVesc) {
-        mVesc->disconnectPort();
+    if (mOpenroad) {
+        mOpenroad->disconnectPort();
     }
 }
 
 void PageConnection::on_CANbusConnectButton_clicked()
 {
-    if (mVesc) {
-        mVesc->setCANbusReceiverID(ui->CANbusTargetIdBox->currentData().toInt());
-        mVesc->connectCANbus("socketcan", ui->CANbusInterfaceBox->currentData().toString(),
+    if (mOpenroad) {
+        mOpenroad->setCANbusReceiverID(ui->CANbusTargetIdBox->currentData().toInt());
+        mOpenroad->connectCANbus("socketcan", ui->CANbusInterfaceBox->currentData().toString(),
                              ui->CANbusBitrateBox->value());
     }
 }
 
 void PageConnection::on_tcpDisconnectButton_clicked()
 {
-    if (mVesc) {
-        mVesc->disconnectPort();
+    if (mOpenroad) {
+        mOpenroad->disconnectPort();
     }
 }
 
 void PageConnection::on_tcpConnectButton_clicked()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         QString tcpServer = ui->tcpServerEdit->text();
         int tcpPort = ui->tcpPortBox->value();
-        mVesc->connectTcp(tcpServer, tcpPort);
+        mOpenroad->connectTcp(tcpServer, tcpPort);
     }
 }
 
 void PageConnection::on_helpButton_clicked()
 {
-    if (mVesc) {
-        HelpDialog::showHelp(this, mVesc->infoConfig(), "help_can_forward");
+    if (mOpenroad) {
+        HelpDialog::showHelp(this, mOpenroad->infoConfig(), "help_can_forward");
     }
 }
 
 void PageConnection::on_canFwdButton_toggled(bool checked)
 {
-    if (mVesc) {
-        if (mVesc->commands()->getCanSendId() >= 0 || !checked) {
-            mVesc->commands()->setSendCan(checked);
+    if (mOpenroad) {
+        if (mOpenroad->commands()->getCanSendId() >= 0 || !checked) {
+            mOpenroad->commands()->setSendCan(checked);
         } else {
-            mVesc->emitMessageDialog("CAN Forward",
+            mOpenroad->emitMessageDialog("CAN Forward",
                                      "No CAN device is selected. Click on the refresh button "
                                      "if the selection box is empty.",
                                      false, false);
@@ -341,14 +341,14 @@ void PageConnection::on_canFwdButton_toggled(bool checked)
 
 void PageConnection::on_autoConnectButton_clicked()
 {
-    Utility::autoconnectBlockingWithProgress(mVesc, this);
+    Utility::autoconnectBlockingWithProgress(mOpenroad, this);
 }
 
 void PageConnection::on_bleScanButton_clicked()
 {
 #ifdef HAS_BLUETOOTH
-    if (mVesc) {
-        mVesc->bleDevice()->startScan();
+    if (mOpenroad) {
+        mOpenroad->bleDevice()->startScan();
         ui->bleScanButton->setEnabled(false);
     }
 #endif
@@ -356,16 +356,16 @@ void PageConnection::on_bleScanButton_clicked()
 
 void PageConnection::on_bleDisconnectButton_clicked()
 {
-    if (mVesc) {
-        mVesc->disconnectPort();
+    if (mOpenroad) {
+        mOpenroad->disconnectPort();
     }
 }
 
 void PageConnection::on_bleConnectButton_clicked()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         if (ui->bleDevBox->count() > 0) {
-            mVesc->connectBle(ui->bleDevBox->currentData().toString());
+            mOpenroad->connectBle(ui->bleDevBox->currentData().toString());
         }
     }
 }
@@ -373,12 +373,12 @@ void PageConnection::on_bleConnectButton_clicked()
 void PageConnection::on_bleSetNameButton_clicked()
 {
 #ifdef HAS_BLUETOOTH
-    if (mVesc) {
+    if (mOpenroad) {
         QString name = ui->bleNameEdit->text();
         QString addr = ui->bleDevBox->currentData().toString();
 
         if (!name.isEmpty()) {
-            mVesc->storeBleName(addr, name);
+            mOpenroad->storeBleName(addr, name);
             name += " [";
             name += addr;
             name += "]";
@@ -393,16 +393,16 @@ void PageConnection::on_bleSetNameButton_clicked()
 void PageConnection::on_canFwdBox_currentIndexChanged(const QString &arg1)
 {
     (void)arg1;
-    if (mVesc && ui->canFwdBox->count() > 0) {
-        mVesc->commands()->setCanSendId(quint32(ui->canFwdBox->currentData().toInt()));
+    if (mOpenroad && ui->canFwdBox->count() > 0) {
+        mOpenroad->commands()->setCanSendId(quint32(ui->canFwdBox->currentData().toInt()));
     }
 }
 
 void PageConnection::on_canRefreshButton_clicked()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         ui->canRefreshButton->setEnabled(false);
-        mVesc->commands()->pingCan();
+        mOpenroad->commands()->pingCan();
     }
 }
 
@@ -416,10 +416,10 @@ void PageConnection::on_canDefaultButton_clicked()
 
 void PageConnection::on_pairConnectedButton_clicked()
 {
-    if (mVesc) {
-        if (mVesc->isPortConnected()) {
-            if (mVesc->commands()->isLimitedMode()) {
-                mVesc->emitMessageDialog("Pair VESC",
+    if (mOpenroad) {
+        if (mOpenroad->isPortConnected()) {
+            if (mOpenroad->commands()->isLimitedMode()) {
+                mOpenroad->emitMessageDialog("Pair VESC",
                                          "The fiwmare must be updated to pair this VESC.",
                                          false, false);
             } else {
@@ -430,20 +430,20 @@ void PageConnection::on_pairConnectedButton_clicked()
                                                 "that are not paired with this VESC will not be able to connect over bluetooth any more. Continue?"),
                                              QMessageBox::Ok | QMessageBox::Cancel);
                 if (reply == QMessageBox::Ok) {
-                    mVesc->addPairedUuid(mVesc->getConnectedUuid());
-                    mVesc->storeSettings();
-                    ConfigParams *ap = mVesc->appConfig();
-                    mVesc->commands()->getAppConf();
+                    mOpenroad->addPairedUuid(mOpenroad->getConnectedUuid());
+                    mOpenroad->storeSettings();
+                    ConfigParams *ap = mOpenroad->appConfig();
+                    mOpenroad->commands()->getAppConf();
                     bool res = Utility::waitSignal(ap, SIGNAL(updated()), 1500);
 
                     if (res) {
-                        mVesc->appConfig()->updateParamBool("pairing_done", true, nullptr);
-                        mVesc->commands()->setAppConf();
+                        mOpenroad->appConfig()->updateParamBool("pairing_done", true, nullptr);
+                        mOpenroad->commands()->setAppConf();
                     }
                 }
             }
         } else {
-            mVesc->emitMessageDialog("Pair VESC",
+            mOpenroad->emitMessageDialog("Pair VESC",
                                      "You are not connected to the VESC. Connect in order to pair it.",
                                      false, false);
         }
@@ -452,12 +452,12 @@ void PageConnection::on_pairConnectedButton_clicked()
 
 void PageConnection::on_addConnectedButton_clicked()
 {
-    if (mVesc) {
-        if (mVesc->isPortConnected()) {
-            mVesc->addPairedUuid(mVesc->getConnectedUuid());
-            mVesc->storeSettings();
+    if (mOpenroad) {
+        if (mOpenroad->isPortConnected()) {
+            mOpenroad->addPairedUuid(mOpenroad->getConnectedUuid());
+            mOpenroad->storeSettings();
         } else {
-            mVesc->emitMessageDialog("Add UUID",
+            mOpenroad->emitMessageDialog("Add UUID",
                                      "You are not connected to the VESC. Connect in order to add it.",
                                      false, false);
         }
@@ -466,7 +466,7 @@ void PageConnection::on_addConnectedButton_clicked()
 
 void PageConnection::on_deletePairedButton_clicked()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         QListWidgetItem *item = ui->pairedListWidget->currentItem();
 
         if (item) {
@@ -478,8 +478,8 @@ void PageConnection::on_deletePairedButton_clicked()
                                             "any more. Are you sure?"),
                                          QMessageBox::Ok | QMessageBox::Cancel);
             if (reply == QMessageBox::Ok) {
-                mVesc->deletePairedUuid(item->data(Qt::UserRole).toString());
-                mVesc->storeSettings();
+                mOpenroad->deletePairedUuid(item->data(Qt::UserRole).toString());
+                mOpenroad->storeSettings();
             }
         }
     }
@@ -487,7 +487,7 @@ void PageConnection::on_deletePairedButton_clicked()
 
 void PageConnection::on_clearPairedButton_clicked()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         QListWidgetItem *item = ui->pairedListWidget->currentItem();
 
         if (item) {
@@ -497,8 +497,8 @@ void PageConnection::on_clearPairedButton_clicked()
                                          tr("This is going to clear the pairing list of this instance of VESC Tool. Are you sure?"),
                                          QMessageBox::Ok | QMessageBox::Cancel);
             if (reply == QMessageBox::Ok) {
-                mVesc->clearPairedUuids();
-                mVesc->storeSettings();
+                mOpenroad->clearPairedUuids();
+                mOpenroad->storeSettings();
             }
         }
     }
@@ -506,24 +506,24 @@ void PageConnection::on_clearPairedButton_clicked()
 
 void PageConnection::on_addUuidButton_clicked()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         bool ok;
         QString text = QInputDialog::getText(this, "Add UUID",
                                              "UUID:", QLineEdit::Normal,
                                              "", &ok);
         if (ok) {
-            mVesc->addPairedUuid(text);
-            mVesc->storeSettings();
+            mOpenroad->addPairedUuid(text);
+            mOpenroad->storeSettings();
         }
     }
 }
 
 void PageConnection::on_unpairButton_clicked()
 {
-    if (mVesc) {
-        if (mVesc->isPortConnected()) {
-            if (mVesc->commands()->isLimitedMode()) {
-                mVesc->emitMessageDialog("Unpair VESC",
+    if (mOpenroad) {
+        if (mOpenroad->isPortConnected()) {
+            if (mOpenroad->commands()->isLimitedMode()) {
+                mOpenroad->emitMessageDialog("Unpair VESC",
                                          "The fiwmare must be updated on this VESC first.",
                                          false, false);
             } else {
@@ -536,21 +536,21 @@ void PageConnection::on_unpairButton_clicked()
                                                  tr("This is going to unpair the connected VESC. Continue?"),
                                                  QMessageBox::Ok | QMessageBox::Cancel);
                     if (reply == QMessageBox::Ok) {
-                        ConfigParams *ap = mVesc->appConfig();
-                        mVesc->commands()->getAppConf();
+                        ConfigParams *ap = mOpenroad->appConfig();
+                        mOpenroad->commands()->getAppConf();
                         bool res = Utility::waitSignal(ap, SIGNAL(updated()), 1500);
 
                         if (res) {
-                            mVesc->appConfig()->updateParamBool("pairing_done", false, nullptr);
-                            mVesc->commands()->setAppConf();
-                            mVesc->deletePairedUuid(mVesc->getConnectedUuid());
-                            mVesc->storeSettings();
+                            mOpenroad->appConfig()->updateParamBool("pairing_done", false, nullptr);
+                            mOpenroad->commands()->setAppConf();
+                            mOpenroad->deletePairedUuid(mOpenroad->getConnectedUuid());
+                            mOpenroad->storeSettings();
                         }
                     }
                 }
             }
         } else {
-            mVesc->emitMessageDialog("Unpair VESC",
+            mOpenroad->emitMessageDialog("Unpair VESC",
                                      "You are not connected to the VESC. Connect in order to unpair it.",
                                      false, false);
         }
@@ -559,12 +559,12 @@ void PageConnection::on_unpairButton_clicked()
 
 void PageConnection::on_tcpServerEnableBox_toggled(bool arg1)
 {
-    if (mVesc) {
+    if (mOpenroad) {
         if (arg1) {
-            mVesc->tcpServerStart(ui->tcpServerPortBox->value());
+            mOpenroad->tcpServerStart(ui->tcpServerPortBox->value());
             ui->tcpServerPortBox->setEnabled(false);
         } else {
-            mVesc->tcpServerStop();
+            mOpenroad->tcpServerStop();
         }
     }
 }

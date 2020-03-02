@@ -26,7 +26,7 @@ PageDc::PageDc(QWidget *parent) :
 {
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
-    mVesc = nullptr;
+    mOpenroad = nullptr;
 }
 
 PageDc::~PageDc()
@@ -34,24 +34,24 @@ PageDc::~PageDc()
     delete ui;
 }
 
-VescInterface *PageDc::openroad() const
+OpenroadInterface *PageDc::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void PageDc::setVesc(VescInterface *openroad)
+void PageDc::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    if (mVesc) {
+    if (mOpenroad) {
         reloadParams();
     }
 }
 
 void PageDc::reloadParams()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         ui->paramTab->clearParams();
-        ui->paramTab->addParamSubgroup(mVesc->mcConfig(), "dc", "general");
+        ui->paramTab->addParamSubgroup(mOpenroad->mcConfig(), "dc", "general");
     }
 }

@@ -33,9 +33,9 @@ Item {
     property real ki: 0.0
     property real gain: 0.0
 
-    property Commands mCommands: VescIf.commands()
-    property ConfigParams mMcConf: VescIf.mcConfig()
-    property ConfigParams mInfoConf: VescIf.infoConfig()
+    property Commands mCommands: OpenroadIf.commands()
+    property ConfigParams mMcConf: OpenroadIf.mcConfig()
+    property ConfigParams mInfoConf: OpenroadIf.infoConfig()
 
     function openDialog() {
         dialog.open()
@@ -53,14 +53,14 @@ Item {
 
     function calcKpKi() {
         if (res < 1e-10) {
-            VescIf.emitMessageDialog("Calculate Error",
+            OpenroadIf.emitMessageDialog("Calculate Error",
                                      "R is 0. Please measure it first.",
                                      false, false)
             return;
         }
 
         if (ind < 1e-10) {
-            VescIf.emitMessageDialog("Calculate Error",
+            OpenroadIf.emitMessageDialog("Calculate Error",
                                      "L is 0. Please measure it first.",
                                      false, false)
             return;
@@ -77,14 +77,14 @@ Item {
 
     function calcGain() {
         if (lambda < 1e-10) {
-            VescIf.emitMessageDialog("Calculate Error",
+            OpenroadIf.emitMessageDialog("Calculate Error",
                                      "\u03BB is 0. Please measure it first.",
                                      false, false)
             return;
         }
 
         if (res < 1e-10) {
-            VescIf.emitMessageDialog("Calculate Error",
+            OpenroadIf.emitMessageDialog("Calculate Error",
                                      "R is 0. Please measure it first.",
                                      false, false)
             return;
@@ -96,10 +96,10 @@ Item {
     }
 
     function testConnected() {
-        if (VescIf.isPortConnected()) {
+        if (OpenroadIf.isPortConnected()) {
             return true
         } else {
-            VescIf.emitMessageDialog(
+            OpenroadIf.emitMessageDialog(
                         "Connection Error",
                         "The VESC is not connected. Please connect it to run detection.",
                         false, false)
@@ -182,7 +182,7 @@ Item {
                     text: "Help"
                     Layout.fillWidth: true
                     onClicked: {
-                        VescIf.emitMessageDialog(
+                        OpenroadIf.emitMessageDialog(
                                     mInfoConf.getLongName("help_foc_detect"),
                                     mInfoConf.getDescription("help_foc_detect"),
                                     true, true)
@@ -215,7 +215,7 @@ Item {
                             }
 
                             if (res < 1e-9) {
-                                VescIf.emitMessageDialog("Detect",
+                                OpenroadIf.emitMessageDialog("Detect",
                                                          "R is 0. Please measure it first.",
                                                          false, false)
                             } else {
@@ -248,21 +248,21 @@ Item {
                     Layout.fillWidth: true
                     onClicked: {
                         if (res < 1e-10) {
-                            VescIf.emitMessageDialog("Apply Error",
+                            OpenroadIf.emitMessageDialog("Apply Error",
                                                      "R is 0. Please measure it first.",
                                                      false, false)
                             return
                         }
 
                         if (ind < 1e-10) {
-                            VescIf.emitMessageDialog("Apply Error",
+                            OpenroadIf.emitMessageDialog("Apply Error",
                                                      "L is 0. Please measure it first.",
                                                      false, false)
                             return
                         }
 
                         if (lambda < 1e-10) {
-                            VescIf.emitMessageDialog("Apply Error",
+                            OpenroadIf.emitMessageDialog("Apply Error",
                                                      "\u03BB is 0. Please measure it first.",
                                                      false, false)
                             return
@@ -350,12 +350,12 @@ Item {
 
         onMotorRLReceived: {
             if (r < 1e-9 && l < 1e-9) {
-                VescIf.emitStatusMessage("Bad FOC Detection Result Received", false)
-                VescIf.emitMessageDialog("Bad Detection Result",
+                OpenroadIf.emitStatusMessage("Bad FOC Detection Result Received", false)
+                OpenroadIf.emitMessageDialog("Bad Detection Result",
                                          "Could not measure the motor resistance and inductance.",
                                          false, false)
             } else {
-                VescIf.emitStatusMessage("FOC Detection Result Received", true)
+                OpenroadIf.emitStatusMessage("FOC Detection Result Received", true)
                 res = r
                 ind = l * 1e-6
                 calcKpKi()
@@ -364,13 +364,13 @@ Item {
 
         onMotorLinkageReceived: {
             if (flux_linkage < 1e-9) {
-                VescIf.emitStatusMessage("Bad FOC Detection Result Received", false)
-                VescIf.emitMessageDialog("Bad Detection Result",
+                OpenroadIf.emitStatusMessage("Bad FOC Detection Result Received", false)
+                OpenroadIf.emitMessageDialog("Bad Detection Result",
                                          "Could not measure the flux linkage properly. Adjust " +
                                          "the start parameters according to the help text and try again.",
                                          false, false)
             } else {
-                VescIf.emitStatusMessage("FOC Detection Result Received", true)
+                OpenroadIf.emitStatusMessage("FOC Detection Result Received", true)
                 lambda = flux_linkage
                 calcGain()
             }

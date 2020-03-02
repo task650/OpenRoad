@@ -25,7 +25,7 @@
 #include <cmath>
 #include <QPainter>
 
-Vesc3DView::Vesc3DView(QWidget *parent) : QOpenGLWidget(parent)
+Openroad3DView::Openroad3DView(QWidget *parent) : QOpenGLWidget(parent)
 {
     mXRot = 0;
     mYRot = 0;
@@ -48,7 +48,7 @@ Vesc3DView::Vesc3DView(QWidget *parent) : QOpenGLWidget(parent)
     setFormat(format);
 }
 
-Vesc3DView::~Vesc3DView()
+Openroad3DView::~Openroad3DView()
 {
     makeCurrent();
     mVbo.destroy();
@@ -59,17 +59,17 @@ Vesc3DView::~Vesc3DView()
     doneCurrent();
 }
 
-QSize Vesc3DView::minimumSizeHint() const
+QSize Openroad3DView::minimumSizeHint() const
 {
     return QSize(0, 0);
 }
 
-QSize Vesc3DView::sizeHint() const
+QSize Openroad3DView::sizeHint() const
 {
     return QSize(0, 0);
 }
 
-void Vesc3DView::setRollPitchYaw(double roll, double pitch, double yaw)
+void Openroad3DView::setRollPitchYaw(double roll, double pitch, double yaw)
 {
     mXRot = float(roll);
     mYRot = float(pitch);
@@ -78,7 +78,7 @@ void Vesc3DView::setRollPitchYaw(double roll, double pitch, double yaw)
     updateUsingTimer();
 }
 
-void Vesc3DView::setQuanternions(float q0, float q1, float q2, float q3)
+void Openroad3DView::setQuanternions(float q0, float q1, float q2, float q3)
 {
     mQ0 = q0;
     mQ1 = q1;
@@ -88,7 +88,7 @@ void Vesc3DView::setQuanternions(float q0, float q1, float q2, float q3)
     updateUsingTimer();
 }
 
-void Vesc3DView::initializeGL()
+void Openroad3DView::initializeGL()
 {
     initializeOpenGLFunctions();
 
@@ -131,7 +131,7 @@ void Vesc3DView::initializeGL()
     mProgram->setUniformValue("texture", 0);
 }
 
-void Vesc3DView::paintGL()
+void Openroad3DView::paintGL()
 {
     glClearColor(mBgColor.redF(), mBgColor.greenF(), mBgColor.blueF(), mBgColor.alphaF());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -165,7 +165,7 @@ void Vesc3DView::paintGL()
     }
 }
 
-void Vesc3DView::makeObject()
+void Openroad3DView::makeObject()
 {
     static const int coords[6][4][3] = {
         { { +1, -1, -1 }, { -1, -1, -1 }, { -1, +1, -1 }, { +1, +1, -1 } },
@@ -223,7 +223,7 @@ void Vesc3DView::makeObject()
     mVbo.allocate(vertData.constData(), vertData.count() * sizeof(GLfloat));
 }
 
-void Vesc3DView::updateUsingTimer()
+void Openroad3DView::updateUsingTimer()
 {
     QTimer::singleShot(1, this, [this]() {
         update();

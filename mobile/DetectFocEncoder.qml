@@ -30,9 +30,9 @@ Item {
     property real mRatio: 0.0
     property bool mInverted: false
 
-    property Commands mCommands: VescIf.commands()
-    property ConfigParams mMcConf: VescIf.mcConfig()
-    property ConfigParams mInfoConf: VescIf.infoConfig()
+    property Commands mCommands: OpenroadIf.commands()
+    property ConfigParams mMcConf: OpenroadIf.mcConfig()
+    property ConfigParams mInfoConf: OpenroadIf.infoConfig()
 
     function openDialog() {
         dialog.open()
@@ -46,10 +46,10 @@ Item {
     }
 
     function testConnected() {
-        if (VescIf.isPortConnected()) {
+        if (OpenroadIf.isPortConnected()) {
             return true
         } else {
-            VescIf.emitMessageDialog(
+            OpenroadIf.emitMessageDialog(
                         "Connection Error",
                         "The VESC is not connected. Please connect it to run detection.",
                         false, false)
@@ -100,7 +100,7 @@ Item {
                         Layout.preferredWidth: 50
                         Layout.fillWidth: true
                         onClicked: {
-                            VescIf.emitMessageDialog(
+                            OpenroadIf.emitMessageDialog(
                                         mInfoConf.getLongName("help_foc_encoder_detect"),
                                         mInfoConf.getDescription("help_foc_encoder_detect"),
                                         true, true)
@@ -138,7 +138,7 @@ Item {
                         mMcConf.updateParamDouble("foc_encoder_ratio", mRatio)
                         mMcConf.updateParamBool("foc_encoder_inverted", mInverted)
 
-                        VescIf.emitStatusMessage("Encoder Parameters Applied", true)
+                        OpenroadIf.emitStatusMessage("Encoder Parameters Applied", true)
 
                         dialog.close()
                     }
@@ -181,12 +181,12 @@ Item {
 
         onEncoderParamReceived: {
             if (offset > 1000.0) {
-                VescIf.emitStatusMessage("Encoder not enabled in firmware", false)
-                VescIf.emitMessageDialog("Error",
+                OpenroadIf.emitStatusMessage("Encoder not enabled in firmware", false)
+                OpenroadIf.emitMessageDialog("Error",
                                          "Encoder support is not enabled. Enable it in the general settings.",
                                          false, false)
             } else {
-                VescIf.emitStatusMessage("Encoder Result Received", true)
+                OpenroadIf.emitStatusMessage("Encoder Result Received", true)
                 mOffset = offset
                 mRatio = ratio
                 mInverted = inverted

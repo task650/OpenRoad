@@ -31,7 +31,7 @@ PageWelcome::PageWelcome(QWidget *parent) :
 {
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
-    mVesc = 0;
+    mOpenroad = 0;
     ui->bgWidget->setPixmap(QPixmap("://res/bg.png"));
 
     connect(ui->wizardFocSimpleButton, SIGNAL(clicked(bool)),
@@ -47,38 +47,38 @@ PageWelcome::~PageWelcome()
 
 void PageWelcome::startSetupWizardFocSimple()
 {
-    if (mVesc) {
-        DetectAllFocDialog::showDialog(mVesc, this);
+    if (mOpenroad) {
+        DetectAllFocDialog::showDialog(mOpenroad, this);
     }
 }
 
 void PageWelcome::startSetupWizardMotor()
 {
-    if (mVesc) {
-        SetupWizardMotor w(mVesc, this);
+    if (mOpenroad) {
+        SetupWizardMotor w(mOpenroad, this);
         w.exec();
     }
 }
 
 void PageWelcome::startSetupWizardApp()
 {
-    if (mVesc) {
-        SetupWizardApp w(mVesc, this);
+    if (mOpenroad) {
+        SetupWizardApp w(mOpenroad, this);
         w.exec();
     }
 }
 
-VescInterface *PageWelcome::openroad() const
+OpenroadInterface *PageWelcome::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void PageWelcome::setVesc(VescInterface *openroad)
+void PageWelcome::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 }
 
 void PageWelcome::on_autoConnectButton_clicked()
 {
-    Utility::autoconnectBlockingWithProgress(mVesc, this);
+    Utility::autoconnectBlockingWithProgress(mOpenroad, this);
 }

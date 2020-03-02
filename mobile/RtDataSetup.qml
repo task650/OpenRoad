@@ -29,8 +29,8 @@ import Vedder.openroad.configparams 1.0
 
 Item {
     id: rtData
-    property Commands mCommands: VescIf.commands()
-    property ConfigParams mMcConf: VescIf.mcConfig()
+    property Commands mCommands: OpenroadIf.commands()
+    property ConfigParams mMcConf: OpenroadIf.mcConfig()
     property bool isHorizontal: rtData.width > rtData.height
 
     property int gaugeSize: isHorizontal ? Math.min((height - valMetrics.height * 4) - 30, width / 3.5 - 10) :
@@ -99,7 +99,7 @@ Item {
             maxAngle: 70
             labelStep: maximumValue > 60 ? 20 : 10
             value: 20
-            unitText: VescIf.useImperialUnits() ? "mph" : "km/h"
+            unitText: OpenroadIf.useImperialUnits() ? "mph" : "km/h"
             typeText: "Speed"
         }
 
@@ -157,7 +157,7 @@ Item {
             Text {
                 id: valText
                 color: "white"
-                text: VescIf.getConnectedPortName()
+                text: OpenroadIf.getConnectedPortName()
                 font.family: "DejaVu Sans Mono"
                 verticalAlignment: Text.AlignVCenter
                 anchors.left: parent.left
@@ -168,7 +168,7 @@ Item {
             Text {
                 id: valText2
                 color: "white"
-                text: VescIf.getConnectedPortName()
+                text: OpenroadIf.getConnectedPortName()
                 font.family: "DejaVu Sans Mono"
                 verticalAlignment: Text.AlignVCenter
                 anchors.left: parent.horizontalCenter
@@ -195,7 +195,7 @@ Item {
             dutyGauge.value = values.duty_now * 100.0
             batteryGauge.value = values.battery_level * 100.0
 
-            var useImperial = VescIf.useImperialUnits()
+            var useImperial = OpenroadIf.useImperialUnits()
             var fl = mMcConf.getParamDouble("foc_motor_flux_linkage")
             var rpmMax = (values.v_in * 60.0) / (Math.sqrt(3.0) * 2.0 * Math.PI * fl)
             var speedFact = ((mMcConf.getParamInt("si_motor_poles") / 2.0) * 60.0 *

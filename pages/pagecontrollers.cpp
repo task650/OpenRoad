@@ -26,7 +26,7 @@ PageControllers::PageControllers(QWidget *parent) :
 {
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
-    mVesc = nullptr;
+    mOpenroad = nullptr;
 }
 
 PageControllers::~PageControllers()
@@ -34,24 +34,24 @@ PageControllers::~PageControllers()
     delete ui;
 }
 
-VescInterface *PageControllers::openroad() const
+OpenroadInterface *PageControllers::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void PageControllers::setVesc(VescInterface *openroad)
+void PageControllers::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    if (mVesc) {
+    if (mOpenroad) {
         reloadParams();
     }
 }
 
 void PageControllers::reloadParams()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         ui->paramTab->clearParams();
-        ui->paramTab->addParamSubgroup(mVesc->mcConfig(), "pid controllers", "general");
+        ui->paramTab->addParamSubgroup(mOpenroad->mcConfig(), "pid controllers", "general");
     }
 }

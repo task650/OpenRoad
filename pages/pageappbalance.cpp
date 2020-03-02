@@ -26,7 +26,7 @@ PageAppBalance::PageAppBalance(QWidget *parent) :
 {
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
-    mVesc = 0;
+    mOpenroad = 0;
 
     mTimer = new QTimer(this);
     mTimer->start(20);
@@ -77,33 +77,33 @@ PageAppBalance::~PageAppBalance()
     delete ui;
 }
 
-VescInterface *PageAppBalance::openroad() const
+OpenroadInterface *PageAppBalance::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void PageAppBalance::setVesc(VescInterface *openroad)
+void PageAppBalance::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    if (mVesc) {
+    if (mOpenroad) {
         reloadParams();
 
         updateTextOutput();
 
-        connect(mVesc->commands(), SIGNAL(decodedBalanceReceived(BALANCE_VALUES)),
+        connect(mOpenroad->commands(), SIGNAL(decodedBalanceReceived(BALANCE_VALUES)),
                 this, SLOT(appValuesReceived(BALANCE_VALUES)));
     }
 }
 
 void PageAppBalance::reloadParams()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         ui->tunePane->clearParams();
         ui->configPane->clearParams();
 
-        ui->tunePane->addParamSubgroup(mVesc->appConfig(), "balance", "tune");
-        ui->configPane->addParamSubgroup(mVesc->appConfig(), "balance", "config");
+        ui->tunePane->addParamSubgroup(mOpenroad->appConfig(), "balance", "tune");
+        ui->configPane->addParamSubgroup(mOpenroad->appConfig(), "balance", "config");
     }
 }
 

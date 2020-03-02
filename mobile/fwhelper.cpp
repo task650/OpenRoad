@@ -89,7 +89,7 @@ QVariantMap FwHelper::getBootloaders(QString hw)
     return bls;
 }
 
-bool FwHelper::uploadFirmware(QString filename, VescInterface *openroad,
+bool FwHelper::uploadFirmware(QString filename, OpenroadInterface *openroad,
                               bool isBootloader, bool checkName, bool fwdCan)
 {
     if (filename.startsWith("file:/")) {

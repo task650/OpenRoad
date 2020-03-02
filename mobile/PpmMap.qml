@@ -35,9 +35,9 @@ Item {
     property real valueNow: 0.5
     property bool resetDone: true
 
-    property Commands mCommands: VescIf.commands()
-    property ConfigParams mAppConf: VescIf.appConfig()
-    property ConfigParams mInfoConf: VescIf.infoConfig()
+    property Commands mCommands: OpenroadIf.commands()
+    property ConfigParams mAppConf: OpenroadIf.appConfig()
+    property ConfigParams mInfoConf: OpenroadIf.infoConfig()
 
     function updateDisplay() {
         resultArea.text =
@@ -59,10 +59,10 @@ Item {
             mAppConf.updateParamDouble("app_ppm_conf.pulse_start", msMin)
             mAppConf.updateParamDouble("app_ppm_conf.pulse_end", msMax)
             mAppConf.updateParamDouble("app_ppm_conf.pulse_center", msCenter)
-            VescIf.emitStatusMessage("Start, End and Center Pulselengths Applied", true)
+            OpenroadIf.emitStatusMessage("Start, End and Center Pulselengths Applied", true)
             mCommands.setAppConf()
         } else {
-            VescIf.emitMessageDialog("Apply Mapping",
+            OpenroadIf.emitMessageDialog("Apply Mapping",
                                      "Mapped values are not valid. Move the throttle to min, " +
                                      "then to max and then leave it in the center.",
                                      false,
@@ -112,7 +112,7 @@ Item {
                 Layout.fillWidth: true
                 flat: true
                 onClicked: {
-                    VescIf.emitMessageDialog(
+                    OpenroadIf.emitMessageDialog(
                                 mInfoConf.getLongName("app_ppm_mapping_help"),
                                 mInfoConf.getDescription("app_ppm_mapping_help"),
                                 true, true)
@@ -147,7 +147,7 @@ Item {
         repeat: true
 
         onTriggered: {
-            if (VescIf.isPortConnected() && visible) {
+            if (OpenroadIf.isPortConnected() && visible) {
                 mCommands.getDecodedPpm()
             }
         }

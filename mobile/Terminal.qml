@@ -26,7 +26,7 @@ import Vedder.openroad.commands 1.0
 import Vedder.openroad.configparams 1.0
 
 Item {
-    property Commands mCommands: VescIf.commands()
+    property Commands mCommands: OpenroadIf.commands()
 
     ColumnLayout {
         id: column

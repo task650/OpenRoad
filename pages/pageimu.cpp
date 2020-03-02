@@ -28,7 +28,7 @@ PageImu::PageImu(QWidget *parent) :
 {
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
-    mVesc = 0;
+    mOpenroad = 0;
 
     mTimer = new QTimer(this);
     mTimer->start(20);
@@ -143,7 +143,7 @@ PageImu::PageImu(QWidget *parent) :
     ui->magPlot->xAxis->setLabel("Seconds (s)");
     ui->magPlot->yAxis->setLabel("Magnetic Field (µT)");
 
-    m3dView = new Vesc3DView(this);
+    m3dView = new Openroad3DView(this);
     m3dView->setMinimumWidth(200);
     m3dView->setRollPitchYaw(20, 20, 0);
     m3dView->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
@@ -155,17 +155,17 @@ PageImu::~PageImu()
     delete ui;
 }
 
-VescInterface *PageImu::openroad() const
+OpenroadInterface *PageImu::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void PageImu::setVesc(VescInterface *openroad)
+void PageImu::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    if (mVesc) {
-        connect(mVesc->commands(), SIGNAL(valuesImuReceived(IMU_VALUES,uint)),
+    if (mOpenroad) {
+        connect(mOpenroad->commands(), SIGNAL(valuesImuReceived(IMU_VALUES,uint)),
                 this, SLOT(valuesReceived(IMU_VALUES,uint)));
     }
 }

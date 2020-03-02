@@ -39,9 +39,9 @@ Item {
     property real valueNow2: 0.5
     property bool resetDone: true
 
-    property Commands mCommands: VescIf.commands()
-    property ConfigParams mAppConf: VescIf.appConfig()
-    property ConfigParams mInfoConf: VescIf.infoConfig()
+    property Commands mCommands: OpenroadIf.commands()
+    property ConfigParams mAppConf: OpenroadIf.appConfig()
+    property ConfigParams mInfoConf: OpenroadIf.infoConfig()
 
     function openDialog() {
         dialog.open()
@@ -110,7 +110,7 @@ Item {
                 Layout.fillWidth: true
                 flat: true
                 onClicked: {
-                    VescIf.emitMessageDialog(
+                    OpenroadIf.emitMessageDialog(
                                 mInfoConf.getLongName("app_adc_mapping_help"),
                                 mInfoConf.getDescription("app_adc_mapping_help"),
                                 true, true)
@@ -138,7 +138,7 @@ Item {
                 mAppConf.updateParamDouble("app_adc_conf.voltage_center", vCenter)
                 mAppConf.updateParamDouble("app_adc_conf.voltage2_start", vMin2)
                 mAppConf.updateParamDouble("app_adc_conf.voltage2_end", vMax2)
-                VescIf.emitStatusMessage("Start, End and Center ADC Voltages Applied", true)
+                OpenroadIf.emitStatusMessage("Start, End and Center ADC Voltages Applied", true)
                 mCommands.setAppConf()
             }
         }
@@ -151,7 +151,7 @@ Item {
         repeat: true
 
         onTriggered: {
-            if (VescIf.isPortConnected() && visible) {
+            if (OpenroadIf.isPortConnected() && visible) {
                 mCommands.getDecodedAdc()
             }
         }

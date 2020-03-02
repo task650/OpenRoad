@@ -41,8 +41,8 @@ public:
     explicit PageExperiments(QWidget *parent = 0);
     ~PageExperiments();
 
-    VescInterface *openroad() const;
-    void setVesc(VescInterface *openroad);
+    OpenroadInterface *openroad() const;
+    void setOpenroad(OpenroadInterface *openroad);
     void stop();
 
 private slots:
@@ -77,7 +77,7 @@ private:
     } experiment_state;
 
     Ui::PageExperiments *ui;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     experiment_state mState;
     QVector<double> mTimeVec;
     QVector<double> mCurrentInVec;

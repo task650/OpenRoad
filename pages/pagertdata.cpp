@@ -30,7 +30,7 @@ PageRtData::PageRtData(QWidget *parent) :
 {
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
-    mVesc = nullptr;
+    mOpenroad = nullptr;
 
     mTimer = new QTimer(this);
     mTimer->start(20);
@@ -205,36 +205,36 @@ PageRtData::~PageRtData()
     delete ui;
 }
 
-VescInterface *PageRtData::openroad() const
+OpenroadInterface *PageRtData::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void PageRtData::setVesc(VescInterface *openroad)
+void PageRtData::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    if (mVesc) {
-        connect(mVesc->commands(), SIGNAL(valuesReceived(MC_VALUES,unsigned int)),
+    if (mOpenroad) {
+        connect(mOpenroad->commands(), SIGNAL(valuesReceived(MC_VALUES,unsigned int)),
                 this, SLOT(valuesReceived(MC_VALUES, unsigned int)));
-        connect(mVesc->commands(), SIGNAL(rotorPosReceived(double)),
+        connect(mOpenroad->commands(), SIGNAL(rotorPosReceived(double)),
                 this, SLOT(rotorPosReceived(double)));
-        connect(mVesc->commands(), SIGNAL(plotInitReceived(QString,QString)),
+        connect(mOpenroad->commands(), SIGNAL(plotInitReceived(QString,QString)),
                 this, SLOT(plotInitReceived(QString,QString)));
-        connect(mVesc->commands(), SIGNAL(plotDataReceived(double,double)),
+        connect(mOpenroad->commands(), SIGNAL(plotDataReceived(double,double)),
                 this, SLOT(plotDataReceived(double,double)));
-        connect(mVesc->commands(), SIGNAL(plotAddGraphReceived(QString)),
+        connect(mOpenroad->commands(), SIGNAL(plotAddGraphReceived(QString)),
                 this, SLOT(plotAddGraphReceived(QString)));
-        connect(mVesc->commands(), SIGNAL(plotSetGraphReceived(int)),
+        connect(mOpenroad->commands(), SIGNAL(plotSetGraphReceived(int)),
                 this, SLOT(plotSetGraphReceived(int)));
     }
 }
 
 void PageRtData::timerSlot()
 {
-    if (mVesc) {
-        if (mVesc->isRtLogOpen() != ui->csvEnableLogBox->isChecked()) {
-            ui->csvEnableLogBox->setChecked(mVesc->isRtLogOpen());
+    if (mOpenroad) {
+        if (mOpenroad->isRtLogOpen() != ui->csvEnableLogBox->isChecked()) {
+            ui->csvEnableLogBox->setChecked(mOpenroad->isRtLogOpen());
         }
     }
 
@@ -528,50 +528,50 @@ void PageRtData::on_rescaleButton_clicked()
 
 void PageRtData::on_posInductanceButton_clicked()
 {
-    if (mVesc) {
-        mVesc->commands()->setDetect(DISP_POS_MODE_INDUCTANCE);
+    if (mOpenroad) {
+        mOpenroad->commands()->setDetect(DISP_POS_MODE_INDUCTANCE);
     }
 }
 
 void PageRtData::on_posObserverButton_clicked()
 {
-    if (mVesc) {
-        mVesc->commands()->setDetect(DISP_POS_MODE_OBSERVER);
+    if (mOpenroad) {
+        mOpenroad->commands()->setDetect(DISP_POS_MODE_OBSERVER);
     }
 }
 
 void PageRtData::on_posEncoderButton_clicked()
 {
-    if (mVesc) {
-        mVesc->commands()->setDetect(DISP_POS_MODE_ENCODER);
+    if (mOpenroad) {
+        mOpenroad->commands()->setDetect(DISP_POS_MODE_ENCODER);
     }
 }
 
 void PageRtData::on_posPidButton_clicked()
 {
-    if (mVesc) {
-        mVesc->commands()->setDetect(DISP_POS_MODE_PID_POS);
+    if (mOpenroad) {
+        mOpenroad->commands()->setDetect(DISP_POS_MODE_PID_POS);
     }
 }
 
 void PageRtData::on_posPidErrorButton_clicked()
 {
-    if (mVesc) {
-        mVesc->commands()->setDetect(DISP_POS_MODE_PID_POS_ERROR);
+    if (mOpenroad) {
+        mOpenroad->commands()->setDetect(DISP_POS_MODE_PID_POS_ERROR);
     }
 }
 
 void PageRtData::on_posEncoderObserverErrorButton_clicked()
 {
-    if (mVesc) {
-        mVesc->commands()->setDetect(DISP_POS_MODE_ENCODER_OBSERVER_ERROR);
+    if (mOpenroad) {
+        mOpenroad->commands()->setDetect(DISP_POS_MODE_ENCODER_OBSERVER_ERROR);
     }
 }
 
 void PageRtData::on_posStopButton_clicked()
 {
-    if (mVesc) {
-        mVesc->commands()->setDetect(DISP_POS_MODE_NONE);
+    if (mOpenroad) {
+        mOpenroad->commands()->setDetect(DISP_POS_MODE_NONE);
     }
 }
 
@@ -594,17 +594,17 @@ void PageRtData::on_csvChooseDirButton_clicked()
 void PageRtData::on_csvEnableLogBox_clicked(bool checked)
 {
     if (checked) {
-        if (mVesc) {
-            mVesc->openRtLogFile(ui->csvFileEdit->text());
+        if (mOpenroad) {
+            mOpenroad->openRtLogFile(ui->csvFileEdit->text());
         }
     } else {
-        mVesc->closeRtLogFile();
+        mOpenroad->closeRtLogFile();
     }
 }
 
 void PageRtData::on_csvHelpButton_clicked()
 {
-    HelpDialog::showHelp(this, mVesc->infoConfig(), "help_rt_logging");
+    HelpDialog::showHelp(this, mOpenroad->infoConfig(), "help_rt_logging");
 }
 
 void PageRtData::on_experimentLoadXmlButton_clicked()
@@ -687,8 +687,8 @@ void PageRtData::on_experimentLoadXmlButton_clicked()
             mExperimentReplot = true;
 
             file.close();
-            if (mVesc) {
-                mVesc->emitStatusMessage("Loaded plot", true);
+            if (mOpenroad) {
+                mOpenroad->emitStatusMessage("Loaded plot", true);
             }
         } else {
             QMessageBox::critical(this, "Load Plot",

@@ -44,7 +44,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     QTimer *mTimer;
 
 };

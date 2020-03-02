@@ -35,8 +35,8 @@ public:
     explicit BatteryCalculator(QWidget *parent = 0);
     ~BatteryCalculator();
 
-    VescInterface *openroad() const;
-    void setVesc(VescInterface *openroad);
+    OpenroadInterface *openroad() const;
+    void setOpenroad(OpenroadInterface *openroad);
 
 private slots:
     void on_batteryCalcButton_clicked();
@@ -46,7 +46,7 @@ private slots:
 
 private:
     Ui::BatteryCalculator *ui;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     double mValStart;
     double mValEnd;
 

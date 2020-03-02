@@ -29,9 +29,9 @@ Item {
     property int parentWidth: 10
     property int parentHeight: 10
 
-    property Commands mCommands: VescIf.commands()
-    property ConfigParams mMcConf: VescIf.mcConfig()
-    property ConfigParams mInfoConf: VescIf.infoConfig()
+    property Commands mCommands: OpenroadIf.commands()
+    property ConfigParams mMcConf: OpenroadIf.mcConfig()
+    property ConfigParams mInfoConf: OpenroadIf.infoConfig()
 
     function openDialog() {
         dialog.open()
@@ -39,10 +39,10 @@ Item {
     }
 
     function testConnected() {
-        if (VescIf.isPortConnected()) {
+        if (OpenroadIf.isPortConnected()) {
             return true
         } else {
-            VescIf.emitMessageDialog(
+            OpenroadIf.emitMessageDialog(
                         "Connection Error",
                         "The VESC is not connected. Please connect it to run detection.",
                         false, false)
@@ -449,7 +449,7 @@ Item {
         repeat: true
 
         onTriggered: {
-            if (VescIf.isPortConnected() && dialog.visible) {
+            if (OpenroadIf.isPortConnected() && dialog.visible) {
                 mCommands.sendAlive()
             }
         }

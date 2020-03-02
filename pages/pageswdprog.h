@@ -36,8 +36,8 @@ public:
     explicit PageSwdProg(QWidget *parent = 0);
     ~PageSwdProg();
 
-    VescInterface *openroad() const;
-    void setVesc(VescInterface *openroad);
+    OpenroadInterface *openroad() const;
+    void setOpenroad(OpenroadInterface *openroad);
 
     class SwdFw {
     public:
@@ -67,7 +67,7 @@ private slots:
 
 private:
     Ui::PageSwdProg *ui;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     QTimer *mTimer;
     uint32_t mFlashOffset;
 

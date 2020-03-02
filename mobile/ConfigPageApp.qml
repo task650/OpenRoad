@@ -26,7 +26,7 @@ import Vedder.openroad.commands 1.0
 import Vedder.openroad.configparams 1.0
 
 Item {
-    property Commands mCommands: VescIf.commands()
+    property Commands mCommands: OpenroadIf.commands()
     property bool isHorizontal: width > height
 
     ParamEditors {
@@ -111,7 +111,7 @@ Item {
     function updateEditors() {
         destroyEditors()
 
-        var params = VescIf.appConfig().getParamsFromSubgroup(pageBox.currentText, tabBox.currentText)
+        var params = OpenroadIf.appConfig().getParamsFromSubgroup(pageBox.currentText, tabBox.currentText)
 
         for (var i = 0;i < params.length;i++) {
             if (params[i].startsWith("::sep::")) {
@@ -135,11 +135,11 @@ Item {
                 id: pageBox
                 Layout.fillWidth: true
 
-                model: VescIf.appConfig().getParamGroups()
+                model: OpenroadIf.appConfig().getParamGroups()
 
                 onCurrentTextChanged: {
                     var tabTextOld = tabBox.currentText
-                    var subgroups = VescIf.appConfig().getParamSubgroups(currentText)
+                    var subgroups = OpenroadIf.appConfig().getParamSubgroups(currentText)
 
                     tabBox.model = subgroups
                     tabBox.visible = subgroups.length > 1
@@ -236,12 +236,12 @@ Item {
     }
 
     Connections {
-        target: VescIf
+        target: OpenroadIf
         onConfigurationChanged: {
-            pageBox.model = VescIf.appConfig().getParamGroups()
+            pageBox.model = OpenroadIf.appConfig().getParamGroups()
 
             var tabTextOld = tabBox.currentText
-            var subgroups = VescIf.appConfig().getParamSubgroups(pageBox.currentText)
+            var subgroups = OpenroadIf.appConfig().getParamSubgroups(pageBox.currentText)
 
             tabBox.model = subgroups
             tabBox.visible = subgroups.length > 1

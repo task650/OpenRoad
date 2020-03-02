@@ -26,7 +26,7 @@ PageTerminal::PageTerminal(QWidget *parent) :
 {
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
-    mVesc = 0;
+    mOpenroad = 0;
 }
 
 PageTerminal::~PageTerminal()
@@ -40,17 +40,17 @@ void PageTerminal::clearTerminal()
     ui->terminalEdit->setFocus();
 }
 
-VescInterface *PageTerminal::openroad() const
+OpenroadInterface *PageTerminal::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void PageTerminal::setVesc(VescInterface *openroad)
+void PageTerminal::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    if (mVesc) {
-        connect(mVesc->commands(), SIGNAL(printReceived(QString)),
+    if (mOpenroad) {
+        connect(mOpenroad->commands(), SIGNAL(printReceived(QString)),
                 this, SLOT(printReceived(QString)));
     }
 }
@@ -62,8 +62,8 @@ void PageTerminal::printReceived(QString str)
 
 void PageTerminal::on_sendButton_clicked()
 {
-    if (mVesc && mVesc->isPortConnected()) {
-        mVesc->commands()->sendTerminalCmd(ui->terminalEdit->text());
+    if (mOpenroad && mOpenroad->isPortConnected()) {
+        mOpenroad->commands()->sendTerminalCmd(ui->terminalEdit->text());
         ui->terminalEdit->clear();
     }
     else {

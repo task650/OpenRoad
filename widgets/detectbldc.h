@@ -35,8 +35,8 @@ public:
     explicit DetectBldc(QWidget *parent = 0);
     ~DetectBldc();
 
-    VescInterface *openroad() const;
-    void setVesc(VescInterface *openroad);
+    OpenroadInterface *openroad() const;
+    void setOpenroad(OpenroadInterface *openroad);
 
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
 
@@ -49,7 +49,7 @@ private slots:
 
 private:
     Ui::DetectBldc *ui;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     bldc_detect mResult;
     bool mResultReceived;
     bool mRunning;

@@ -29,7 +29,7 @@
 typedef struct {
     QString name;
     QString systemPath;
-    bool isVesc;
+    bool isOpenroad;
 } VSerialInfo_t;
 
 typedef enum {

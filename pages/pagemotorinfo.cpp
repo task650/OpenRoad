@@ -27,7 +27,7 @@ PageMotorInfo::PageMotorInfo(QWidget *parent) :
 {
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
-    mVesc = nullptr;
+    mOpenroad = nullptr;
 }
 
 PageMotorInfo::~PageMotorInfo()
@@ -35,48 +35,48 @@ PageMotorInfo::~PageMotorInfo()
     delete ui;
 }
 
-VescInterface *PageMotorInfo::openroad() const
+OpenroadInterface *PageMotorInfo::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void PageMotorInfo::setVesc(VescInterface *openroad)
+void PageMotorInfo::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    if (mVesc) {
+    if (mOpenroad) {
         reloadParams();
 
-        connect(mVesc->mcConfig(), SIGNAL(paramChangedQString(QObject*,QString,QString)),
+        connect(mOpenroad->mcConfig(), SIGNAL(paramChangedQString(QObject*,QString,QString)),
                 this, SLOT(paramChangedQString(QObject*,QString,QString)));
-        connect(mVesc->mcConfig(), SIGNAL(savingXml()),
+        connect(mOpenroad->mcConfig(), SIGNAL(savingXml()),
                 this, SLOT(savingXml()));
     }
 }
 
 void PageMotorInfo::reloadParams()
 {
-    if (mVesc) {
+    if (mOpenroad) {
         ui->setupTab->clearParams();
         ui->generalTab->clearParams();
         ui->qualityTab->clearParams();
 
-        ui->setupTab->addParamSubgroup(mVesc->mcConfig(), "Additional Info", "setup");
-        ui->generalTab->addParamSubgroup(mVesc->mcConfig(), "Additional Info", "general");
-        ui->qualityTab->addParamSubgroup(mVesc->mcConfig(), "Additional Info", "quality");
+        ui->setupTab->addParamSubgroup(mOpenroad->mcConfig(), "Additional Info", "setup");
+        ui->generalTab->addParamSubgroup(mOpenroad->mcConfig(), "Additional Info", "general");
+        ui->qualityTab->addParamSubgroup(mOpenroad->mcConfig(), "Additional Info", "quality");
 
-        ui->descriptionEdit->document()->setHtml(mVesc->mcConfig()->getParamQString("motor_description"));
-        ui->qualityEdit->document()->setHtml(mVesc->mcConfig()->getParamQString("motor_quality_description"));
+        ui->descriptionEdit->document()->setHtml(mOpenroad->mcConfig()->getParamQString("motor_description"));
+        ui->qualityEdit->document()->setHtml(mOpenroad->mcConfig()->getParamQString("motor_quality_description"));
     }
 }
 
 void PageMotorInfo::savingXml()
 {
-    mVesc->mcConfig()->updateParamString("motor_description",
+    mOpenroad->mcConfig()->updateParamString("motor_description",
                                          ui->descriptionEdit->document()->toHtml(),
                                          this);
 
-    mVesc->mcConfig()->updateParamString("motor_quality_description",
+    mOpenroad->mcConfig()->updateParamString("motor_quality_description",
                                          ui->qualityEdit->document()->toHtml(),
                                          this);
 }
@@ -94,7 +94,7 @@ void PageMotorInfo::paramChangedQString(QObject *src, QString name, QString newP
 
 void PageMotorInfo::on_descriptionHelpButton_clicked()
 {
-    if (mVesc) {
-        HelpDialog::showHelp(this, mVesc->mcConfig(), "motor_description");
+    if (mOpenroad) {
+        HelpDialog::showHelp(this, mOpenroad->mcConfig(), "motor_description");
     }
 }

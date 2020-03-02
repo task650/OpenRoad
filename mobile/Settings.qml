@@ -50,21 +50,21 @@ Item {
                 id: imperialBox
                 Layout.fillWidth: true
                 text: "Use Imperial Units"
-                checked: VescIf.useImperialUnits()
+                checked: OpenroadIf.useImperialUnits()
             }
 
             CheckBox {
                 id: screenOnBox
                 Layout.fillWidth: true
                 text: "Keep Screen On"
-                checked: VescIf.keepScreenOn()
+                checked: OpenroadIf.keepScreenOn()
             }
 
             CheckBox {
                 id: wakeLockBox
                 Layout.fillWidth: true
                 text: "Use Wake Lock (experimental)"
-                checked: VescIf.useWakeLock()
+                checked: OpenroadIf.useWakeLock()
             }
 
             Item {
@@ -75,15 +75,15 @@ Item {
         }
 
         onClosed: {
-            VescIf.setUseImperialUnits(imperialBox.checked)
-            VescIf.setKeepScreenOn(screenOnBox.checked)
-            VescIf.setUseWakeLock(wakeLockBox.checked)
-            VescIf.storeSettings()
+            OpenroadIf.setUseImperialUnits(imperialBox.checked)
+            OpenroadIf.setKeepScreenOn(screenOnBox.checked)
+            OpenroadIf.setUseWakeLock(wakeLockBox.checked)
+            OpenroadIf.storeSettings()
 
-            Utility.keepScreenOn(VescIf.keepScreenOn())
+            Utility.keepScreenOn(OpenroadIf.keepScreenOn())
 
-            if (VescIf.useWakeLock()) {
-                VescIf.setWakeLock(VescIf.isPortConnected())
+            if (OpenroadIf.useWakeLock()) {
+                OpenroadIf.setWakeLock(OpenroadIf.isPortConnected())
             }
         }
     }

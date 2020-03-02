@@ -63,10 +63,10 @@ public:
         int poles;
     };
 
-    explicit DetectAllFocDialog(VescInterface *openroad, QWidget *parent = 0);
+    explicit DetectAllFocDialog(OpenroadInterface *openroad, QWidget *parent = 0);
     ~DetectAllFocDialog();
 
-    static void showDialog(VescInterface *openroad, QWidget *parent = 0);
+    static void showDialog(OpenroadInterface *openroad, QWidget *parent = 0);
 
 protected:
     void reject();
@@ -86,7 +86,7 @@ private slots:
 
 private:
     Ui::DetectAllFocDialog *ui;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
     bool mRejectOk;
     int mPulleyMotorOld;
     int mPulleyWheelOld;

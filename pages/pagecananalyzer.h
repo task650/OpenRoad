@@ -36,8 +36,8 @@ public:
     explicit PageCanAnalyzer(QWidget *parent = nullptr);
     ~PageCanAnalyzer();
 
-    VescInterface *openroad() const;
-    void setVesc(VescInterface *openroad);
+    OpenroadInterface *openroad() const;
+    void setOpenroad(OpenroadInterface *openroad);
     void reloadParams();
 
 private slots:
@@ -47,7 +47,7 @@ private slots:
 
 private:
     Ui::PageCanAnalyzer *ui;
-    VescInterface *mVesc;
+    OpenroadInterface *mOpenroad;
 
 };
 

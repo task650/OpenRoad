@@ -32,7 +32,7 @@ PageFirmware::PageFirmware(QWidget *parent) :
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
     ui->cancelButton->setEnabled(false);
-    mVesc = nullptr;
+    mOpenroad = nullptr;
 
     updateHwList();
     updateBlList();
@@ -59,31 +59,31 @@ PageFirmware::~PageFirmware()
     delete ui;
 }
 
-VescInterface *PageFirmware::openroad() const
+OpenroadInterface *PageFirmware::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void PageFirmware::setVesc(VescInterface *openroad)
+void PageFirmware::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    if (mVesc) {
-        ui->display->setText(mVesc->getFwUploadStatus());
+    if (mOpenroad) {
+        ui->display->setText(mOpenroad->getFwUploadStatus());
 
         reloadParams();
 
-        connect(mVesc, SIGNAL(fwUploadStatus(QString,double,bool)),
+        connect(mOpenroad, SIGNAL(fwUploadStatus(QString,double,bool)),
                 this, SLOT(fwUploadStatus(QString,double,bool)));
-        connect(mVesc->commands(), SIGNAL(fwVersionReceived(int,int,QString,QByteArray,bool)),
+        connect(mOpenroad->commands(), SIGNAL(fwVersionReceived(int,int,QString,QByteArray,bool)),
                 this, SLOT(fwVersionReceived(int,int,QString,QByteArray,bool)));
     }
 }
 
 void PageFirmware::reloadParams()
 {
-    if (mVesc) {
-        QStringList fws = mVesc->getSupportedFirmwares();
+    if (mOpenroad) {
+        QStringList fws = mOpenroad->getSupportedFirmwares();
         QString str;
         for (int i = 0;i < fws.size();i++) {
             str.append(fws.at(i));
@@ -97,13 +97,13 @@ void PageFirmware::reloadParams()
 
 void PageFirmware::timerSlot()
 {
-    if (mVesc) {
-        if (mVesc->getFwUploadProgress() >= 0.0) {
-            ui->uploadAllButton->setEnabled(mVesc->commands()->getLimitedSupportsFwdAllCan() &&
-                                            !mVesc->commands()->getSendCan() && mVesc->getFwUploadProgress() < 0.0);
+    if (mOpenroad) {
+        if (mOpenroad->getFwUploadProgress() >= 0.0) {
+            ui->uploadAllButton->setEnabled(mOpenroad->commands()->getLimitedSupportsFwdAllCan() &&
+                                            !mOpenroad->commands()->getSendCan() && mOpenroad->getFwUploadProgress() < 0.0);
         }
 
-        if (!mVesc->isPortConnected()) {
+        if (!mOpenroad->isPortConnected()) {
             ui->currentLabel->clear();
         }
     }
@@ -266,15 +266,15 @@ void PageFirmware::on_uploadButton_clicked()
 
 void PageFirmware::on_readVersionButton_clicked()
 {
-    if (mVesc) {
-        mVesc->commands()->getFwVersion();
+    if (mOpenroad) {
+        mOpenroad->commands()->getFwVersion();
     }
 }
 
 void PageFirmware::on_cancelButton_clicked()
 {
-    if (mVesc) {
-        mVesc->fwUploadCancel();
+    if (mOpenroad) {
+        mOpenroad->fwUploadCancel();
     }
 }
 
@@ -290,8 +290,8 @@ void PageFirmware::on_uploadAllButton_clicked()
 
 void PageFirmware::uploadFw(bool allOverCan)
 {
-    if (mVesc) {
-        if (!mVesc->isPortConnected()) {
+    if (mOpenroad) {
+        if (!mOpenroad->isPortConnected()) {
             QMessageBox::critical(this,
                                   tr("Connection Error"),
                                   tr("The VESC is not connected. Please connect it."));
@@ -384,7 +384,7 @@ void PageFirmware::uploadFw(bool allOverCan)
                                             "chosen the correct hardware version?"),
                                          QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
         } else if (ui->fwTabWidget->currentIndex() == 2) {
-            if (mVesc->commands()->getLimitedSupportsEraseBootloader()) {
+            if (mOpenroad->commands()->getLimitedSupportsEraseBootloader()) {
                 reply = QMessageBox::warning(this,
                                              tr("Warning"),
                                              tr("This will attempt to upload a bootloader to the connected VESC. "
@@ -406,7 +406,7 @@ void PageFirmware::uploadFw(bool allOverCan)
 
         if (reply == QMessageBox::Yes) {
             QByteArray data = file.readAll();
-            bool fwRes = mVesc->fwUpload(data, isBootloader, allOverCan);
+            bool fwRes = mOpenroad->fwUpload(data, isBootloader, allOverCan);
 
             if (!isBootloader && fwRes) {
                 QMessageBox::warning(this,

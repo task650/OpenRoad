@@ -31,8 +31,8 @@ Item {
     implicitHeight: text.implicitHeight +
                     canIdList.contentHeight + 10
 
-    property ConfigParams mAppConf: VescIf.appConfig()
-    property Commands mCommands: VescIf.commands()
+    property ConfigParams mAppConf: OpenroadIf.appConfig()
+    property Commands mCommands: OpenroadIf.commands()
 
     function scanCan() {
         canIdModel.clear()
@@ -41,15 +41,15 @@ Item {
         canIdModel.append({"name": "This VESC",
                               "canId": mAppConf.getParamInt("controller_id"),
                               "isCan": false,
-                              "isInv": Utility.getInvertDirection(VescIf, -1)})
+                              "isInv": Utility.getInvertDirection(OpenroadIf, -1)})
 
-        var canDevs = VescIf.scanCan()
+        var canDevs = OpenroadIf.scanCan()
 
         for (var i = 0;i < canDevs.length;i++) {
             canIdModel.append({"name": "VESC on CAN-bus",
                                   "canId": canDevs[i],
                                   "isCan": true,
-                                  "isInv": Utility.getInvertDirection(VescIf, canDevs[i])})
+                                  "isInv": Utility.getInvertDirection(OpenroadIf, canDevs[i])})
         }
         enableDialog()
     }
@@ -138,7 +138,7 @@ Item {
                                 checked: isInv
                                 onToggled: {
                                     disableDialog()
-                                    Utility.setInvertDirection(VescIf, isCan ? canId : -1, checked)
+                                    Utility.setInvertDirection(OpenroadIf, isCan ? canId : -1, checked)
                                     enableDialog()
                                 }
                             }
@@ -156,7 +156,7 @@ Item {
 
                                 onClicked: {
                                     disableDialog()
-                                    Utility.testDirection(VescIf, isCan ? canId : -1, 0.1, 2000)
+                                    Utility.testDirection(OpenroadIf, isCan ? canId : -1, 0.1, 2000)
                                     enableDialog()
                                 }
                             }
@@ -169,7 +169,7 @@ Item {
 
                                 onClicked: {
                                     disableDialog()
-                                    Utility.testDirection(VescIf, isCan ? canId : -1, -0.1, 2000)
+                                    Utility.testDirection(OpenroadIf, isCan ? canId : -1, -0.1, 2000)
                                     enableDialog()
                                 }
                             }

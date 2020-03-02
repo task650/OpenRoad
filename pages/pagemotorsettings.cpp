@@ -27,7 +27,7 @@ PageMotorSettings::PageMotorSettings(QWidget *parent) :
 {
     ui->setupUi(this);
     layout()->setContentsMargins(0, 0, 0, 0);
-    mVesc = nullptr;
+    mOpenroad = nullptr;
 }
 
 PageMotorSettings::~PageMotorSettings()
@@ -35,24 +35,24 @@ PageMotorSettings::~PageMotorSettings()
     delete ui;
 }
 
-VescInterface *PageMotorSettings::openroad() const
+OpenroadInterface *PageMotorSettings::openroad() const
 {
-    return mVesc;
+    return mOpenroad;
 }
 
-void PageMotorSettings::setVesc(VescInterface *openroad)
+void PageMotorSettings::setOpenroad(OpenroadInterface *openroad)
 {
-    mVesc = openroad;
+    mOpenroad = openroad;
 
-    if (mVesc) {
+    if (mOpenroad) {
         reloadParams();
     }
 }
 
 void PageMotorSettings::reloadParams()
 {
-    if (mVesc) {
-        ConfigParam *p = mVesc->infoConfig()->getParam("motor_setting_description");
+    if (mOpenroad) {
+        ConfigParam *p = mOpenroad->infoConfig()->getParam("motor_setting_description");
         if (p != nullptr) {
             ui->textEdit->setHtml(p->description);
         } else {
@@ -63,8 +63,8 @@ void PageMotorSettings::reloadParams()
 
 void PageMotorSettings::on_motorSetupWizardButton_clicked()
 {
-    if (mVesc) {
-        SetupWizardMotor w(mVesc, this);
+    if (mOpenroad) {
+        SetupWizardMotor w(mOpenroad, this);
         w.exec();
     }
 }
